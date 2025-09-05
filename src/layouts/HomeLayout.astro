@@ -1,0 +1,61 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "City Of Tangier - Your Perfect Tangier Experience", 
+  description = "Discover the magic where Africa meets Europe. From ancient kasbahs to modern rooftops, find your next adventure in Morocco's gateway city." 
+} = Astro.props;
+---
+
+<BaseLayout 
+  title={title} 
+  description={description}
+  ogImage="/og-home-image.jpg"
+  ogType="website"
+>
+  <!-- Home-specific head content -->
+  <Fragment slot="head">
+    <!-- Home-specific meta tags -->
+    <meta name="theme-color" content="#f97316" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <!-- Home-specific styles -->
+    <style>
+      body {
+        padding-top: 4rem; /* pt-16 equivalent for fixed navbar */
+      }
+      
+      /* Home-specific hero styles */
+      .hero-gradient {
+        background: linear-gradient(135deg, #fb923c 0%, #ef4444 50%, #9333ea 100%);
+      }
+      
+      /* Home-specific animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out;
+      }
+    </style>
+  </Fragment>
+
+  <!-- Home-specific content with hero styling -->
+  <div class="home-content">
+    <slot />
+  </div>
+</BaseLayout>
