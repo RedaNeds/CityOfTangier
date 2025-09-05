@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogLayout from '../../layouts/BlogLayout.astro';
 
 const allPosts = await getCollection('blog');
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<BaseLayout title="Blog - City of Tangier" description="Discover the latest stories and insights about Tangier">
+<BlogLayout title="Blog - City of Tangier" description="Discover the latest stories and insights about Tangier">
   <div class="max-w-4xl mx-auto px-4 py-16">
     <h1 class="text-4xl font-bold text-gray-900 mb-8">Blog</h1>
     <p class="text-xl text-gray-600 mb-12">Stories and insights about Tangier</p>
@@ -34,4 +34,4 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
       ))}
     </div>
   </div>
-</BaseLayout>
+</BlogLayout>

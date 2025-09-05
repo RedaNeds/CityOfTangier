@@ -1,0 +1,188 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  author?: string;
+  publishDate?: Date;
+  readTime?: string;
+  tags?: string[];
+  featuredImage?: string;
+}
+
+const { 
+  title = "Blog - City of Tangier", 
+  description = "Discover the latest stories and insights about Tangier",
+  author = "City of Tangier Team",
+  publishDate = new Date(),
+  readTime = "5 min read",
+  tags = [],
+  featuredImage = "/blog-default-image.jpg"
+} = Astro.props;
+
+// Generate structured data for blog posts
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": title,
+  "description": description,
+  "author": {
+    "@type": "Person",
+    "name": author
+  },
+  "datePublished": publishDate.toISOString(),
+  "image": featuredImage,
+  "keywords": tags.join(", ")
+};
+---
+
+<BaseLayout 
+  title={title} 
+  description={description}
+  ogImage={featuredImage}
+  ogType="article"
+>
+  <!-- Blog-specific head content -->
+  <Fragment slot="head">
+    <!-- Blog-specific meta tags -->
+    <meta name="author" content={author} />
+    <meta name="article:author" content={author} />
+    <meta name="article:published_time" content={publishDate.toISOString()} />
+    <meta name="article:section" content="Travel" />
+    {tags.map(tag => <meta name="article:tag" content={tag} />)}
+    
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    
+    <!-- Blog-specific styles -->
+    <style>
+      body {
+        padding-top: 4rem; /* pt-16 equivalent for fixed navbar */
+      }
+      
+      /* Blog typography */
+      .blog-content {
+        max-width: 4xl;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+      
+      .blog-content h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+      
+      .blog-content h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 2rem 0 1rem 0;
+        color: #374151;
+      }
+      
+      .blog-content h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 1.5rem 0 0.75rem 0;
+        color: #4b5563;
+      }
+      
+      .blog-content p {
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+        color: #4b5563;
+      }
+      
+      .blog-content ul, .blog-content ol {
+        margin-bottom: 1.5rem;
+        padding-left: 1.5rem;
+      }
+      
+      .blog-content li {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+      }
+      
+      .blog-content blockquote {
+        border-left: 4px solid #f97316;
+        padding-left: 1rem;
+        margin: 2rem 0;
+        font-style: italic;
+        color: #6b7280;
+      }
+      
+      .blog-content code {
+        background-color: #f3f4f6;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+      }
+      
+      .blog-content pre {
+        background-color: #1f2937;
+        color: #f9fafb;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+      }
+      
+      .blog-content pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+      }
+      
+      /* Blog metadata styles */
+      .blog-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+      
+      .blog-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+      
+      .blog-tag {
+        background-color: #fef3c7;
+        color: #92400e;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .blog-content {
+          padding: 1rem;
+        }
+        
+        .blog-content h1 {
+          font-size: 2rem;
+        }
+        
+        .blog-content h2 {
+          font-size: 1.75rem;
+        }
+      }
+    </style>
+  </Fragment>
+
+  <!-- Blog-specific content -->
+  <div class="blog-content">
+    <slot />
+  </div>
+</BaseLayout>

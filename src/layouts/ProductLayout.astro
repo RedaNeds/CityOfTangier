@@ -1,0 +1,105 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  price?: string;
+  category?: string;
+  images?: string[];
+  availability?: string;
+}
+
+const { 
+  title = "Product - City of Tangier", 
+  description = "Discover amazing products and experiences in Tangier",
+  price,
+  category,
+  images = [],
+  availability = "available"
+} = Astro.props;
+
+// Generate structured data for products
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": title,
+  "description": description,
+  "category": category,
+  "offers": {
+    "@type": "Offer",
+    "price": price,
+    "availability": `https://schema.org/${availability === "available" ? "InStock" : "OutOfStock"}`
+  },
+  "image": images
+};
+---
+
+<BaseLayout 
+  title={title} 
+  description={description}
+  ogType="product"
+>
+  <!-- Product-specific head content -->
+  <Fragment slot="head">
+    <!-- Product-specific meta tags -->
+    <meta name="product:price:amount" content={price} />
+    <meta name="product:price:currency" content="EUR" />
+    <meta name="product:availability" content={availability} />
+    <meta name="product:category" content={category} />
+    
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    
+    <!-- Product-specific styles -->
+    <style>
+      body {
+        padding-top: 4rem; /* pt-16 equivalent for fixed navbar */
+      }
+      
+      /* Product-specific styles */
+      .product-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      
+      .product-image {
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        border-radius: 0.5rem;
+      }
+      
+      .price-tag {
+        background: linear-gradient(135deg, #f97316, #ef4444);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: bold;
+        display: inline-block;
+      }
+      
+      .availability-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      
+      .availability-available {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+      
+      .availability-unavailable {
+        background-color: #fef2f2;
+        color: #dc2626;
+      }
+    </style>
+  </Fragment>
+
+  <!-- Product-specific content -->
+  <div class="product-content">
+    <slot />
+  </div>
+</BaseLayout>
