@@ -1,0 +1,123 @@
+---
+import HomeLayout from '../../layouts/HomeLayout.astro';
+---
+
+<HomeLayout 
+  title="Places to Visit in Tangier - City of Tangier"
+  description="Discover the best places to visit in Tangier. From historic kasbahs to modern cafes, find your perfect spots in Morocco's gateway city."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Places to Visit</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Discover the best places in Tangier. From ancient kasbahs to modern rooftops, 
+        find your perfect spots in Morocco's gateway city.
+      </p>
+    </div>
+
+    <!-- Interactive Map Section -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">Interactive Map</h2>
+      <div class="bg-gray-100 rounded-xl h-96 flex items-center justify-center">
+        <div class="text-center">
+          <div class="text-6xl mb-4">🗺️</div>
+          <p class="text-gray-600 text-lg">Interactive map coming soon</p>
+          <p class="text-gray-500">Filter by category, neighborhood, or type</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      <!-- Eat & Drink -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🍽️</div>
+            <h3 class="text-xl font-bold">Eat & Drink</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Eat & Drink</h3>
+          <p class="text-gray-600 mb-4">From traditional Moroccan cuisine to modern cafes with sea views.</p>
+          <div class="space-y-2">
+            <a href="/places/eat-drink/rooftops" class="block text-teal-600 hover:text-teal-800">Rooftops</a>
+            <a href="/places/eat-drink/sea-view-cafes" class="block text-teal-600 hover:text-teal-800">Sea-view Cafes</a>
+            <a href="/places/eat-drink/moroccan-restaurants" class="block text-teal-600 hover:text-teal-800">Moroccan Restaurants</a>
+            <a href="/places/eat-drink/seafood" class="block text-teal-600 hover:text-teal-800">Seafood</a>
+          </div>
+          <a href="/places/eat-drink" class="inline-block mt-4 text-teal-600 hover:text-teal-800 font-medium">
+            View all →
+          </a>
+        </div>
+      </div>
+
+      <!-- See & Do -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🎯</div>
+            <h3 class="text-xl font-bold">See & Do</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">See & Do</h3>
+          <p class="text-gray-600 mb-4">Explore museums, beaches, photo spots, and nightlife.</p>
+          <div class="space-y-2">
+            <a href="/places/see-do/museums" class="block text-teal-600 hover:text-teal-800">Museums</a>
+            <a href="/places/see-do/photo-spots" class="block text-teal-600 hover:text-teal-800">Photo Spots</a>
+            <a href="/places/see-do/beaches" class="block text-teal-600 hover:text-teal-800">Beaches</a>
+            <a href="/places/see-do/nightlife" class="block text-teal-600 hover:text-teal-800">Nightlife</a>
+          </div>
+          <a href="/places/see-do" class="inline-block mt-4 text-teal-600 hover:text-teal-800 font-medium">
+            View all →
+          </a>
+        </div>
+      </div>
+
+      <!-- Neighborhoods -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🏘️</div>
+            <h3 class="text-xl font-bold">Neighborhoods</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Neighborhoods</h3>
+          <p class="text-gray-600 mb-4">Explore Tangier's distinct neighborhoods and their unique character.</p>
+          <div class="space-y-2">
+            <a href="/places/neighborhoods/kasbah" class="block text-teal-600 hover:text-teal-800">Kasbah</a>
+            <a href="/places/neighborhoods/marshan" class="block text-teal-600 hover:text-teal-800">Marshan</a>
+            <a href="/places/neighborhoods/medina" class="block text-teal-600 hover:text-teal-800">Medina</a>
+            <a href="/places/neighborhoods/city-center" class="block text-teal-600 hover:text-teal-800">City Center</a>
+          </div>
+          <a href="/places/neighborhoods" class="inline-block mt-4 text-teal-600 hover:text-teal-800 font-medium">
+            View all →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">150+</div>
+        <div class="text-gray-600">Places</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">12</div>
+        <div class="text-gray-600">Categories</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">4</div>
+        <div class="text-gray-600">Neighborhoods</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">24/7</div>
+        <div class="text-gray-600">Updated</div>
+      </div>
+    </div>
+  </div>
+</HomeLayout>

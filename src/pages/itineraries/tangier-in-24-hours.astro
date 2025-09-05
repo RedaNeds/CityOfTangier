@@ -1,0 +1,265 @@
+---
+import ItineraryLayout from '../../layouts/ItineraryLayout.astro';
+---
+
+<ItineraryLayout 
+  title="Tangier in 24 Hours - Perfect One Day Itinerary"
+  description="Make the most of your 24 hours in Tangier with this comprehensive itinerary covering the city's highlights, best food, and must-see attractions."
+  duration="24 hours"
+  difficulty="easy"
+  budget="€50-80"
+  tags={['quick-visit', 'highlights', 'culture', 'food']}
+>
+  <div class="max-w-4xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-serif font-bold text-gray-900 mb-6">Tangier in 24 Hours</h1>
+      <p class="text-xl text-gray-600 mb-6">
+        The perfect one-day itinerary to experience the best of Tangier
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
+        <span>⏱️ 8 stops</span>
+        <span>🚶 12 hours</span>
+        <span>💰 €50-80 budget</span>
+        <span>👥 All fitness levels</span>
+      </div>
+    </div>
+
+    <!-- Itinerary Timeline -->
+    <div class="space-y-8">
+      <!-- Morning -->
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex items-center mb-6">
+          <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-4">
+            <span class="text-orange-600 font-bold">🌅</span>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">Morning (8:00 AM - 12:00 PM)</h2>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- Stop 1 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">1</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Kasbah Museum</h3>
+              <p class="text-gray-600 mb-3">Start your day exploring Morocco's rich history in this beautifully restored 17th-century palace with stunning views of the Strait of Gibraltar.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">museum</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">history</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">views</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 1.5 hours • 
+                <span class="font-medium">Cost:</span> €3 • 
+                <span class="font-medium">Best time:</span> 8:00-9:30 AM
+              </div>
+            </div>
+          </div>
+
+          <!-- Stop 2 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">2</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Medina Walking Tour</h3>
+              <p class="text-gray-600 mb-3">Wander through the narrow streets of the old town, discover traditional souks, and experience authentic Moroccan life.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">walking</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">souks</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">culture</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 2 hours • 
+                <span class="font-medium">Cost:</span> Free • 
+                <span class="font-medium">Best time:</span> 9:30-11:30 AM
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Afternoon -->
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex items-center mb-6">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+            <span class="text-blue-600 font-bold">☀️</span>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">Afternoon (12:00 PM - 6:00 PM)</h2>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- Stop 3 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">3</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Lunch at Café Hafa</h3>
+              <p class="text-gray-600 mb-3">Enjoy traditional mint tea and light lunch at this legendary café with breathtaking views of the Strait of Gibraltar.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">mint tea</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">sea view</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 1 hour • 
+                <span class="font-medium">Cost:</span> €8-12 • 
+                <span class="font-medium">Best time:</span> 12:00-1:00 PM
+              </div>
+            </div>
+          </div>
+
+          <!-- Stop 4 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">4</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Cap Spartel Lighthouse</h3>
+              <p class="text-gray-600 mb-3">Visit the historic lighthouse marking the meeting point of the Atlantic Ocean and Mediterranean Sea.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">lighthouse</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">ocean</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 1 hour • 
+                <span class="font-medium">Cost:</span> €5 • 
+                <span class="font-medium">Best time:</span> 2:00-3:00 PM
+              </div>
+            </div>
+          </div>
+
+          <!-- Stop 5 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">5</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Hercules Caves</h3>
+              <p class="text-gray-600 mb-3">Explore the legendary cave with a natural window opening to the Atlantic Ocean, perfect for sunset views.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">nature</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">legend</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">cave</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 1.5 hours • 
+                <span class="font-medium">Cost:</span> €3 • 
+                <span class="font-medium">Best time:</span> 3:00-4:30 PM
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evening -->
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="flex items-center mb-6">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+            <span class="text-purple-600 font-bold">🌅</span>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900">Evening (6:00 PM - 8:00 PM)</h2>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- Stop 6 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">6</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Sunset at Achakar Beach</h3>
+              <p class="text-gray-600 mb-3">Relax on the beach and watch the spectacular sunset over the Atlantic Ocean.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">beach</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">sunset</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">relaxation</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 1 hour • 
+                <span class="font-medium">Cost:</span> Free • 
+                <span class="font-medium">Best time:</span> 6:00-7:00 PM
+              </div>
+            </div>
+          </div>
+
+          <!-- Stop 7 -->
+          <div class="flex items-start space-x-4">
+            <div class="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-1">7</div>
+            <div class="flex-1">
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">Dinner at Restaurant Saveur de Poisson</h3>
+              <p class="text-gray-600 mb-3">Enjoy fresh seafood and traditional Moroccan dishes in the heart of the Medina.</p>
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">seafood</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">traditional</span>
+                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">dinner</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span class="font-medium">Duration:</span> 1.5 hours • 
+                <span class="font-medium">Cost:</span> €20-30 • 
+                <span class="font-medium">Best time:</span> 7:30-9:00 PM
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips & Recommendations -->
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Essential Tips -->
+      <div class="bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6">Essential Tips</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start">
+            <span class="text-teal-600 mr-3 mt-1">✓</span>
+            <span class="text-gray-700">Wear comfortable walking shoes for the Medina</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-teal-600 mr-3 mt-1">✓</span>
+            <span class="text-gray-700">Bring cash for small purchases and tips</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-teal-600 mr-3 mt-1">✓</span>
+            <span class="text-gray-700">Book restaurants in advance for dinner</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-teal-600 mr-3 mt-1">✓</span>
+            <span class="text-gray-700">Check sunset times for optimal viewing</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Transportation -->
+      <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-8">
+        <h3 class="text-2xl font-bold text-gray-900 mb-6">Getting Around</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start">
+            <span class="text-orange-600 mr-3 mt-1">🚕</span>
+            <span class="text-gray-700">Taxis: €5-10 between major attractions</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-orange-600 mr-3 mt-1">🚶</span>
+            <span class="text-gray-700">Walking: Best for Medina and city center</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-orange-600 mr-3 mt-1">🚌</span>
+            <span class="text-gray-700">Bus: €1 for longer distances</span>
+          </li>
+          <li class="flex items-start">
+            <span class="text-orange-600 mr-3 mt-1">🚗</span>
+            <span class="text-gray-700">Car rental: €30-50/day for flexibility</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Download & Share -->
+    <div class="mt-12 text-center">
+      <h3 class="text-2xl font-bold text-gray-900 mb-6">Save This Itinerary</h3>
+      <div class="flex flex-wrap justify-center gap-4">
+        <button class="bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors">
+          📱 Save to Phone
+        </button>
+        <button class="bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors">
+          📧 Email Itinerary
+        </button>
+        <button class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+          🗺️ View on Map
+        </button>
+      </div>
+    </div>
+  </div>
+</ItineraryLayout>

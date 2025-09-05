@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Eat & Drink in Tangier - Best Restaurants & Cafes"
+  description="Discover the best places to eat and drink in Tangier. From rooftop bars to traditional Moroccan restaurants, find your perfect dining experience."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-serif font-bold text-gray-900 mb-6">Eat & Drink</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        From traditional Moroccan cuisine to modern cafes with stunning sea views, 
+        discover Tangier's vibrant food and drink scene.
+      </p>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      <!-- Rooftops -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🏢</div>
+            <h3 class="text-xl font-bold">Rooftops</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Rooftops</h3>
+          <p class="text-gray-600 mb-4">Stunning rooftop bars and restaurants with panoramic views.</p>
+          <div class="text-sm text-gray-500 mb-4">12 places</div>
+          <a href="/places/eat-drink/rooftops" class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+            Explore rooftops →
+          </a>
+        </div>
+      </div>
+
+      <!-- Sea-view Cafes -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">☕</div>
+            <h3 class="text-xl font-bold">Sea-view Cafes</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Sea-view Cafes</h3>
+          <p class="text-gray-600 mb-4">Perfect spots for coffee with a view of the Strait of Gibraltar.</p>
+          <div class="text-sm text-gray-500 mb-4">8 places</div>
+          <a href="/places/eat-drink/sea-view-cafes" class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+            Explore cafes →
+          </a>
+        </div>
+      </div>
+
+      <!-- Moroccan Restaurants -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🍽️</div>
+            <h3 class="text-xl font-bold">Moroccan Restaurants</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Moroccan Restaurants</h3>
+          <p class="text-gray-600 mb-4">Authentic Moroccan cuisine in traditional settings.</p>
+          <div class="text-sm text-gray-500 mb-4">15 places</div>
+          <a href="/places/eat-drink/moroccan-restaurants" class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+            Explore restaurants →
+          </a>
+        </div>
+      </div>
+
+      <!-- Brunch & Breakfast -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🥐</div>
+            <h3 class="text-xl font-bold">Brunch & Breakfast</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Brunch & Breakfast</h3>
+          <p class="text-gray-600 mb-4">Start your day right with the best breakfast spots.</p>
+          <div class="text-sm text-gray-500 mb-4">10 places</div>
+          <a href="/places/eat-drink/brunch-breakfast" class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+            Explore brunch spots →
+          </a>
+        </div>
+      </div>
+
+      <!-- Seafood -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🐟</div>
+            <h3 class="text-xl font-bold">Seafood</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Seafood</h3>
+          <p class="text-gray-600 mb-4">Fresh seafood from the Atlantic and Mediterranean.</p>
+          <div class="text-sm text-gray-500 mb-4">12 places</div>
+          <a href="/places/eat-drink/seafood" class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+            Explore seafood →
+          </a>
+        </div>
+      </div>
+
+      <!-- Vegetarian & Vegan -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-48 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
+          <div class="text-center text-white">
+            <div class="text-4xl mb-2">🌱</div>
+            <h3 class="text-xl font-bold">Vegetarian & Vegan</h3>
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-3">Vegetarian & Vegan</h3>
+          <p class="text-gray-600 mb-4">Plant-based options for conscious diners.</p>
+          <div class="text-sm text-gray-500 mb-4">6 places</div>
+          <a href="/places/eat-drink/vegetarian-vegan" class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+            Explore options →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Places -->
+    <div class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Featured Places</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
+            <span class="text-white text-lg font-semibold">Café Hafa</span>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Café Hafa</h3>
+            <p class="text-gray-500 text-sm mb-3">Sea-view Café</p>
+            <p class="text-gray-600 mb-4">Historic café with stunning sea views, famous for its mint tea and bohemian atmosphere.</p>
+            <div class="flex items-center justify-between">
+              <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+              <a href="/places/cafe-hafa" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
+            <span class="text-white text-lg font-semibold">Restaurant Saveur de Poisson</span>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Restaurant Saveur de Poisson</h3>
+            <p class="text-gray-500 text-sm mb-3">Seafood Restaurant</p>
+            <p class="text-gray-600 mb-4">Fresh seafood restaurant serving traditional Moroccan dishes with a modern twist.</p>
+            <div class="flex items-center justify-between">
+              <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+              <a href="/places/restaurant-saveur-de-poisson" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
+            <span class="text-white text-lg font-semibold">Achakar Beach Club</span>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-semibold mb-2">Achakar Beach Club</h3>
+            <p class="text-gray-500 text-sm mb-3">Rooftop & Beach Club</p>
+            <p class="text-gray-600 mb-4">Luxury beach club with cocktails, fresh seafood, and stunning Atlantic views.</p>
+            <div class="flex items-center justify-between">
+              <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+              <a href="/places/achakar-beach-club" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

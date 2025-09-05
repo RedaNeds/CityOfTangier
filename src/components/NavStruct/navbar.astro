@@ -3,36 +3,372 @@
 // Navbar component
 ---
 
-<nav class="fixed top-0 left-0 right-0 bg-white shadow-lg z-50">
+<nav id="navbar" class="navbar">
 	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<div class="flex justify-between items-center h-16">
+			<!-- Logo and Brand -->
 			<div class="flex items-center">
-				<div class="flex items-center space-x-2">
+				<a href="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity">
 					<div class="w-8 h-8 bg-teal-600 rounded flex items-center justify-center">
 						<span class="text-white font-bold text-sm">T</span>
 					</div>
 					<h1 class="text-xl font-bold text-gray-900">City Of Tangier</h1>
-				</div>
+				</a>
 			</div>
+
+			<!-- Desktop Navigation -->
 			<div class="hidden md:block">
 				<div class="ml-10 flex items-baseline space-x-6">
-					<a href="#see-do" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">See & Do</a>
-					<a href="#eat-drink" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Eat & Drink</a>
-					<a href="#events" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Events</a>
-					<a href="#itineraries" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Itineraries</a>
-					<a href="#neighborhoods" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Neighborhoods</a>
-					<a href="#map" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Map</a>
-					<a href="#guides" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Guides</a>
+					<a href="/places/see-do" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">See & Do</a>
+					<a href="/places/eat-drink" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Eat & Drink</a>
+					<a href="/events" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Events</a>
+					<a href="/itineraries" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Itineraries</a>
+					<a href="/places/neighborhoods" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Neighborhoods</a>
+					<a href="/map" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Map</a>
+					<a href="/practical" class="text-gray-700 hover:text-teal-600 px-3 py-2 text-sm font-medium transition-colors">Guides</a>
 				</div>
 			</div>
+
+			<!-- Search and Mobile Menu -->
 			<div class="flex items-center space-x-4">
-				<button class="text-gray-700 hover:text-teal-600">
+				<!-- Search Button -->
+				<button id="search-toggle" class="text-gray-700 hover:text-teal-600 transition-colors">
 					<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
 					</svg>
 				</button>
-				<span class="text-gray-700 font-medium text-sm">Search</span>
+
+				<!-- Mobile Menu Button -->
+				<button id="mobile-menu-toggle" class="md:hidden text-gray-700 hover:text-teal-600 transition-colors">
+					<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+					</svg>
+				</button>
+			</div>
+		</div>
+
+		<!-- Mobile Menu -->
+		<div id="mobile-menu" class="md:hidden hidden">
+			<div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+				<a href="/places/see-do" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">See & Do</a>
+				<a href="/places/eat-drink" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">Eat & Drink</a>
+				<a href="/events" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">Events</a>
+				<a href="/itineraries" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">Itineraries</a>
+				<a href="/places/neighborhoods" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">Neighborhoods</a>
+				<a href="/map" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">Map</a>
+				<a href="/practical" class="block px-3 py-2 text-gray-700 hover:text-teal-600 hover:bg-gray-50 rounded-md text-base font-medium">Guides</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Search Overlay -->
+	<div id="search-overlay" class="search-overlay" style="display: none;">
+		<div class="search-container">
+			<div class="max-w-2xl mx-auto px-4">
+				<div class="relative">
+					<input 
+						type="text" 
+						id="search-input"
+						placeholder="Search places, events, guides..." 
+						class="w-full px-4 py-4 pl-12 pr-16 text-lg border-0 rounded-xl shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+					>
+					<div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+						<svg class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+						</svg>
+					</div>
+					<button id="search-close" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+						<svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</button>
+				</div>
+				
+				<!-- Search Results -->
+				<div id="search-results" class="mt-6 bg-white rounded-xl shadow-lg max-h-96 overflow-y-auto hidden">
+					<div class="p-4">
+						<div class="text-sm text-gray-500 mb-3">Search Results</div>
+						<div id="search-results-list" class="space-y-2">
+							<!-- Search results will be populated here -->
+						</div>
+					</div>
+				</div>
+
+				<!-- Quick Links -->
+				<div class="mt-6">
+					<div class="text-sm text-gray-500 mb-3">Quick Links</div>
+					<div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+						<a href="/places" class="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center">
+							<div class="text-2xl mb-1">📍</div>
+							<div class="text-sm font-medium text-gray-700">Places</div>
+						</a>
+						<a href="/events" class="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center">
+							<div class="text-2xl mb-1">🎉</div>
+							<div class="text-sm font-medium text-gray-700">Events</div>
+						</a>
+						<a href="/itineraries" class="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center">
+							<div class="text-2xl mb-1">🗺️</div>
+							<div class="text-sm font-medium text-gray-700">Itineraries</div>
+						</a>
+						<a href="/practical" class="p-3 bg-white rounded-lg shadow hover:shadow-md transition-shadow text-center">
+							<div class="text-2xl mb-1">📚</div>
+							<div class="text-sm font-medium text-gray-700">Guides</div>
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 </nav>
+
+<style>
+	.navbar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		background: rgba(255, 255, 255, 0.95);
+		backdrop-filter: blur(10px);
+		z-index: 50;
+		transition: all 0.3s ease;
+		transform: translateY(0);
+	}
+
+	.navbar.hidden {
+		transform: translateY(-100%);
+	}
+
+	.navbar.scrolled {
+		background: rgba(255, 255, 255, 0.98);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	}
+
+	.search-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
+		z-index: 9999;
+		display: flex;
+		align-items: flex-start;
+		padding-top: 20vh;
+	}
+
+	.search-container {
+		width: 100%;
+		animation: slideDown 0.3s ease;
+	}
+
+	@keyframes slideDown {
+		from {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (max-width: 768px) {
+		.search-overlay {
+			padding-top: 10vh;
+		}
+	}
+
+	/* Ensure search overlay is above everything */
+	.search-overlay * {
+		position: relative;
+		z-index: 10000;
+	}
+
+	/* Prevent body scroll when search is open */
+	body.search-open {
+		overflow: hidden;
+	}
+</style>
+
+<script>
+	// Wait for DOM to be ready
+	document.addEventListener('DOMContentLoaded', function() {
+		// Navbar scroll behavior
+		let lastScrollY = window.scrollY;
+		let ticking = false;
+
+		function updateNavbar() {
+			const navbar = document.getElementById('navbar');
+			if (!navbar) return;
+			
+			const currentScrollY = window.scrollY;
+
+			if (currentScrollY > 100) {
+				navbar.classList.add('scrolled');
+			} else {
+				navbar.classList.remove('scrolled');
+			}
+
+			// Hide navbar when scrolling down, show when scrolling up
+			if (currentScrollY > lastScrollY && currentScrollY > 100) {
+				navbar.classList.add('hidden');
+			} else {
+				navbar.classList.remove('hidden');
+			}
+
+			lastScrollY = currentScrollY;
+			ticking = false;
+		}
+
+		function requestTick() {
+			if (!ticking) {
+				requestAnimationFrame(updateNavbar);
+				ticking = true;
+			}
+		}
+
+		window.addEventListener('scroll', requestTick);
+
+		// Mobile menu toggle
+		const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+		const mobileMenu = document.getElementById('mobile-menu');
+
+		if (mobileMenuToggle && mobileMenu) {
+			mobileMenuToggle.addEventListener('click', () => {
+				mobileMenu.classList.toggle('hidden');
+			});
+		}
+
+		// Search functionality
+		const searchToggle = document.getElementById('search-toggle');
+		const searchOverlay = document.getElementById('search-overlay');
+		const searchClose = document.getElementById('search-close');
+		const searchInput = document.getElementById('search-input');
+		const searchResults = document.getElementById('search-results');
+		const searchResultsList = document.getElementById('search-results-list');
+
+		// Mock search data
+		const searchData = [
+			{ title: 'Kasbah Museum', url: '/places/kasbah-museum', type: 'Museum', description: 'Historic palace with stunning views' },
+			{ title: 'Café Hafa', url: '/places/cafe-hafa', type: 'Café', description: 'Legendary café with sea views' },
+			{ title: 'Tangier in 24 Hours', url: '/itineraries/tangier-in-24-hours', type: 'Itinerary', description: 'Perfect one-day itinerary' },
+			{ title: 'Money & Tipping Guide', url: '/practical/money-tipping', type: 'Guide', description: 'Everything about currency and tips' },
+			{ title: 'Rooftops in Tangier', url: '/places/eat-drink/rooftops', type: 'Places', description: 'Best rooftop bars and restaurants' },
+			{ title: 'Tanjazz Festival', url: '/events/tanjazz', type: 'Event', description: 'International jazz festival' },
+			{ title: 'Hercules Caves', url: '/places/hercules-caves', type: 'Attraction', description: 'Legendary cave with ocean views' },
+			{ title: 'Transportation Guide', url: '/practical/taxis', type: 'Guide', description: 'Getting around Tangier' }
+		];
+
+		function performSearch(query) {
+			if (!searchResults || !searchResultsList) return;
+			
+			if (query.length < 2) {
+				searchResults.classList.add('hidden');
+				return;
+			}
+
+			const results = searchData.filter(item => 
+				item.title.toLowerCase().includes(query.toLowerCase()) ||
+				item.description.toLowerCase().includes(query.toLowerCase()) ||
+				item.type.toLowerCase().includes(query.toLowerCase())
+			);
+
+			if (results.length > 0) {
+				searchResultsList.innerHTML = results.map(item => `
+					<a href="${item.url}" class="block p-3 hover:bg-gray-50 rounded-lg transition-colors">
+						<div class="flex items-start space-x-3">
+							<div class="flex-shrink-0">
+								<div class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
+									<span class="text-teal-600 text-sm">${getTypeIcon(item.type)}</span>
+								</div>
+							</div>
+							<div class="flex-1 min-w-0">
+								<div class="text-sm font-medium text-gray-900">${item.title}</div>
+								<div class="text-xs text-gray-500">${item.type}</div>
+								<div class="text-xs text-gray-600 mt-1">${item.description}</div>
+							</div>
+						</div>
+					</a>
+				`).join('');
+				searchResults.classList.remove('hidden');
+			} else {
+				searchResultsList.innerHTML = `
+					<div class="p-4 text-center text-gray-500">
+						<div class="text-sm">No results found for "${query}"</div>
+						<div class="text-xs mt-1">Try different keywords</div>
+					</div>
+				`;
+				searchResults.classList.remove('hidden');
+			}
+		}
+
+		function getTypeIcon(type) {
+			const icons = {
+				'Museum': '🏛️',
+				'Café': '☕',
+				'Itinerary': '🗺️',
+				'Guide': '📚',
+				'Places': '📍',
+				'Event': '🎉',
+				'Attraction': '🎯'
+			};
+			return icons[type] || '📍';
+		}
+
+		function openSearch() {
+			if (searchOverlay) {
+				searchOverlay.style.display = 'flex';
+				document.body.classList.add('search-open');
+				setTimeout(() => {
+					if (searchInput) searchInput.focus();
+				}, 100);
+			}
+		}
+
+		function closeSearch() {
+			if (searchOverlay) searchOverlay.style.display = 'none';
+			if (searchInput) searchInput.value = '';
+			if (searchResults) searchResults.classList.add('hidden');
+			document.body.classList.remove('search-open');
+		}
+
+		// Search event listeners
+		if (searchToggle && searchOverlay && searchInput) {
+			searchToggle.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				openSearch();
+			});
+		}
+
+		if (searchClose) {
+			searchClose.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				closeSearch();
+			});
+		}
+
+		if (searchOverlay) {
+			searchOverlay.addEventListener('click', (e) => {
+				if (e.target === searchOverlay) {
+					closeSearch();
+				}
+			});
+		}
+
+		if (searchInput) {
+			searchInput.addEventListener('input', (e) => {
+				performSearch(e.target.value);
+			});
+		}
+
+		// Close search on Escape key
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape' && searchOverlay && searchOverlay.style.display !== 'none') {
+				closeSearch();
+			}
+		});
+	});
+</script>

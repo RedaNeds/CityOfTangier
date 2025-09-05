@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Contact City of Tangier - Get in Touch"
+  description="Contact City of Tangier for travel advice, recommendations, or partnerships. We're here to help you plan your perfect Tangier experience."
+>
+  <div class="max-w-4xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Contact Us</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Have questions about Tangier? Need personalized recommendations? 
+        We're here to help you plan your perfect visit.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <!-- Contact Form -->
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+        
+        <form class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+              <input type="text" id="firstName" name="firstName" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+            </div>
+            <div>
+              <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+              <input type="text" id="lastName" name="lastName" required 
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+            </div>
+          </div>
+          
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input type="email" id="email" name="email" required 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+          </div>
+          
+          <div>
+            <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+            <select id="subject" name="subject" required 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+              <option value="">Select a topic</option>
+              <option value="general">General Question</option>
+              <option value="recommendations">Travel Recommendations</option>
+              <option value="itinerary">Custom Itinerary</option>
+              <option value="partnership">Partnership</option>
+              <option value="feedback">Feedback</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+            <textarea id="message" name="message" rows="6" required 
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="Tell us about your travel plans, questions, or how we can help..."></textarea>
+          </div>
+          
+          <div class="flex items-start">
+            <input type="checkbox" id="newsletter" name="newsletter" 
+                   class="mt-1 h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded">
+            <label for="newsletter" class="ml-3 text-sm text-gray-700">
+              Subscribe to our newsletter for travel tips and Tangier updates
+            </label>
+          </div>
+          
+          <button type="submit" 
+                  class="w-full bg-teal-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-teal-700 transition-colors">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="space-y-8">
+        <!-- Quick Contact -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Contact</h2>
+          
+          <div class="space-y-6">
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="text-teal-600 text-xl">📧</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">Email</h3>
+                <p class="text-gray-600">hello@cityoftangier.com</p>
+                <p class="text-sm text-gray-500">We respond within 24 hours</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="text-blue-600 text-xl">💬</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">WhatsApp</h3>
+                <p class="text-gray-600">+212 6XX XXX XXX</p>
+                <p class="text-sm text-gray-500">For urgent travel questions</p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="text-green-600 text-xl">📍</span>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">Location</h3>
+                <p class="text-gray-600">Tangier, Morocco</p>
+                <p class="text-sm text-gray-500">Based in the heart of the city</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Response Times -->
+        <div class="bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-8">
+          <h3 class="text-xl font-bold text-gray-900 mb-4">Response Times</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-700">General Questions</span>
+              <span class="text-teal-600 font-medium">24 hours</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-700">Travel Recommendations</span>
+              <span class="text-teal-600 font-medium">48 hours</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-700">Custom Itineraries</span>
+              <span class="text-teal-600 font-medium">3-5 days</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-700">Partnership Inquiries</span>
+              <span class="text-teal-600 font-medium">1 week</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+          <h3 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h3>
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-2">How can you help me plan my trip?</h4>
+              <p class="text-sm text-gray-600">We provide personalized recommendations based on your interests, budget, and time constraints.</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-2">Do you offer custom itineraries?</h4>
+              <p class="text-sm text-gray-600">Yes! We can create detailed itineraries tailored to your specific needs and preferences.</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-2">Are your recommendations free?</h4>
+              <p class="text-sm text-gray-600">Basic recommendations are free. Custom itineraries may have a small fee depending on complexity.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media -->
+    <div class="mt-16 bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl p-8 text-white text-center">
+      <h2 class="text-3xl font-bold mb-4">Follow Us</h2>
+      <p class="text-xl mb-6 opacity-90">
+        Stay updated with the latest Tangier tips, events, and hidden gems
+      </p>
+      <div class="flex justify-center space-x-6">
+        <a href="#" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-3 rounded-full transition-colors">
+          <span class="text-2xl">📘</span>
+        </a>
+        <a href="#" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-3 rounded-full transition-colors">
+          <span class="text-2xl">📷</span>
+        </a>
+        <a href="#" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-3 rounded-full transition-colors">
+          <span class="text-2xl">🐦</span>
+        </a>
+        <a href="#" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-3 rounded-full transition-colors">
+          <span class="text-2xl">📺</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

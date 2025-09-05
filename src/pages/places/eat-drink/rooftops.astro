@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Best Rooftops in Tangier - Sea Views & Sunset Spots"
+  description="Discover the best rooftop bars and restaurants in Tangier with stunning views of the Strait of Gibraltar and Atlantic Ocean."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-4xl font-serif font-bold text-gray-900 mb-6">Rooftops in Tangier</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Experience Tangier from above. These rooftop venues offer stunning views of the Strait of Gibraltar, 
+        perfect for sunset cocktails and romantic dinners.
+      </p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-12">
+      <div class="flex flex-wrap gap-4 items-center">
+        <span class="text-gray-700 font-medium">Filter by:</span>
+        <button class="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium">All</button>
+        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Bars</button>
+        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Restaurants</button>
+        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Hotels</button>
+        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Sunset Views</button>
+      </div>
+    </div>
+
+    <!-- Rooftops Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- El Morocco Club -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-64 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
+          <span class="text-white text-lg font-semibold">El Morocco Club</span>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">El Morocco Club</h3>
+          <p class="text-gray-500 text-sm mb-3">Hotel Rooftop • Kasbah</p>
+          <p class="text-gray-600 mb-4">Luxury rooftop bar with panoramic views of the city and sea. Perfect for sunset cocktails.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">cocktails</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">sunset</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">luxury</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+            <a href="/places/el-morocco-club" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hotel Continental Rooftop -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-64 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
+          <span class="text-white text-lg font-semibold">Hotel Continental Rooftop</span>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Hotel Continental Rooftop</h3>
+          <p class="text-gray-500 text-sm mb-3">Hotel Rooftop • Medina</p>
+          <p class="text-gray-600 mb-4">Historic hotel rooftop with authentic Moroccan atmosphere and stunning harbor views.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">harbor view</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">authentic</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+            <a href="/places/hotel-continental-rooftop" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Riad Dar Nour -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-64 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
+          <span class="text-white text-lg font-semibold">Riad Dar Nour</span>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Riad Dar Nour</h3>
+          <p class="text-gray-500 text-sm mb-3">Boutique Hotel • Kasbah</p>
+          <p class="text-gray-600 mb-4">Intimate rooftop terrace with 360-degree views. Perfect for romantic dinners.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">romantic</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">360° view</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">intimate</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+            <a href="/places/riad-dar-nour" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Café Hafa -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-64 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+          <span class="text-white text-lg font-semibold">Café Hafa</span>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Café Hafa</h3>
+          <p class="text-gray-500 text-sm mb-3">Historic Café • Kasbah</p>
+          <p class="text-gray-600 mb-4">Legendary café with terraced seating and breathtaking views of the Strait of Gibraltar.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">mint tea</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">legendary</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+            <a href="/places/cafe-hafa" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hotel Minzah Rooftop -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-64 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+          <span class="text-white text-lg font-semibold">Hotel Minzah Rooftop</span>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Hotel Minzah Rooftop</h3>
+          <p class="text-gray-500 text-sm mb-3">Hotel Rooftop • City Center</p>
+          <p class="text-gray-600 mb-4">Elegant rooftop restaurant with panoramic city views and fine dining experience.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">fine dining</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">elegant</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">panoramic</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+            <a href="/places/hotel-minzah-rooftop" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achakar Beach Club -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <div class="h-64 bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center">
+          <span class="text-white text-lg font-semibold">Achakar Beach Club</span>
+        </div>
+        <div class="p-6">
+          <h3 class="text-xl font-semibold mb-2">Achakar Beach Club</h3>
+          <p class="text-gray-500 text-sm mb-3">Beach Club • Achakar</p>
+          <p class="text-gray-600 mb-4">Luxury beach club with rooftop bar and stunning Atlantic Ocean views.</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">beach club</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">atlantic view</span>
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">luxury</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
+            <a href="/places/achakar-beach-club" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="mt-16 bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Rooftop Tips</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">Best Time to Visit</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li>• Sunset hours (6-8 PM) for the best views</li>
+            <li>• Weekdays are less crowded</li>
+            <li>• Book ahead for popular spots</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 mb-3">What to Expect</h3>
+          <ul class="space-y-2 text-gray-600">
+            <li>• Dress codes may apply at luxury venues</li>
+            <li>• Prices are generally higher than ground level</li>
+            <li>• Weather can affect availability</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

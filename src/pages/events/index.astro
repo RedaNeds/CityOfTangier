@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Events in Tangier - What's Happening"
+  description="Discover the latest events, festivals, and cultural happenings in Tangier. From Tanjazz to art exhibitions, find what's on in the city."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">What's On in Tangier</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Stay updated with the latest events, festivals, and cultural happenings in Tangier. 
+        From music festivals to art exhibitions, there's always something exciting happening.
+      </p>
+    </div>
+
+    <!-- Event Categories -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+      <button class="bg-teal-600 text-white px-4 py-3 rounded-xl font-medium">All Events</button>
+      <button class="bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-200">Music</button>
+      <button class="bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-200">Culture</button>
+      <button class="bg-gray-100 text-gray-700 px-4 py-3 rounded-xl font-medium hover:bg-gray-200">Food & Drink</button>
+    </div>
+
+    <!-- Featured Events -->
+    <div class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8">Featured Events</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Tanjazz Festival -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-64 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
+            <div class="text-center text-white">
+              <div class="text-4xl mb-2">🎷</div>
+              <h3 class="text-xl font-bold">Tanjazz Festival</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <span class="bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">SEP 21-28</span>
+              <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Ongoing</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Tanjazz Festival 2024</h3>
+            <p class="text-gray-500 text-sm mb-3">Kasbah Amphitheater & Various Venues</p>
+            <p class="text-gray-600 mb-4">International jazz festival featuring world-class musicians in the historic Kasbah amphitheater and venues throughout the city.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Music • Festival</span>
+              <a href="/events/tanjazz" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contemporary Art Exhibition -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+          <div class="h-64 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
+            <div class="text-center text-white">
+              <div class="text-4xl mb-2">🎨</div>
+              <h3 class="text-xl font-bold">Art Exhibition</h3>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <span class="bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">SEP 25</span>
+              <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Upcoming</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">Contemporary Art at the Kasbah</h3>
+            <p class="text-gray-500 text-sm mb-3">Kasbah Museum</p>
+            <p class="text-gray-600 mb-4">Exhibition showcasing contemporary Moroccan and international artists in the historic museum setting.</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">Culture • Art</span>
+              <a href="/events/contemporary-art-kasbah" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- This Week's Events -->
+    <div class="mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8">This Week's Events</h2>
+      <div class="space-y-6">
+        <!-- Event 1 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+          <div class="flex items-start space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-2xl">🎵</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-semibold text-gray-900">Tanjazz Opening Night</h3>
+                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Today</span>
+              </div>
+              <p class="text-gray-500 text-sm mb-2">Kasbah Amphitheater • 8:00 PM</p>
+              <p class="text-gray-600 mb-3">Opening night of the Tanjazz Festival with performances by international jazz artists.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">Music • Festival</span>
+                <a href="/events/tanjazz-opening-night" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event 2 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+          <div class="flex items-start space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-2xl">🍽️</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-semibold text-gray-900">Moroccan Food Festival</h3>
+                <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">Tomorrow</span>
+              </div>
+              <p class="text-gray-500 text-sm mb-2">Grand Socco • 10:00 AM - 6:00 PM</p>
+              <p class="text-gray-600 mb-3">Celebrate Moroccan cuisine with local chefs, traditional dishes, and cooking demonstrations.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">Food • Culture</span>
+                <a href="/events/moroccan-food-festival" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event 3 -->
+        <div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+          <div class="flex items-start space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <span class="text-white text-2xl">🎭</span>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xl font-semibold text-gray-900">Theater Performance</h3>
+                <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium">This Weekend</span>
+              </div>
+              <p class="text-gray-500 text-sm mb-2">Théâtre Cervantes • 7:30 PM</p>
+              <p class="text-gray-600 mb-3">Contemporary theater performance exploring themes of cultural identity and migration.</p>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-gray-500">Theater • Culture</span>
+                <a href="/events/theater-performance" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">Event Calendar</h2>
+        <a href="/events/calendar" class="text-teal-600 hover:text-teal-800 font-medium">View Full Calendar →</a>
+      </div>
+      <div class="bg-gray-100 rounded-xl h-96 flex items-center justify-center">
+        <div class="text-center">
+          <div class="text-6xl mb-4">📅</div>
+          <p class="text-gray-600 text-lg">Interactive calendar coming soon</p>
+          <p class="text-gray-500">Filter events by date, category, and location</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Submission -->
+    <div class="bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl p-8 text-white text-center">
+      <h2 class="text-3xl font-bold mb-4">Have an Event?</h2>
+      <p class="text-xl mb-6 opacity-90">
+        Submit your event to be featured on our calendar and reach thousands of visitors.
+      </p>
+      <button class="bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+        Submit Event
+      </button>
+    </div>
+  </div>
+</BaseLayout>

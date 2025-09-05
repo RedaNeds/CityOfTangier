@@ -1,0 +1,229 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  duration?: string;
+  difficulty?: 'easy' | 'moderate' | 'challenging';
+  budget?: string;
+  tags?: string[];
+  featuredImage?: string;
+}
+
+const { 
+  title = "Itinerary - City of Tangier", 
+  description = "Discover the best itineraries for exploring Tangier",
+  duration = "1 day",
+  difficulty = "easy",
+  budget = "€50-100",
+  tags = [],
+  featuredImage = "/itinerary-default-image.jpg"
+} = Astro.props;
+
+// Generate structured data for itineraries
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "TouristTrip",
+  "name": title,
+  "description": description,
+  "duration": duration,
+  "offers": {
+    "@type": "Offer",
+    "price": budget,
+    "priceCurrency": "EUR"
+  },
+  "image": featuredImage,
+  "keywords": tags.join(", ")
+};
+---
+
+<BaseLayout 
+  title={title} 
+  description={description}
+  ogImage={featuredImage}
+  ogType="article"
+>
+  <!-- Itinerary-specific head content -->
+  <Fragment slot="head">
+    <!-- Itinerary-specific meta tags -->
+    <meta name="itinerary:duration" content={duration} />
+    <meta name="itinerary:difficulty" content={difficulty} />
+    <meta name="itinerary:budget" content={budget} />
+    {tags.map(tag => <meta name="itinerary:tag" content={tag} />)}
+    
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    
+    <!-- Itinerary-specific styles -->
+    <style>
+      body {
+        padding-top: 4rem; /* pt-16 equivalent for fixed navbar */
+      }
+      
+      /* Itinerary timeline styles */
+      .itinerary-timeline {
+        position: relative;
+      }
+      
+      .itinerary-timeline::before {
+        content: '';
+        position: absolute;
+        left: 2rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #14b8a6, #0d9488);
+      }
+      
+      .timeline-item {
+        position: relative;
+        margin-bottom: 3rem;
+      }
+      
+      .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 1.5rem;
+        top: 0.5rem;
+        width: 1rem;
+        height: 1rem;
+        background: #14b8a6;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 3px #14b8a6;
+        z-index: 1;
+      }
+      
+      .timeline-content {
+        margin-left: 4rem;
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #14b8a6;
+      }
+      
+      /* Step numbers */
+      .step-number {
+        background: linear-gradient(135deg, #14b8a6, #0d9488);
+        color: white;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+        margin-right: 1rem;
+        flex-shrink: 0;
+      }
+      
+      /* Time periods */
+      .time-period {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+      
+      /* Difficulty badges */
+      .difficulty-easy {
+        background: #dcfce7;
+        color: #166534;
+      }
+      
+      .difficulty-moderate {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      
+      .difficulty-challenging {
+        background: #fef2f2;
+        color: #dc2626;
+      }
+      
+      /* Budget indicators */
+      .budget-indicator {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      
+      /* Interactive elements */
+      .itinerary-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      
+      .itinerary-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Progress indicator */
+      .progress-bar {
+        background: #e5e7eb;
+        height: 0.5rem;
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+      
+      .progress-fill {
+        background: linear-gradient(90deg, #14b8a6, #0d9488);
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .itinerary-timeline::before {
+          left: 1.5rem;
+        }
+        
+        .timeline-item::before {
+          left: 1rem;
+        }
+        
+        .timeline-content {
+          margin-left: 3rem;
+        }
+        
+        .step-number {
+          width: 1.5rem;
+          height: 1.5rem;
+          font-size: 0.75rem;
+        }
+      }
+      
+      /* Print styles */
+      @media print {
+        .itinerary-timeline::before {
+          display: none;
+        }
+        
+        .timeline-item::before {
+          display: none;
+        }
+        
+        .timeline-content {
+          margin-left: 0;
+          box-shadow: none;
+          border: 1px solid #e5e7eb;
+        }
+      }
+    </style>
+  </Fragment>
+
+  <!-- Itinerary-specific content -->
+  <div class="itinerary-content">
+    <slot />
+  </div>
+</BaseLayout>
