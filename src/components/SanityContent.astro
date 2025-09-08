@@ -1,0 +1,51 @@
+---
+export interface Props {
+  content: any[]
+}
+
+const { content } = Astro.props
+
+// Fonction pour convertir les blocs Sanity en HTML simple
+function sanityBlocksToHtml(blocks: any[]): string {
+  if (!blocks || !Array.isArray(blocks)) return ''
+  
+  return blocks.map(block => {
+    if (block._type === 'block') {
+      const text = block.children?.map((child: any) => child.text || '').join('') || ''
+      
+      switch (block.style) {
+        case 'h1':
+          return `<h1 class="text-3xl font-bold mb-4">${text}</h1>`
+        case 'h2':
+          return `<h2 class="text-2xl font-semibold mb-3">${text}</h2>`
+        case 'h3':
+          return `<h3 class="text-xl font-semibold mb-2">${text}</h3>`
+        case 'h4':
+          return `<h4 class="text-lg font-semibold mb-2">${text}</h4>`
+        case 'blockquote':
+          return `<blockquote class="border-l-4 border-teal-500 pl-4 italic my-4">${text}</blockquote>`
+        default:
+          if (block.listItem === 'bullet') {
+            return `<li class="mb-1">${text}</li>`
+          } else if (block.listItem === 'number') {
+            return `<li class="mb-1">${text}</li>`
+          } else {
+            return `<p class="mb-4">${text}</p>`
+          }
+      }
+    }
+    return ''
+  }).join('')
+}
+
+const htmlContent = sanityBlocksToHtml(content)
+---
+
+{content && content.length > 0 ? (
+  <div class="prose prose-lg max-w-none" set:html={htmlContent} />
+) : (
+  <div class="text-gray-600">
+    <p>Contenu en cours de préparation...</p>
+  </div>
+)}
+

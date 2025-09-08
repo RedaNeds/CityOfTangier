@@ -1,0 +1,256 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+import SanityContent from '../../components/SanityContent.astro';
+
+export async function getStaticPaths() {
+  try {
+    const events = await client.fetch(`
+      *[_type == "event"] {
+        "slug": slug.current
+      }
+    `);
+    
+    return events.map((event) => ({
+      params: { slug: event.slug },
+      props: { slug: event.slug },
+    }));
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.props;
+
+// Get the specific event from Sanity
+const event = await client.fetch(`
+  *[_type == "event" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    description,
+    content,
+    category,
+    eventDate,
+    endDate,
+    location,
+    price,
+    featuredImage,
+    tags,
+    featured,
+    publishedAt
+  }
+`, { slug });
+
+// Get related events
+const relatedEvents = await client.fetch(`
+  *[_type == "event" && slug.current != $slug && category == $category] | order(eventDate asc) [0...3] {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    eventDate,
+    location,
+    featuredImage
+  }
+`, { slug, category: event.category });
+---
+
+{event && event.title ? (
+  <BaseLayout 
+    title={event.title}
+    description={event.description}
+  >
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      <!-- Hero Section -->
+      <div class="mb-8">
+        {event.featuredImage && (
+          <div class="mb-6">
+            <img 
+              src={event.featuredImage} 
+              alt={event.title}
+              class="w-full h-64 md:h-96 object-cover rounded-2xl"
+            />
+          </div>
+        )}
+        
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+          <div>
+            <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{event.title}</h1>
+            <p class="text-xl text-gray-600">{event.description}</p>
+          </div>
+          
+          <div class="flex items-center gap-4 mt-4 md:mt-0">
+            <div class="text-right">
+              <div class="text-lg font-semibold text-gray-700">
+                {new Date(event.eventDate).toLocaleDateString('en-US', { 
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+              <div class="text-sm text-gray-500">
+                {new Date(event.eventDate).toLocaleTimeString('en-US', { 
+                  hour: 'numeric',
+                  minute: '2-digit'
+                })}
+                {event.endDate && ` - ${new Date(event.endDate).toLocaleTimeString('en-US', { 
+                  hour: 'numeric',
+                  minute: '2-digit'
+                })}`}
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-3 mb-6">
+          <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-medium">
+            {event.category}
+          </span>
+          {event.tags?.map(tag => (
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <!-- Event Details -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <!-- Main Content -->
+        <div class="md:col-span-2">
+          <SanityContent content={event.content} />
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="space-y-6">
+          <!-- Event Info -->
+          <div class="bg-white border border-gray-200 rounded-2xl p-6">
+            <h3 class="font-semibold text-gray-900 mb-4 flex items-center">
+              <span class="mr-2">📅</span>
+              Event Details
+            </h3>
+            
+            <div class="space-y-4">
+              <div>
+                <div class="text-sm text-gray-500">Date & Time</div>
+                <div class="font-medium">
+                  {new Date(event.eventDate).toLocaleDateString('en-US', { 
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </div>
+                <div class="text-sm text-gray-600">
+                  {new Date(event.eventDate).toLocaleTimeString('en-US', { 
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  })}
+                  {event.endDate && ` - ${new Date(event.endDate).toLocaleTimeString('en-US', { 
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  })}`}
+                </div>
+              </div>
+              
+              {event.location && (
+                <div>
+                  <div class="text-sm text-gray-500">Location</div>
+                  <div class="font-medium">{event.location.name || 'Event Venue'}</div>
+                  {event.location.address && (
+                    <div class="text-sm text-gray-600">{event.location.address}</div>
+                  )}
+                  {event.location.coordinates && (
+                    <a 
+                      href={`https://www.google.com/maps?q=${event.location.coordinates.lat},${event.location.coordinates.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-teal-600 hover:text-teal-800 text-sm"
+                    >
+                      📍 Get Directions
+                    </a>
+                  )}
+                </div>
+              )}
+              
+              {event.price && (
+                <div>
+                  <div class="text-sm text-gray-500">Price</div>
+                  <div class="font-medium">
+                    {event.price.free ? 'Free' : `${event.price.amount} ${event.price.currency}`}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="space-y-3">
+            {event.location?.coordinates && (
+              <a 
+                href={`https://www.google.com/maps?q=${event.location.coordinates.lat},${event.location.coordinates.lng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-full bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors text-center block"
+              >
+                📍 Get Directions
+              </a>
+            )}
+            
+            <button 
+              onclick="window.print()"
+              class="w-full bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
+            >
+              🖨️ Print Event
+            </button>
+            
+            <button 
+              onclick="navigator.share ? navigator.share({title: event.title, text: event.description, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+              class="w-full bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
+            >
+              📤 Share Event
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Events -->
+      {relatedEvents && relatedEvents.length > 0 && (
+        <div class="bg-gray-50 rounded-2xl p-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">More {event.category} Events</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {relatedEvents.map(relatedEvent => (
+              <a 
+                href={`/events/${relatedEvent.slug.current}`}
+                class="bg-white rounded-xl p-4 hover:shadow-md transition-all"
+              >
+                <h3 class="font-semibold text-gray-900 mb-2">{relatedEvent.title}</h3>
+                <p class="text-gray-600 text-sm line-clamp-2 mb-2">{relatedEvent.description}</p>
+                <div class="text-sm text-gray-500">
+                  {new Date(relatedEvent.eventDate).toLocaleDateString('en-US', { 
+                    month: 'short',
+                    day: 'numeric'
+                  })} • {relatedEvent.location?.name}
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </BaseLayout>
+) : (
+  <BaseLayout title="Event Not Found">
+    <div class="max-w-4xl mx-auto px-4 py-16 text-center">
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">Event Not Found</h1>
+      <p class="text-xl text-gray-600 mb-8">The event you're looking for doesn't exist or has been removed.</p>
+      <a href="/events" class="bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors">
+        View All Events
+      </a>
+    </div>
+  </BaseLayout>
+)}

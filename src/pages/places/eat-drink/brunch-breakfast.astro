@@ -1,0 +1,186 @@
+---
+import EatDrinkLayout from '../../../layouts/EatDrinkLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get the brunch-breakfast content
+const brunchEntry = await getCollection('eatDrink', ({ data }) => data.category === 'brunch-breakfast');
+const brunch = brunchEntry[0];
+
+if (!brunch) {
+  throw new Error('Brunch & breakfast content not found');
+}
+
+// Get related eat-drink content
+const relatedEntries = await getCollection('eatDrink', ({ data }) => 
+  data.category !== 'brunch-breakfast' && 
+  (data.category === 'sea-view-cafes' || data.category === 'rooftops')
+);
+---
+
+<EatDrinkLayout 
+  title={brunch.data.title}
+  description={brunch.data.description}
+  category={brunch.data.category}
+  tags={brunch.data.tags}
+  featuredImage={brunch.data.featuredImage}
+  rating={brunch.data.rating}
+  priceLevel={brunch.data.priceLevel}
+  location={brunch.data.location}
+  coordinates={brunch.data.coordinates}
+  highlights={brunch.data.highlights}
+>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <div class="mb-8">
+      {brunch.data.featuredImage && (
+        <div class="mb-6">
+          <img 
+            src={brunch.data.featuredImage} 
+            alt={brunch.data.title}
+            class="w-full h-64 md:h-96 object-cover rounded-2xl"
+          />
+        </div>
+      )}
+      
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{brunch.data.title}</h1>
+          <p class="text-xl text-gray-600">{brunch.data.description}</p>
+        </div>
+        
+        <div class="flex items-center gap-4 mt-4 md:mt-0">
+          {brunch.data.rating && (
+            <div class="rating-stars">
+              <span class="text-lg font-semibold text-gray-700 mr-2">{brunch.data.rating}</span>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span class={`star ${star <= brunch.data.rating! ? '' : 'empty'}`}>★</span>
+              ))}
+            </div>
+          )}
+          
+          {brunch.data.priceLevel && (
+            <div class="price-level">
+              <span class="text-lg font-semibold text-gray-700 mr-1">Price:</span>
+              <span class="price-symbol text-xl">{brunch.data.priceLevel}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-3 mb-6">
+        <span class="category-badge">
+          {brunch.data.category}
+        </span>
+        {brunch.data.tags?.map(tag => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Key Information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {brunch.data.location && (
+        <div class="location-info">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">📍</span>
+            Location
+          </h3>
+          <p class="text-gray-600">{brunch.data.location}</p>
+          {brunch.data.coordinates && (
+            <p class="text-sm text-gray-500 mt-1">
+              {brunch.data.coordinates.lat}, {brunch.data.coordinates.lng}
+            </p>
+          )}
+        </div>
+      )}
+      
+      {brunch.data.openingHours && (
+        <div class="opening-hours">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">🕒</span>
+            Opening Hours
+          </h3>
+          <table class="hours-table">
+            {brunch.data.openingHours.map(hours => (
+              <tr>
+                <td>{hours.day}</td>
+                <td>{hours.hours}</td>
+              </tr>
+            ))}
+          </table>
+        </div>
+      )}
+    </div>
+
+    <!-- Highlights -->
+    {brunch.data.highlights && brunch.data.highlights.length > 0 && (
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
+        <ul class="highlights-list">
+          {brunch.data.highlights.map(highlight => (
+            <li class="text-gray-700">{highlight}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Main Content -->
+    <div class="prose prose-lg max-w-none mb-8">
+      <div set:html={brunch.body} />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons mb-8">
+      {brunch.data.coordinates && (
+        <a 
+          href={`https://www.google.com/maps?q=${brunch.data.coordinates.lat},${brunch.data.coordinates.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          📍 Get Directions
+        </a>
+      )}
+      
+      <button 
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        🖨️ Print Guide
+      </button>
+      
+      <button 
+        onclick="navigator.share ? navigator.share({title: brunch.data.title, text: brunch.data.description, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+        class="btn-secondary"
+      >
+        📤 Share
+      </button>
+    </div>
+
+    <!-- Related Places -->
+    {relatedEntries && relatedEntries.length > 0 && (
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">More Places to Eat & Drink</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {relatedEntries.slice(0, 2).map(relatedEntry => (
+            <a 
+              href={`/places/eat-drink/${relatedEntry.data.category}`}
+              class="restaurant-card p-4 hover:shadow-md transition-all"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">{relatedEntry.data.title}</h3>
+              <p class="text-gray-600 text-sm line-clamp-2">{relatedEntry.data.description}</p>
+              {relatedEntry.data.rating && (
+                <div class="rating-stars mt-2">
+                  <span class="text-sm text-gray-600 mr-1">{relatedEntry.data.rating}</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span class={`star text-sm ${star <= relatedEntry.data.rating! ? '' : 'empty'}`}>★</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</EatDrinkLayout>

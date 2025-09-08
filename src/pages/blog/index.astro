@@ -1,9 +1,18 @@
 ---
-import { getCollection } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
+import { client } from '../../lib/sanity';
 
-const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allPosts = await client.fetch(`
+  *[_type == "blogPost"] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    author,
+    _createdAt
+  }
+`);
+const sortedPosts = allPosts;
 ---
 
 <BlogLayout title="Blog - City of Tangier" description="Discover the latest stories and insights about Tangier">
@@ -13,17 +22,17 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
     
     <div class="space-y-8">
       {sortedPosts.map((post) => (
-        <article class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+        <article class="bg-white rounded-lg border border-[#F0F0F0] p-6 transition-all">
           <h2 class="text-2xl font-semibold text-gray-900 mb-3">
-            <a href={`/blog/${post.slug}`} class="hover:text-teal-600 transition-colors">
-              {post.data.title}
+            <a href={`/blog/${post.slug.current}`} class="hover:text-teal-600 transition-colors">
+              {post.title}
             </a>
           </h2>
-          <p class="text-gray-600 mb-4">{post.data.description}</p>
+          <p class="text-gray-600 mb-4">{post.excerpt}</p>
           <div class="flex items-center justify-between text-sm text-gray-500">
-            <span>By {post.data.author || 'Anonymous'}</span>
-            <time datetime={post.data.pubDate.toISOString()}>
-              {post.data.pubDate.toLocaleDateString('en-US', {
+            <span>By {post.author?.name || 'Anonymous'}</span>
+            <time datetime={new Date(post._createdAt).toISOString()}>
+              {new Date(post._createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'

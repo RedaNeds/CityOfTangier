@@ -1,0 +1,252 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+
+// Get all guides from Sanity
+const guides = await client.fetch(`
+  *[_type == "guide"] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    description,
+    excerpt,
+    category,
+    difficulty,
+    estimatedReadTime,
+    featuredImage,
+    author,
+    tags,
+    featured,
+    _createdAt
+  }
+`);
+
+// Get featured guides
+const featuredGuides = guides.filter(guide => guide.featured);
+
+// Group guides by category
+const guidesByCategory = guides.reduce((acc, guide) => {
+  const category = guide.category || 'other';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(guide);
+  return acc;
+}, {} as Record<string, typeof guides>);
+
+const categoryInfo = {
+  'travel-tips': { name: 'Travel Tips', icon: '✈️', color: 'from-blue-400 to-cyan-600' },
+  'culture-history': { name: 'Culture & History', icon: '🏛️', color: 'from-purple-400 to-pink-600' },
+  'food-drink': { name: 'Food & Drink', icon: '🍽️', color: 'from-orange-400 to-red-600' },
+  'transportation': { name: 'Transportation', icon: '🚌', color: 'from-green-400 to-emerald-600' },
+  'accommodation': { name: 'Accommodation', icon: '🏨', color: 'from-indigo-400 to-purple-600' },
+  'shopping': { name: 'Shopping', icon: '🛍️', color: 'from-pink-400 to-rose-600' },
+  'safety': { name: 'Safety', icon: '🛡️', color: 'from-yellow-400 to-orange-600' },
+  'language': { name: 'Language', icon: '🗣️', color: 'from-teal-400 to-blue-600' },
+  'other': { name: 'Other', icon: '📚', color: 'from-gray-400 to-gray-600' }
+};
+
+const difficultyColors = {
+  beginner: 'bg-green-100 text-green-800',
+  intermediate: 'bg-yellow-100 text-yellow-800',
+  advanced: 'bg-red-100 text-red-800'
+};
+---
+
+<BaseLayout 
+  title="Travel Guides - City of Tangier"
+  description="Comprehensive travel guides to help you explore Tangier like a local. From cultural insights to practical tips."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Travel Guides</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Discover Tangier through our comprehensive guides. From cultural insights to practical travel tips, 
+        we'll help you explore the city like a local.
+      </p>
+    </div>
+
+    <!-- Featured Guides -->
+    {featuredGuides.length > 0 && (
+      <div class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Featured Guides</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {featuredGuides.slice(0, 3).map((guide) => (
+            <a 
+              href={`/guides/${guide.slug.current}`}
+              class="group block bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all duration-300 hover:-translate-y-1"
+            >
+              {guide.featuredImage ? (
+                <img 
+                  src={guide.featuredImage} 
+                  alt={guide.title}
+                  class="w-full h-48 object-cover"
+                />
+              ) : (
+                <div class={`h-48 bg-gradient-to-br ${categoryInfo[guide.category]?.color || categoryInfo.other.color} flex items-center justify-center`}>
+                  <div class="text-center text-white">
+                    <div class="text-4xl mb-2">{categoryInfo[guide.category]?.icon || '📚'}</div>
+                    <h3 class="text-lg font-bold">{categoryInfo[guide.category]?.name || 'Guide'}</h3>
+                  </div>
+                </div>
+              )}
+              
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-3">
+                  <span class={`px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[guide.difficulty] || difficultyColors.beginner}`}>
+                    {guide.difficulty || 'beginner'}
+                  </span>
+                  <span class="text-sm text-gray-500">{guide.estimatedReadTime || 5} min read</span>
+                </div>
+                
+                <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
+                  {guide.title}
+                </h3>
+                
+                <p class="text-gray-600 mb-4 line-clamp-2">
+                  {guide.excerpt || guide.description}
+                </p>
+                
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-500">
+                    By {guide.author?.name || 'City of Tangier Team'}
+                  </span>
+                  <span class="text-sm text-gray-500">
+                    {new Date(guide._createdAt).toLocaleDateString('en-US', { 
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      {Object.entries(guidesByCategory).map(([categoryKey, categoryGuides]) => {
+        const category = categoryInfo[categoryKey as keyof typeof categoryInfo] || categoryInfo.other;
+        return (
+          <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all hover:shadow-lg">
+            <div class={`h-48 bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+              <div class="text-center text-white">
+                <div class="text-4xl mb-2">{category.icon}</div>
+                <h3 class="text-xl font-bold">{category.name}</h3>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-3">{category.name}</h3>
+              <p class="text-gray-600 mb-4">
+                {categoryKey === 'travel-tips' && 'Essential tips and advice for traveling to Tangier.'}
+                {categoryKey === 'culture-history' && 'Discover Tangier\'s rich cultural heritage and fascinating history.'}
+                {categoryKey === 'food-drink' && 'Explore the vibrant food scene and traditional Moroccan cuisine.'}
+                {categoryKey === 'transportation' && 'Navigate Tangier with our transportation guides and tips.'}
+                {categoryKey === 'accommodation' && 'Find the perfect place to stay in Tangier.'}
+                {categoryKey === 'shopping' && 'Shop like a local with our shopping guides and recommendations.'}
+                {categoryKey === 'safety' && 'Stay safe and secure during your visit to Tangier.'}
+                {categoryKey === 'language' && 'Learn essential phrases and communication tips.'}
+                {categoryKey === 'other' && 'Miscellaneous guides and helpful information.'}
+              </p>
+              <div class="space-y-2 mb-4">
+                {categoryGuides.slice(0, 3).map(guide => (
+                  <a href={`/guides/${guide.slug.current}`} class="block text-teal-600 hover:text-teal-800">
+                    {guide.title}
+                  </a>
+                ))}
+                {categoryGuides.length > 3 && (
+                  <div class="text-gray-500 text-sm">
+                    +{categoryGuides.length - 3} more
+                  </div>
+                )}
+              </div>
+              <a href={`/guides?category=${categoryKey}`} class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+                View all →
+              </a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- All Guides List -->
+    <div class="bg-white rounded-2xl border border-[#F0F0F0] p-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">All Travel Guides</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {guides.map(guide => (
+          <a 
+            href={`/guides/${guide.slug.current}`}
+            class="group block bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-all"
+          >
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-teal-600">
+                  {guide.title}
+                </h3>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                  {guide.excerpt || guide.description}
+                </p>
+              </div>
+              <div class="ml-4 text-right">
+                <span class={`px-2 py-1 rounded-full text-xs font-medium ${difficultyColors[guide.difficulty] || difficultyColors.beginner}`}>
+                  {guide.difficulty || 'beginner'}
+                </span>
+                <div class="text-xs text-gray-500 mt-1">
+                  {guide.estimatedReadTime || 5} min
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">
+                {categoryInfo[guide.category]?.name || 'Guide'}
+              </span>
+              <span class="text-sm text-gray-500">
+                {new Date(guide._createdAt).toLocaleDateString('en-US', { 
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{guides.length}</div>
+        <div class="text-gray-600">Guides</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{Object.keys(guidesByCategory).length}</div>
+        <div class="text-gray-600">Categories</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">
+          {guides.reduce((acc, guide) => acc + (guide.estimatedReadTime || 5), 0)}
+        </div>
+        <div class="text-gray-600">Total Read Time</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">24/7</div>
+        <div class="text-gray-600">Updated</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+

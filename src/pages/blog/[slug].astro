@@ -1,33 +1,52 @@
 ---
-import { getCollection } from 'astro:content';
 import BlogLayout from '../../layouts/BlogLayout.astro';
+import { client } from '../../lib/sanity';
+import SanityContent from '../../components/SanityContent.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await client.fetch(`
+    *[_type == "blogPost"] {
+      "slug": slug.current
+    }
+  `);
+  
   return posts.map((post) => ({
     params: { slug: post.slug },
-    props: { post },
+    props: { slug: post.slug },
   }));
 }
 
-const { post } = Astro.props;
-const { Content } = await post.render();
+const { slug } = Astro.props;
+
+// Get the specific blog post from Sanity
+const post = await client.fetch(`
+  *[_type == "blogPost" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    author,
+    content,
+    tags,
+    _createdAt
+  }
+`, { slug });
 ---
 
 <BlogLayout 
-  title={post.data.title} 
-  description={post.data.description}
-  author={post.data.author}
-  publishDate={post.data.pubDate}
-  tags={['travel', 'tangier', 'morocco']}
+  title={post.title} 
+  description={post.excerpt}
+  author={post.author}
+  publishDate={new Date(post._createdAt)}
+  tags={post.tags || ['travel', 'tangier', 'morocco']}
 >
   <article class="max-w-4xl mx-auto px-4 py-16">
     <header class="mb-8">
-      <h1 class="text-4xl font-bold text-gray-900 mb-4">{post.data.title}</h1>
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
       <div class="flex items-center justify-between text-gray-600 mb-6">
-        <span>By {post.data.author || 'Anonymous'}</span>
-        <time datetime={post.data.pubDate.toISOString()}>
-          {post.data.pubDate.toLocaleDateString('en-US', {
+        <span>By {post.author?.name || 'Anonymous'}</span>
+        <time datetime={new Date(post._createdAt).toISOString()}>
+          {new Date(post._createdAt).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -36,9 +55,7 @@ const { Content } = await post.render();
       </div>
     </header>
     
-    <div class="prose prose-lg max-w-none">
-      <Content />
-    </div>
+    <SanityContent content={post.content} />
     
     <div class="mt-12 pt-8 border-t border-gray-200">
       <a href="/blog" class="text-teal-600 hover:text-teal-800 font-medium">

@@ -1,0 +1,327 @@
+---
+import HomeLayout from '../../../layouts/HomeLayout.astro';
+import { client } from '../../../lib/sanity';
+
+// Get all places from Sanity
+const places = await client.fetch(`
+  *[_type == "place"] | order(title asc) {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    subcategory,
+    rating,
+    priceLevel,
+    tags,
+    featuredImage,
+    location,
+    coordinates,
+    highlights,
+    publishedAt
+  }
+`);
+
+// Group by category
+const categories = places.reduce((acc, place) => {
+  const category = place.category;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(place);
+  return acc;
+}, {} as Record<string, typeof places>);
+
+// Category display names and colors
+const categoryInfo = {
+  'eat-drink': { name: 'Eat & Drink', icon: '🍽️', color: 'from-orange-400 to-red-600' },
+  'see-do': { name: 'See & Do', icon: '🎯', color: 'from-blue-400 to-cyan-600' },
+  'accommodation': { name: 'Accommodation', icon: '🏨', color: 'from-green-400 to-emerald-600' },
+  'shopping': { name: 'Shopping', icon: '🛍️', color: 'from-purple-400 to-pink-600' },
+  'services': { name: 'Services', icon: '🔧', color: 'from-gray-400 to-gray-600' }
+};
+
+// Helper function to get image URL
+function getImageUrl(image) {
+  if (!image) return null;
+  if (typeof image === 'string') return image;
+  if (image.asset) {
+    return client.image(image.asset).url();
+  }
+  return null;
+}
+---
+
+<HomeLayout 
+  title="Places in Tangier - Managed by Sanity CMS"
+  description="Discover all the places in Tangier managed through our Sanity CMS. Add, edit, and manage places easily."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Places in Tangier</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        All places are managed through Sanity CMS. You can easily add, edit, or delete places from the admin panel.
+      </p>
+      <div class="mt-6">
+        <a 
+          href="http://localhost:3333" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Open Sanity Studio →
+        </a>
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      {Object.entries(categories).map(([categoryKey, categoryPlaces]) => {
+        const category = categoryInfo[categoryKey as keyof typeof categoryInfo];
+        if (!category) return null;
+        
+        return (
+          <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all hover:shadow-lg">
+            <div class={`h-48 bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+              <div class="text-center text-white">
+                <div class="text-4xl mb-2">{category.icon}</div>
+                <h3 class="text-xl font-bold">{category.name}</h3>
+                <p class="text-sm opacity-90">{categoryPlaces.length} places</p>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-3">{category.name}</h3>
+              <p class="text-gray-600 mb-4">
+                {categoryKey === 'eat-drink' && 'Restaurants, cafes, and dining experiences.'}
+                {categoryKey === 'see-do' && 'Attractions, activities, and things to do.'}
+                {categoryKey === 'accommodation' && 'Hotels, riads, and places to stay.'}
+                {categoryKey === 'shopping' && 'Markets, boutiques, and shopping areas.'}
+                {categoryKey === 'services' && 'Transportation, health, and business services.'}
+              </p>
+              <div class="space-y-2 mb-4">
+                {categoryPlaces.slice(0, 3).map(place => (
+                  <a 
+                    href={`/places/sanity/${place.slug.current}`} 
+                    class="block text-teal-600 hover:text-teal-800"
+                  >
+                    {place.title}
+                  </a>
+                ))}
+                {categoryPlaces.length > 3 && (
+                  <div class="text-gray-500 text-sm">
+                    +{categoryPlaces.length - 3} more
+                  </div>
+                )}
+              </div>
+              <a 
+                href={`/places/sanity?category=${categoryKey}`} 
+                class="inline-block text-teal-600 hover:text-teal-800 font-medium"
+              >
+                View all →
+              </a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- All Places List -->
+    <div class="bg-white rounded-2xl border border-[#F0F0F0] p-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">All Places</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {places.map(place => (
+          <div class="place-card p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                  <a href={`/places/sanity/${place.slug.current}`} class="hover:text-teal-600">
+                    {place.title}
+                  </a>
+                </h3>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                  {place.description}
+                </p>
+              </div>
+              {place.rating && (
+                <div class="rating-stars ml-4">
+                  <span class="text-sm text-gray-600 mr-1">{place.rating}</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span class={`star ${star <= place.rating ? '' : 'empty'}`}>★</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div class="flex items-center justify-between mb-4">
+              <span class="category-badge">
+                {categoryInfo[place.category as keyof typeof categoryInfo]?.name || place.category}
+              </span>
+              {place.priceLevel && (
+                <div class="price-level">
+                  <span class="price-symbol">{place.priceLevel}</span>
+                </div>
+              )}
+            </div>
+            
+            {place.tags && place.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-4">
+                {place.tags.slice(0, 3).map(tag => (
+                  <span class="tag-chip">{tag}</span>
+                ))}
+                {place.tags.length > 3 && (
+                  <span class="tag-chip">+{place.tags.length - 3}</span>
+                )}
+              </div>
+            )}
+            
+            <a 
+              href={`/places/sanity/${place.slug.current}`} 
+              class="btn-primary w-full text-center"
+            >
+              Learn More
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{places.length}</div>
+        <div class="text-gray-600">Total Places</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{Object.keys(categories).length}</div>
+        <div class="text-gray-600">Categories</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">
+          {places.filter(p => p.rating).length > 0 ? 
+            (places.filter(p => p.rating).reduce((sum, p) => sum + p.rating, 0) / places.filter(p => p.rating).length).toFixed(1) : 
+            'N/A'
+          }
+        </div>
+        <div class="text-gray-600">Avg Rating</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">CMS</div>
+        <div class="text-gray-600">Managed</div>
+      </div>
+    </div>
+
+    <!-- Sanity Admin Section -->
+    <div class="mt-16 bg-blue-50 border border-blue-200 rounded-2xl p-8">
+      <h2 class="text-2xl font-bold text-blue-900 mb-4">Manage Places with Sanity CMS</h2>
+      <p class="text-blue-800 mb-6">
+        All places are managed through Sanity CMS. You can easily add new places, edit existing ones, 
+        or delete places you no longer need. The changes will be reflected on the website automatically.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+        <a 
+          href="http://localhost:3333" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Open Sanity Studio →
+        </a>
+        <a 
+          href="http://localhost:3333/desk/place" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-block bg-white text-blue-600 border border-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors"
+        >
+          Manage Places →
+        </a>
+      </div>
+    </div>
+  </div>
+</HomeLayout>
+
+<style>
+  /* Place card styles */
+  .place-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .place-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Rating stars */
+  .rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .star {
+    color: #fbbf24;
+    font-size: 1.125rem;
+  }
+  
+  .star.empty {
+    color: #d1d5db;
+  }
+  
+  /* Price level indicators */
+  .price-level {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .price-symbol {
+    color: #10b981;
+    font-weight: bold;
+  }
+  
+  /* Category badges */
+  .category-badge {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+  
+  /* Tag chips */
+  .tag-chip {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+  }
+  
+  /* Action buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: block;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-1px);
+  }
+</style>

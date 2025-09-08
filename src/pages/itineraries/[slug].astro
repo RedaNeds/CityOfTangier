@@ -1,0 +1,52 @@
+---
+import ItineraryContentLayout from '../../layouts/ItineraryContentLayout.astro';
+import ItineraryFallbackLayout from '../../layouts/ItineraryFallbackLayout.astro';
+import { client } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  try {
+    const itineraries = await client.fetch(`
+      *[_type == "itinerary"] {
+        "slug": slug.current
+      }
+    `);
+    
+    return itineraries.map((itinerary) => ({
+      params: { slug: itinerary.slug },
+      props: { slug: itinerary.slug },
+    }));
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.props;
+
+// Get the specific itinerary from Sanity
+const itinerary = await client.fetch(`
+  *[_type == "itinerary" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    description,
+    duration,
+    difficulty,
+    budget,
+    tags,
+    totalStops,
+    totalDuration,
+    featuredImage,
+    content,
+    stops,
+    tips,
+    _createdAt
+  }
+`, { slug });
+---
+
+{itinerary && itinerary.title ? (
+  <ItineraryContentLayout entry={itinerary} />
+) : (
+  <ItineraryFallbackLayout slug={slug} />
+)}

@@ -1,0 +1,39 @@
+---
+import type { ItineraryData } from '../../lib/itinerary-data.ts';
+import ItineraryHeader from './ItineraryHeader.astro';
+import ItineraryPeriod from './ItineraryPeriod.astro';
+import ItineraryTips from './ItineraryTips.astro';
+import ItineraryActions from './ItineraryActions.astro';
+
+export interface Props {
+  itinerary: ItineraryData;
+}
+
+const { itinerary } = Astro.props;
+---
+
+<div class="max-w-4xl mx-auto px-4 py-16">
+  <!-- Header -->
+  <ItineraryHeader itinerary={itinerary} />
+
+  <!-- Itinerary Timeline -->
+  <div class="space-y-8">
+    {itinerary.periods.map(period => (
+      <ItineraryPeriod period={period} />
+    ))}
+  </div>
+
+  <!-- Tips & Recommendations -->
+  <div class="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
+    {itinerary.tips.map(tips => (
+      <ItineraryTips tips={tips} />
+    ))}
+    
+    {itinerary.transportation && (
+      <ItineraryTips tips={itinerary.transportation} />
+    )}
+  </div>
+
+  <!-- Actions -->
+  <ItineraryActions />
+</div>

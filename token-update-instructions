@@ -1,0 +1,9 @@
+Instructions pour mettre à jour votre token API :
+
+1. Remplacez votre token actuel dans .env.local par le nouveau token avec permissions d'écriture
+2. Ou exportez-le temporairement :
+   export SANITY_API_TOKEN=votre-nouveau-token-avec-permissions
+
+3. Puis relancez la migration :
+   npm run migrate:sanity
+

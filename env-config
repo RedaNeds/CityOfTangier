@@ -1,0 +1,5 @@
+# Copiez ce contenu dans votre fichier .env.local
+SANITY_PROJECT_ID=0lav3g2f
+SANITY_DATASET=production
+
+

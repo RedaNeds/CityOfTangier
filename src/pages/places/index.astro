@@ -1,5 +1,10 @@
 ---
 import HomeLayout from '../../layouts/HomeLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get featured places
+const featuredPlaces = await getCollection('places');
+const topPlaces = featuredPlaces.slice(0, 6); // Get first 6 places as featured
 ---
 
 <HomeLayout 
@@ -14,10 +19,26 @@ import HomeLayout from '../../layouts/HomeLayout.astro';
         Discover the best places in Tangier. From ancient kasbahs to modern rooftops, 
         find your perfect spots in Morocco's gateway city.
       </p>
+      <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+        <a 
+          href="/places/sanity" 
+          class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          🎛️ Manage Places (Sanity CMS)
+        </a>
+        <a 
+          href="http://localhost:3333" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          class="inline-block bg-gray-100 text-gray-700 border border-gray-300 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+        >
+          📝 Open Sanity Studio
+        </a>
+      </div>
     </div>
 
     <!-- Interactive Map Section -->
-    <div class="bg-white rounded-2xl shadow-lg p-8 mb-16">
+    <div class="bg-white rounded-2xl border border-[#F0F0F0] p-8 mb-16">
       <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">Interactive Map</h2>
       <div class="bg-gray-100 rounded-xl h-96 flex items-center justify-center">
         <div class="text-center">
@@ -31,7 +52,7 @@ import HomeLayout from '../../layouts/HomeLayout.astro';
     <!-- Categories Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
       <!-- Eat & Drink -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+      <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
         <div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
           <div class="text-center text-white">
             <div class="text-4xl mb-2">🍽️</div>
@@ -54,7 +75,7 @@ import HomeLayout from '../../layouts/HomeLayout.astro';
       </div>
 
       <!-- See & Do -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+      <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
         <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
           <div class="text-center text-white">
             <div class="text-4xl mb-2">🎯</div>
@@ -77,7 +98,7 @@ import HomeLayout from '../../layouts/HomeLayout.astro';
       </div>
 
       <!-- Neighborhoods -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+      <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
         <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
           <div class="text-center text-white">
             <div class="text-4xl mb-2">🏘️</div>
@@ -99,6 +120,51 @@ import HomeLayout from '../../layouts/HomeLayout.astro';
         </div>
       </div>
     </div>
+
+    <!-- Featured Places -->
+    {topPlaces && topPlaces.length > 0 && (
+      <div class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Featured Places</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {topPlaces.map(place => (
+            <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all hover:shadow-lg">
+              {place.data.featuredImage && (
+                <div class="h-48 bg-cover bg-center" style={`background-image: url(${place.data.featuredImage})`}>
+                  <div class="h-full bg-black bg-opacity-30 flex items-end">
+                    <div class="p-4 text-white">
+                      <h3 class="text-lg font-semibold">{place.data.title}</h3>
+                      <p class="text-sm opacity-90">{place.data.subcategory}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div class="p-6">
+                <h3 class="text-xl font-semibold mb-2">
+                  <a href={`/places/${place.slug}`} class="hover:text-teal-600">
+                    {place.data.title}
+                  </a>
+                </h3>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">{place.data.description}</p>
+                <div class="flex items-center justify-between mb-3">
+                  <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                    {place.data.category}
+                  </span>
+                  {place.data.rating && (
+                    <div class="flex items-center">
+                      <span class="text-sm text-gray-600 mr-1">{place.data.rating}</span>
+                      <span class="text-yellow-400">★</span>
+                    </div>
+                  )}
+                </div>
+                <a href={`/places/${place.slug}`} class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+                  Learn More →
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
 
     <!-- Quick Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">

@@ -1,0 +1,304 @@
+---
+// Hero Search Bar Component
+---
+
+<div class="max-w-4xl mx-auto mb-8 relative">
+	<div class="bg-surface rounded-2xl border border-[#F0F0F0] p-2">
+		<div class="flex border-b border-border mb-4">
+			<button 
+				id="filter-places" 
+				class="filter-btn flex-1 flex items-center justify-center py-3 px-4 text-strait-blue border-b-2 border-strait-blue font-medium transition-all duration-200"
+				data-filter="places"
+			>
+				<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+				</svg>
+				Places
+			</button>
+			<button 
+				id="filter-eat-drink" 
+				class="filter-btn flex-1 flex items-center justify-center py-3 px-4 text-slate font-medium transition-all duration-200"
+				data-filter="eat-drink"
+			>
+				<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+					<path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+				</svg>
+				Eat & Drink
+			</button>
+			<button 
+				id="filter-events" 
+				class="filter-btn flex-1 flex items-center justify-center py-3 px-4 text-slate font-medium transition-all duration-200"
+				data-filter="events"
+			>
+				<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+					<path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+				</svg>
+				Events
+			</button>
+		</div>
+		<div class="flex items-center">
+			<input 
+				type="text" 
+				id="hero-search-input"
+				placeholder="Search places, attractions, neighborhoods..." 
+				class="flex-1 px-4 py-3 text-ink placeholder-slate focus:outline-none bg-transparent"
+			>
+			<button 
+				id="hero-search-btn" 
+				class="bg-strait-blue text-white px-8 py-3 rounded-xl font-semibold hover:bg-kasbah-navy transition-colors"
+			>
+				Search
+			</button>
+		</div>
+	</div>
+	
+	<!-- Search Results -->
+	<div id="hero-search-results" class="hero-search-results hidden">
+		<div class="bg-surface rounded-card border border-[#F0F0F0] max-h-96 overflow-y-auto">
+			<div class="p-4">
+				<div class="text-sm text-slate mb-3">Search Results</div>
+				<div id="hero-search-results-list" class="space-y-2">
+					<!-- Search results will be populated here -->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.filter-btn.active {
+		color: var(--strait-blue);
+		border-bottom-color: var(--strait-blue);
+	}
+	
+	.filter-btn:not(.active) {
+		color: var(--slate);
+		border-bottom-color: transparent;
+	}
+	
+	.filter-btn:not(.active):hover {
+		color: var(--ink);
+		background-color: var(--sand);
+	}
+	
+	.hero-search-results {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		z-index: 50;
+		margin-top: 8px;
+		animation: slideDown 0.3s ease;
+	}
+	
+	@keyframes slideDown {
+		from {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	
+	.hero-search-results.hidden {
+		display: none;
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const filterButtons = document.querySelectorAll('.filter-btn');
+		const searchInput = document.getElementById('hero-search-input');
+		const searchButton = document.getElementById('hero-search-btn');
+		const searchResults = document.getElementById('hero-search-results');
+		const searchResultsList = document.getElementById('hero-search-results-list');
+		
+		let currentFilter = 'places';
+		
+		// Mock search data - same as navbar but organized by category
+		const searchData = {
+			places: [
+				{ title: 'Kasbah Museum', url: '/places/kasbah-museum', type: 'Museum', description: 'Historic palace with stunning views' },
+				{ title: 'Hercules Caves', url: '/places/hercules-caves', type: 'Attraction', description: 'Legendary cave with ocean views' },
+				{ title: 'Cap Spartel Lighthouse', url: '/places/cap-spartel', type: 'Attraction', description: 'Historic lighthouse at the meeting of two seas' },
+				{ title: 'Grand Socco', url: '/places/grand-socco', type: 'Square', description: 'Historic square in the heart of Tangier' },
+				{ title: 'Petit Socco', url: '/places/petit-socco', type: 'Square', description: 'Charming square in the medina' },
+				{ title: 'American Legation', url: '/places/american-legation', type: 'Museum', description: 'First American public property outside the US' },
+				{ title: 'Marshan District', url: '/places/marshan', type: 'Neighborhood', description: 'Historic residential area with colonial architecture' },
+				{ title: 'Tangier Beach', url: '/places/tangier-beach', type: 'Beach', description: 'Beautiful beach with views of Spain' }
+			],
+			'eat-drink': [
+				{ title: 'Café Hafa', url: '/places/cafe-hafa', type: 'Café', description: 'Legendary café with sea views' },
+				{ title: 'Restaurant Saveur de Poisson', url: '/places/saveur-poisson', type: 'Restaurant', description: 'Fresh seafood restaurant in the medina' },
+				{ title: 'Achakar Beach Club', url: '/places/achakar-beach-club', type: 'Beach Club', description: 'Luxury beach club with cocktails' },
+				{ title: 'El Morocco Club', url: '/places/el-morocco-club', type: 'Restaurant', description: 'Historic restaurant with traditional cuisine' },
+				{ title: 'Café Central', url: '/places/cafe-central', type: 'Café', description: 'Traditional café in the medina' },
+				{ title: 'Restaurant Rif', url: '/places/restaurant-rif', type: 'Restaurant', description: 'Modern Moroccan cuisine with a view' },
+				{ title: 'Bar Tanger Inn', url: '/places/tanger-inn', type: 'Bar', description: 'Historic bar with international atmosphere' },
+				{ title: 'Restaurant Dar Naji', url: '/places/dar-naji', type: 'Restaurant', description: 'Traditional Moroccan dishes in a riad' }
+			],
+			events: [
+				{ title: 'Tanjazz Festival', url: '/events/tanjazz', type: 'Festival', description: 'International jazz festival' },
+				{ title: 'Contemporary Art at the Kasbah', url: '/events/kasbah-art', type: 'Exhibition', description: 'Contemporary art exhibition' },
+				{ title: 'Tangier International Film Festival', url: '/events/film-festival', type: 'Festival', description: 'Annual film festival' },
+				{ title: 'Moroccan Music Night', url: '/events/moroccan-music', type: 'Concert', description: 'Traditional and modern Moroccan music' },
+				{ title: 'Artisan Market', url: '/events/artisan-market', type: 'Market', description: 'Weekly market with local crafts' },
+				{ title: 'Cooking Workshop', url: '/events/cooking-workshop', type: 'Workshop', description: 'Learn to cook traditional Moroccan dishes' },
+				{ title: 'Sunset Yoga Session', url: '/events/sunset-yoga', type: 'Wellness', description: 'Yoga session with ocean views' },
+				{ title: 'Cultural Walking Tour', url: '/events/cultural-tour', type: 'Tour', description: 'Guided tour of historic Tangier' }
+			]
+		};
+		
+		// Filter button functionality
+		filterButtons.forEach(button => {
+			button.addEventListener('click', function() {
+				// Remove active class from all buttons
+				filterButtons.forEach(btn => {
+					btn.classList.remove('active');
+					btn.classList.add('text-slate');
+					btn.classList.remove('text-strait-blue', 'border-b-2', 'border-strait-blue');
+				});
+				
+				// Add active class to clicked button
+				this.classList.add('active');
+				this.classList.remove('text-slate');
+				this.classList.add('text-strait-blue', 'border-b-2', 'border-strait-blue');
+				
+				// Update current filter
+				currentFilter = this.dataset.filter;
+				
+				// Update placeholder text based on filter
+				updatePlaceholder();
+				
+				// Re-perform search if there's a query
+				if (searchInput.value.trim()) {
+					performSearch(searchInput.value.trim());
+				}
+			});
+		});
+		
+		// Update placeholder text based on selected filter
+		function updatePlaceholder() {
+			const placeholders = {
+				'places': 'Search places, attractions, neighborhoods...',
+				'eat-drink': 'Search restaurants, cafes, bars...',
+				'events': 'Search events, festivals, activities...'
+			};
+			searchInput.placeholder = placeholders[currentFilter];
+		}
+		
+		// Search functionality
+		function performSearch(query) {
+			if (!searchResults || !searchResultsList) return;
+			
+			if (query.length < 2) {
+				searchResults.classList.add('hidden');
+				return;
+			}
+			
+			const results = searchData[currentFilter].filter(item => 
+				item.title.toLowerCase().includes(query.toLowerCase()) ||
+				item.description.toLowerCase().includes(query.toLowerCase()) ||
+				item.type.toLowerCase().includes(query.toLowerCase())
+			);
+			
+			if (results.length > 0) {
+				searchResultsList.innerHTML = results.map(item => `
+					<a href="${item.url}" class="block p-3 hover:bg-sand rounded-lg transition-colors">
+						<div class="flex items-start space-x-3">
+							<div class="flex-shrink-0">
+								<div class="w-8 h-8 bg-seafoam/20 rounded-full flex items-center justify-center">
+									<span class="text-strait-blue text-sm">${getTypeIcon(item.type)}</span>
+								</div>
+							</div>
+							<div class="flex-1 min-w-0">
+								<div class="text-sm font-medium text-ink">${item.title}</div>
+								<div class="text-xs text-slate">${item.type}</div>
+								<div class="text-xs text-slate mt-1">${item.description}</div>
+							</div>
+						</div>
+					</a>
+				`).join('');
+				searchResults.classList.remove('hidden');
+			} else {
+				searchResultsList.innerHTML = `
+					<div class="p-4 text-center text-slate">
+						<div class="text-sm">No results found for "${query}"</div>
+						<div class="text-xs mt-1">Try different keywords</div>
+					</div>
+				`;
+				searchResults.classList.remove('hidden');
+			}
+		}
+		
+		function getTypeIcon(type) {
+			const icons = {
+				'Museum': '🏛️',
+				'Attraction': '🎯',
+				'Square': '🏛️',
+				'Neighborhood': '🏘️',
+				'Beach': '🏖️',
+				'Café': '☕',
+				'Restaurant': '🍽️',
+				'Beach Club': '🏖️',
+				'Bar': '🍸',
+				'Festival': '🎉',
+				'Exhibition': '🎨',
+				'Concert': '🎵',
+				'Market': '🛍️',
+				'Workshop': '🔧',
+				'Wellness': '🧘',
+				'Tour': '🚶'
+			};
+			return icons[type] || '📍';
+		}
+		
+		// Event listeners
+		searchInput.addEventListener('input', (e) => {
+			performSearch(e.target.value);
+		});
+		
+		searchButton.addEventListener('click', () => {
+			const query = searchInput.value.trim();
+			if (query) {
+				performSearch(query);
+			} else {
+				// If no query, redirect to the general category page
+				const categoryUrls = {
+					'places': '/places',
+					'eat-drink': '/places/eat-drink',
+					'events': '/events'
+				};
+				window.location.href = categoryUrls[currentFilter];
+			}
+		});
+		
+		searchInput.addEventListener('keypress', function(e) {
+			if (e.key === 'Enter') {
+				const query = searchInput.value.trim();
+				if (query) {
+					performSearch(query);
+				} else {
+					const categoryUrls = {
+						'places': '/places',
+						'eat-drink': '/places/eat-drink',
+						'events': '/events'
+					};
+					window.location.href = categoryUrls[currentFilter];
+				}
+			}
+		});
+		
+		// Hide results when clicking outside
+		document.addEventListener('click', function(e) {
+			if (!e.target.closest('.max-w-4xl')) {
+				searchResults.classList.add('hidden');
+			}
+		});
+		
+		// Initialize placeholder
+		updatePlaceholder();
+	});
+</script>

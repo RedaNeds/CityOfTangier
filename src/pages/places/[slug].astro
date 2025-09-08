@@ -1,0 +1,333 @@
+---
+import PlaceLayout from '../../layouts/PlaceLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const places = await getCollection('places');
+  
+  return places.map((place) => ({
+    params: { slug: place.slug },
+    props: { place },
+  }));
+}
+
+const { place } = Astro.props;
+
+// Get related places from the same category
+const relatedPlaces = await getCollection('places', ({ data }) => 
+  data.category === place.data.category && 
+  data.slug !== place.slug
+);
+
+// Get related places from the same subcategory
+const subcategoryPlaces = await getCollection('places', ({ data }) => 
+  data.subcategory === place.data.subcategory && 
+  data.slug !== place.slug
+);
+
+// Combine and limit related places
+const allRelatedPlaces = [...relatedPlaces, ...subcategoryPlaces]
+  .filter((p, index, self) => self.findIndex(pl => pl.slug === p.slug) === index)
+  .slice(0, 3);
+---
+
+<PlaceLayout 
+  title={place.data.title}
+  description={place.data.description}
+  category={place.data.category}
+  subcategory={place.data.subcategory}
+  tags={place.data.tags}
+  featuredImage={place.data.featuredImage}
+  gallery={place.data.gallery}
+  rating={place.data.rating}
+  priceLevel={place.data.priceLevel}
+  location={place.data.location}
+  address={place.data.address}
+  coordinates={place.data.coordinates}
+  highlights={place.data.highlights}
+  contact={place.data.contact}
+  amenities={place.data.amenities}
+  accessibility={place.data.accessibility}
+>
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <div class="mb-8">
+      {place.data.featuredImage && (
+        <div class="mb-6">
+          <img 
+            src={place.data.featuredImage} 
+            alt={place.data.title}
+            class="w-full h-64 md:h-96 object-cover rounded-2xl"
+          />
+        </div>
+      )}
+      
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{place.data.title}</h1>
+          <p class="text-xl text-gray-600">{place.data.description}</p>
+        </div>
+        
+        <div class="flex items-center gap-4 mt-4 md:mt-0">
+          {place.data.rating && (
+            <div class="rating-stars">
+              <span class="text-lg font-semibold text-gray-700 mr-2">{place.data.rating}</span>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span class={`star ${star <= place.data.rating! ? '' : 'empty'}`}>★</span>
+              ))}
+            </div>
+          )}
+          
+          {place.data.priceLevel && (
+            <div class="price-level">
+              <span class="text-lg font-semibold text-gray-700 mr-1">Price:</span>
+              <span class="price-symbol text-xl">{place.data.priceLevel}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-3 mb-6">
+        <span class="category-badge">
+          {place.data.category}
+        </span>
+        <span class="subcategory-badge">
+          {place.data.subcategory}
+        </span>
+        {place.data.tags?.map(tag => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Image Gallery -->
+    {place.data.gallery && place.data.gallery.length > 0 && (
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Gallery</h2>
+        <div class="image-gallery">
+          {place.data.gallery.map(image => (
+            <div class="gallery-item">
+              <img 
+                src={image} 
+                alt={`${place.data.title} - Gallery image`}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Key Information Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      {place.data.location && (
+        <div class="location-info">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">📍</span>
+            Location
+          </h3>
+          <p class="text-gray-600">{place.data.location}</p>
+          {place.data.address && (
+            <p class="text-sm text-gray-500 mt-1">{place.data.address}</p>
+          )}
+          {place.data.coordinates && (
+            <p class="text-sm text-gray-500 mt-1">
+              {place.data.coordinates.lat}, {place.data.coordinates.lng}
+            </p>
+          )}
+        </div>
+      )}
+      
+      {place.data.openingHours && (
+        <div class="opening-hours">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">🕒</span>
+            Opening Hours
+          </h3>
+          <table class="hours-table">
+            {place.data.openingHours.map(hours => (
+              <tr>
+                <td>{hours.day}</td>
+                <td>{hours.hours}</td>
+              </tr>
+            ))}
+          </table>
+        </div>
+      )}
+
+      {place.data.contact && (place.data.contact.phone || place.data.contact.email || place.data.contact.website) && (
+        <div class="contact-info">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="contact-icon">📞</span>
+            Contact
+          </h3>
+          {place.data.contact.phone && (
+            <p class="text-gray-600 mb-1">
+              <span class="font-medium">Phone:</span> {place.data.contact.phone}
+            </p>
+          )}
+          {place.data.contact.email && (
+            <p class="text-gray-600 mb-1">
+              <span class="font-medium">Email:</span> {place.data.contact.email}
+            </p>
+          )}
+          {place.data.contact.website && (
+            <p class="text-gray-600 mb-1">
+              <span class="font-medium">Website:</span> 
+              <a href={place.data.contact.website} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline ml-1">
+                Visit Website
+              </a>
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+
+    <!-- Highlights -->
+    {place.data.highlights && place.data.highlights.length > 0 && (
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
+        <ul class="highlights-list">
+          {place.data.highlights.map(highlight => (
+            <li class="text-gray-700">{highlight}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Amenities -->
+    {place.data.amenities && place.data.amenities.length > 0 && (
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Amenities</h2>
+        <ul class="amenities-list">
+          {place.data.amenities.map(amenity => (
+            <li class="text-gray-700">{amenity}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Accessibility -->
+    {place.data.accessibility && (
+      <div class="accessibility-info mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Accessibility</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {place.data.accessibility.wheelchairAccessible !== undefined && (
+            <div class="accessibility-item">
+              <span class="accessibility-icon">
+                {place.data.accessibility.wheelchairAccessible ? '♿' : '🚫'}
+              </span>
+              <span class="text-gray-700">
+                {place.data.accessibility.wheelchairAccessible ? 'Wheelchair Accessible' : 'Not Wheelchair Accessible'}
+              </span>
+            </div>
+          )}
+          {place.data.accessibility.parking !== undefined && (
+            <div class="accessibility-item">
+              <span class="accessibility-icon">
+                {place.data.accessibility.parking ? '🅿️' : '🚫'}
+              </span>
+              <span class="text-gray-700">
+                {place.data.accessibility.parking ? 'Parking Available' : 'No Parking'}
+              </span>
+            </div>
+          )}
+          {place.data.accessibility.wifi !== undefined && (
+            <div class="accessibility-item">
+              <span class="accessibility-icon">
+                {place.data.accessibility.wifi ? '📶' : '🚫'}
+              </span>
+              <span class="text-gray-700">
+                {place.data.accessibility.wifi ? 'WiFi Available' : 'No WiFi'}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    )}
+
+    <!-- Main Content -->
+    <div class="prose prose-lg max-w-none mb-8">
+      <div set:html={place.body} />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons mb-8">
+      {place.data.coordinates && (
+        <a 
+          href={`https://www.google.com/maps?q=${place.data.coordinates.lat},${place.data.coordinates.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          📍 Get Directions
+        </a>
+      )}
+      
+      {place.data.contact?.phone && (
+        <a 
+          href={`tel:${place.data.contact.phone}`}
+          class="btn-contact"
+        >
+          📞 Call Now
+        </a>
+      )}
+      
+      {place.data.contact?.website && (
+        <a 
+          href={place.data.contact.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-secondary"
+        >
+          🌐 Visit Website
+        </a>
+      )}
+      
+      <button 
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        🖨️ Print Guide
+      </button>
+      
+      <button 
+        onclick="navigator.share ? navigator.share({title: place.data.title, text: place.data.description, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+        class="btn-secondary"
+      >
+        📤 Share
+      </button>
+    </div>
+
+    <!-- Related Places -->
+    {allRelatedPlaces && allRelatedPlaces.length > 0 && (
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">More Places to Explore</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {allRelatedPlaces.map(relatedPlace => (
+            <a 
+              href={`/places/${relatedPlace.slug}`}
+              class="place-card p-4 hover:shadow-md transition-all"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">{relatedPlace.data.title}</h3>
+              <p class="text-gray-600 text-sm line-clamp-2">{relatedPlace.data.description}</p>
+              <div class="flex items-center justify-between mt-2">
+                <span class="subcategory-badge text-xs">
+                  {relatedPlace.data.subcategory}
+                </span>
+                {relatedPlace.data.rating && (
+                  <div class="rating-stars">
+                    <span class="text-sm text-gray-600 mr-1">{relatedPlace.data.rating}</span>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <span class={`star text-sm ${star <= relatedPlace.data.rating! ? '' : 'empty'}`}>★</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</PlaceLayout>

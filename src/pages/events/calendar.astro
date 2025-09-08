@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+import EventsCalendar from '../../components/EventsCalendar.tsx';
+
+// Get all events from Sanity
+const events = await client.fetch(`
+  *[_type == "event"] | order(eventDate asc) {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    eventDate,
+    endDate,
+    location,
+    price,
+    featuredImage,
+    featured,
+    tags
+  }
+`);
+
+// Get upcoming events (next 30 days)
+const now = new Date();
+const nextMonth = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+const upcomingEvents = events.filter(event => {
+  const eventDate = new Date(event.eventDate);
+  return eventDate >= now && eventDate <= nextMonth;
+});
+
+// Group events by category for stats
+const eventsByCategory = events.reduce((acc, event) => {
+  const category = event.category || 'other';
+  if (!acc[category]) {
+    acc[category] = 0;
+  }
+  acc[category]++;
+  return acc;
+}, {} as Record<string, number>);
+---
+
+<BaseLayout 
+  title="Event Calendar - City of Tangier"
+  description="Browse all events in Tangier with our interactive calendar. Find concerts, festivals, cultural events, and more."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Event Calendar</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Discover all the amazing events happening in Tangier. Use our interactive calendar to find events by date, 
+        category, and location.
+      </p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+      <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{events.length}</div>
+        <div class="text-gray-600">Total Events</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{upcomingEvents.length}</div>
+        <div class="text-gray-600">This Month</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{Object.keys(eventsByCategory).length}</div>
+        <div class="text-gray-600">Categories</div>
+      </div>
+      <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">24/7</div>
+        <div class="text-gray-600">Updated</div>
+      </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">Event Categories</h2>
+      <div class="flex flex-wrap gap-3">
+        {Object.entries(eventsByCategory).map(([category, count]) => {
+          const categoryColors = {
+            'cultural': 'bg-purple-100 text-purple-800 border-purple-200',
+            'music': 'bg-blue-100 text-blue-800 border-blue-200',
+            'food-drink': 'bg-orange-100 text-orange-800 border-orange-200',
+            'art': 'bg-pink-100 text-pink-800 border-pink-200',
+            'sports': 'bg-green-100 text-green-800 border-green-200',
+            'festival': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+            'workshop': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+            'other': 'bg-gray-100 text-gray-800 border-gray-200'
+          };
+          
+          return (
+            <div class={`px-4 py-2 rounded-full border ${categoryColors[category] || categoryColors.other}`}>
+              <span class="font-medium capitalize">{category.replace('-', ' ')}</span>
+              <span class="ml-2 text-sm opacity-75">({count})</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Interactive Calendar -->
+    <div class="mb-16">
+      <EventsCalendar events={events} client:load />
+    </div>
+
+    <!-- Upcoming Events List -->
+    {upcomingEvents.length > 0 && (
+      <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Upcoming Events (Next 30 Days)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {upcomingEvents.slice(0, 6).map((event) => {
+            const eventDate = new Date(event.eventDate);
+            const isToday = eventDate.toDateString() === new Date().toDateString();
+            const isTomorrow = eventDate.toDateString() === new Date(Date.now() + 24 * 60 * 60 * 1000).toDateString();
+            
+            const getStatusBadge = () => {
+              if (isToday) return { text: 'Today', class: 'bg-green-500 text-white' };
+              if (isTomorrow) return { text: 'Tomorrow', class: 'bg-blue-500 text-white' };
+              return { text: 'Upcoming', class: 'bg-gray-500 text-white' };
+            };
+            
+            const status = getStatusBadge();
+            const categoryColors = {
+              'cultural': 'bg-purple-100 text-purple-800',
+              'music': 'bg-blue-100 text-blue-800',
+              'food-drink': 'bg-orange-100 text-orange-800',
+              'art': 'bg-pink-100 text-pink-800',
+              'sports': 'bg-green-100 text-green-800',
+              'festival': 'bg-yellow-100 text-yellow-800',
+              'workshop': 'bg-indigo-100 text-indigo-800',
+              'other': 'bg-gray-100 text-gray-800'
+            };
+            
+            return (
+              <a 
+                href={`/events/${event.slug.current}`}
+                class="group block bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-all"
+              >
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-teal-600">
+                      {event.title}
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {event.description}
+                    </p>
+                  </div>
+                  <span class={`px-2 py-1 rounded-full text-xs font-medium ${status.class}`}>
+                    {status.text}
+                  </span>
+                </div>
+                
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                  <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {eventDate.toLocaleDateString('en-US', { 
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                  <span class={`px-2 py-1 rounded-full text-xs font-medium ${categoryColors[event.category] || categoryColors.other}`}>
+                    {event.category}
+                  </span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+        
+        {upcomingEvents.length > 6 && (
+          <div class="text-center mt-8">
+            <a 
+              href="/events" 
+              class="inline-block bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors"
+            >
+              View All Events
+            </a>
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- Event Submission CTA -->
+    <div class="bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl p-8 text-white text-center">
+      <h2 class="text-3xl font-bold mb-4">Have an Event?</h2>
+      <p class="text-xl mb-6 opacity-90">
+        Submit your event to be featured on our calendar and reach thousands of visitors.
+      </p>
+      <button class="bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+        Submit Event
+      </button>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+

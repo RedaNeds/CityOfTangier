@@ -1,0 +1,250 @@
+---
+import { client, queries, urlFor } from '../../lib/sanity';
+import HomeLayout from '../../layouts/HomeLayout.astro';
+
+// Get all see-do entries from Sanity
+const seeDoEntries = await client.fetch(queries.placesByCategory('see-do'));
+
+// Group by subcategory
+const categories = seeDoEntries.reduce((acc, entry) => {
+  const category = entry.subcategory || 'other';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(entry);
+  return acc;
+}, {} as Record<string, typeof seeDoEntries>);
+
+// Category display names and colors
+const categoryInfo = {
+  'museums': { name: 'Museums', icon: '🏛️', color: 'from-blue-400 to-cyan-600' },
+  'photo-spots': { name: 'Photo Spots', icon: '📸', color: 'from-purple-400 to-pink-600' },
+  'beaches': { name: 'Beaches', icon: '🏖️', color: 'from-teal-400 to-blue-600' },
+  'nightlife': { name: 'Nightlife', icon: '🌃', color: 'from-orange-400 to-red-600' },
+  'other': { name: 'Other', icon: '🎯', color: 'from-gray-400 to-gray-600' }
+};
+---
+
+<HomeLayout 
+  title="See & Do in Tangier - City of Tangier"
+  description="Discover amazing places to see and things to do in Tangier. From museums and beaches to photo spots and nightlife."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">See & Do</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Explore Tangier's diverse attractions and activities. From cultural museums to stunning beaches, 
+        discover the best places to see and things to do in Morocco's gateway city.
+      </p>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+      {Object.entries(categories).map(([categoryKey, entries]) => {
+        const category = categoryInfo[categoryKey as keyof typeof categoryInfo] || categoryInfo.other;
+        return (
+          <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all hover:shadow-lg">
+            <div class={`h-48 bg-gradient-to-br ${category.color} flex items-center justify-center`}>
+              <div class="text-center text-white">
+                <div class="text-4xl mb-2">{category.icon}</div>
+                <h3 class="text-xl font-bold">{category.name}</h3>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-semibold mb-3">{category.name}</h3>
+              <p class="text-gray-600 mb-4">
+                {categoryKey === 'museums' && 'Discover Tangier\'s rich cultural heritage through fascinating museums and art galleries.'}
+                {categoryKey === 'photo-spots' && 'Capture the beauty of Tangier at these stunning photo locations with perfect lighting.'}
+                {categoryKey === 'beaches' && 'Relax on beautiful beaches along the Atlantic coast with spectacular sunset views.'}
+                {categoryKey === 'nightlife' && 'Experience Tangier\'s vibrant nightlife with rooftop bars, clubs, and cultural venues.'}
+                {categoryKey === 'other' && 'Explore other amazing attractions and activities in Tangier.'}
+              </p>
+              <div class="space-y-2 mb-4">
+                {entries.slice(0, 3).map(entry => (
+                  <a href={`/places/see-do/${entry.slug.current}`} class="block text-teal-600 hover:text-teal-800">
+                    {entry.title}
+                  </a>
+                ))}
+                {entries.length > 3 && (
+                  <div class="text-gray-500 text-sm">
+                    +{entries.length - 3} more
+                  </div>
+                )}
+              </div>
+              <a href={`/places/see-do?category=${categoryKey}`} class="inline-block text-teal-600 hover:text-teal-800 font-medium">
+                View all →
+              </a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- All Places List -->
+    <div class="bg-white rounded-2xl border border-[#F0F0F0] p-8">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">All Places to See & Do</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {seeDoEntries.map(entry => (
+          <div class="place-card p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                  <a href={`/places/see-do/${entry.slug.current}`} class="hover:text-teal-600">
+                    {entry.title}
+                  </a>
+                </h3>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2">
+                  {entry.description}
+                </p>
+              </div>
+              {entry.rating && (
+                <div class="rating-stars ml-4">
+                  <span class="text-sm text-gray-600 mr-1">{entry.rating}</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span class={`star ${star <= entry.rating! ? '' : 'empty'}`}>★</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div class="flex items-center justify-between mb-4">
+              <span class="category-badge">
+                {categoryInfo[entry.subcategory as keyof typeof categoryInfo]?.name || entry.subcategory || 'Other'}
+              </span>
+              {entry.priceLevel && (
+                <div class="price-level">
+                  <span class="price-symbol">{entry.priceLevel}</span>
+                </div>
+              )}
+            </div>
+            
+            {entry.tags && entry.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-4">
+                {entry.tags.slice(0, 3).map(tag => (
+                  <span class="tag-chip">{tag}</span>
+                ))}
+                {entry.tags.length > 3 && (
+                  <span class="tag-chip">+{entry.tags.length - 3}</span>
+                )}
+              </div>
+            )}
+            
+            <a href={`/places/see-do/${entry.slug.current}`} class="btn-primary w-full text-center">
+              Learn More
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{seeDoEntries.length}</div>
+        <div class="text-gray-600">Places</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">{Object.keys(categories).length}</div>
+        <div class="text-gray-600">Categories</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">4.5</div>
+        <div class="text-gray-600">Avg Rating</div>
+      </div>
+      <div class="text-center">
+        <div class="text-3xl font-bold text-teal-600 mb-2">24/7</div>
+        <div class="text-gray-600">Updated</div>
+      </div>
+    </div>
+  </div>
+</HomeLayout>
+
+<style>
+  /* Place card styles */
+  .place-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .place-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Rating stars */
+  .rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .star {
+    color: #fbbf24;
+    font-size: 1.125rem;
+  }
+  
+  .star.empty {
+    color: #d1d5db;
+  }
+  
+  /* Price level indicators */
+  .price-level {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  
+  .price-symbol {
+    color: #10b981;
+    font-weight: bold;
+  }
+  
+  /* Category badges */
+  .category-badge {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+  
+  /* Tag chips */
+  .tag-chip {
+    background: #f3f4f6;
+    color: #374151;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid #e5e7eb;
+  }
+  
+  /* Action buttons */
+  .btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: block;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    transform: translateY(-1px);
+  }
+</style>
+
+
+

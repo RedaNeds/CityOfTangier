@@ -1,183 +1,186 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import EatDrinkLayout from '../../../layouts/EatDrinkLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get the rooftops content
+const rooftopsEntry = await getCollection('eatDrink', ({ data }) => data.category === 'rooftops');
+const rooftops = rooftopsEntry[0];
+
+if (!rooftops) {
+  throw new Error('Rooftops content not found');
+}
+
+// Get related eat-drink content
+const relatedEntries = await getCollection('eatDrink', ({ data }) => 
+  data.category !== 'rooftops' && 
+  (data.category === 'sea-view-cafes' || data.category === 'moroccan-restaurants')
+);
 ---
 
-<BaseLayout 
-  title="Best Rooftops in Tangier - Sea Views & Sunset Spots"
-  description="Discover the best rooftop bars and restaurants in Tangier with stunning views of the Strait of Gibraltar and Atlantic Ocean."
+<EatDrinkLayout 
+  title={rooftops.data.title}
+  description={rooftops.data.description}
+  category={rooftops.data.category}
+  tags={rooftops.data.tags}
+  featuredImage={rooftops.data.featuredImage}
+  rating={rooftops.data.rating}
+  priceLevel={rooftops.data.priceLevel}
+  location={rooftops.data.location}
+  coordinates={rooftops.data.coordinates}
+  highlights={rooftops.data.highlights}
 >
-  <div class="max-w-7xl mx-auto px-4 py-16">
-    <!-- Header -->
-    <div class="text-center mb-16">
-      <h1 class="text-4xl font-serif font-bold text-gray-900 mb-6">Rooftops in Tangier</h1>
-      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Experience Tangier from above. These rooftop venues offer stunning views of the Strait of Gibraltar, 
-        perfect for sunset cocktails and romantic dinners.
-      </p>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-12">
-      <div class="flex flex-wrap gap-4 items-center">
-        <span class="text-gray-700 font-medium">Filter by:</span>
-        <button class="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium">All</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Bars</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Restaurants</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Hotels</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Sunset Views</button>
-      </div>
-    </div>
-
-    <!-- Rooftops Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- El Morocco Club -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-64 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
-          <span class="text-white text-lg font-semibold">El Morocco Club</span>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <div class="mb-8">
+      {rooftops.data.featuredImage && (
+        <div class="mb-6">
+          <img 
+            src={rooftops.data.featuredImage} 
+            alt={rooftops.data.title}
+            class="w-full h-64 md:h-96 object-cover rounded-2xl"
+          />
         </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-2">El Morocco Club</h3>
-          <p class="text-gray-500 text-sm mb-3">Hotel Rooftop • Kasbah</p>
-          <p class="text-gray-600 mb-4">Luxury rooftop bar with panoramic views of the city and sea. Perfect for sunset cocktails.</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">cocktails</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">sunset</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">luxury</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
-            <a href="/places/el-morocco-club" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hotel Continental Rooftop -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-64 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
-          <span class="text-white text-lg font-semibold">Hotel Continental Rooftop</span>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-2">Hotel Continental Rooftop</h3>
-          <p class="text-gray-500 text-sm mb-3">Hotel Rooftop • Medina</p>
-          <p class="text-gray-600 mb-4">Historic hotel rooftop with authentic Moroccan atmosphere and stunning harbor views.</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">harbor view</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">authentic</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
-            <a href="/places/hotel-continental-rooftop" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Riad Dar Nour -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-64 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
-          <span class="text-white text-lg font-semibold">Riad Dar Nour</span>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-2">Riad Dar Nour</h3>
-          <p class="text-gray-500 text-sm mb-3">Boutique Hotel • Kasbah</p>
-          <p class="text-gray-600 mb-4">Intimate rooftop terrace with 360-degree views. Perfect for romantic dinners.</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">romantic</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">360° view</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">intimate</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
-            <a href="/places/riad-dar-nour" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Café Hafa -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-64 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-          <span class="text-white text-lg font-semibold">Café Hafa</span>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-2">Café Hafa</h3>
-          <p class="text-gray-500 text-sm mb-3">Historic Café • Kasbah</p>
-          <p class="text-gray-600 mb-4">Legendary café with terraced seating and breathtaking views of the Strait of Gibraltar.</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">mint tea</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">legendary</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
-            <a href="/places/cafe-hafa" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hotel Minzah Rooftop -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-64 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-          <span class="text-white text-lg font-semibold">Hotel Minzah Rooftop</span>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-2">Hotel Minzah Rooftop</h3>
-          <p class="text-gray-500 text-sm mb-3">Hotel Rooftop • City Center</p>
-          <p class="text-gray-600 mb-4">Elegant rooftop restaurant with panoramic city views and fine dining experience.</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">fine dining</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">elegant</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">panoramic</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
-            <a href="/places/hotel-minzah-rooftop" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Achakar Beach Club -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-64 bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center">
-          <span class="text-white text-lg font-semibold">Achakar Beach Club</span>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-2">Achakar Beach Club</h3>
-          <p class="text-gray-500 text-sm mb-3">Beach Club • Achakar</p>
-          <p class="text-gray-600 mb-4">Luxury beach club with rooftop bar and stunning Atlantic Ocean views.</p>
-          <div class="flex flex-wrap gap-2 mb-4">
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">beach club</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">atlantic view</span>
-            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">luxury</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Open now</span>
-            <a href="/places/achakar-beach-club" class="text-teal-600 hover:text-teal-800 font-medium">View details →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tips Section -->
-    <div class="mt-16 bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6">Rooftop Tips</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      )}
+      
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Best Time to Visit</h3>
-          <ul class="space-y-2 text-gray-600">
-            <li>• Sunset hours (6-8 PM) for the best views</li>
-            <li>• Weekdays are less crowded</li>
-            <li>• Book ahead for popular spots</li>
-          </ul>
+          <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{rooftops.data.title}</h1>
+          <p class="text-xl text-gray-600">{rooftops.data.description}</p>
         </div>
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">What to Expect</h3>
-          <ul class="space-y-2 text-gray-600">
-            <li>• Dress codes may apply at luxury venues</li>
-            <li>• Prices are generally higher than ground level</li>
-            <li>• Weather can affect availability</li>
-          </ul>
+        
+        <div class="flex items-center gap-4 mt-4 md:mt-0">
+          {rooftops.data.rating && (
+            <div class="rating-stars">
+              <span class="text-lg font-semibold text-gray-700 mr-2">{rooftops.data.rating}</span>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span class={`star ${star <= rooftops.data.rating! ? '' : 'empty'}`}>★</span>
+              ))}
+            </div>
+          )}
+          
+          {rooftops.data.priceLevel && (
+            <div class="price-level">
+              <span class="text-lg font-semibold text-gray-700 mr-1">Price:</span>
+              <span class="price-symbol text-xl">{rooftops.data.priceLevel}</span>
+            </div>
+          )}
         </div>
       </div>
+      
+      <div class="flex flex-wrap gap-3 mb-6">
+        <span class="category-badge">
+          {rooftops.data.category}
+        </span>
+        {rooftops.data.tags?.map(tag => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
     </div>
+
+    <!-- Key Information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {rooftops.data.location && (
+        <div class="location-info">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">📍</span>
+            Location
+          </h3>
+          <p class="text-gray-600">{rooftops.data.location}</p>
+          {rooftops.data.coordinates && (
+            <p class="text-sm text-gray-500 mt-1">
+              {rooftops.data.coordinates.lat}, {rooftops.data.coordinates.lng}
+            </p>
+          )}
+        </div>
+      )}
+      
+      {rooftops.data.openingHours && (
+        <div class="opening-hours">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">🕒</span>
+            Opening Hours
+          </h3>
+          <table class="hours-table">
+            {rooftops.data.openingHours.map(hours => (
+              <tr>
+                <td>{hours.day}</td>
+                <td>{hours.hours}</td>
+              </tr>
+            ))}
+          </table>
+        </div>
+      )}
+    </div>
+
+    <!-- Highlights -->
+    {rooftops.data.highlights && rooftops.data.highlights.length > 0 && (
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
+        <ul class="highlights-list">
+          {rooftops.data.highlights.map(highlight => (
+            <li class="text-gray-700">{highlight}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Main Content -->
+    <div class="prose prose-lg max-w-none mb-8">
+      <div set:html={rooftops.body} />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons mb-8">
+      {rooftops.data.coordinates && (
+        <a 
+          href={`https://www.google.com/maps?q=${rooftops.data.coordinates.lat},${rooftops.data.coordinates.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          📍 Get Directions
+        </a>
+      )}
+      
+      <button 
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        🖨️ Print Guide
+      </button>
+      
+      <button 
+        onclick="navigator.share ? navigator.share({title: rooftops.data.title, text: rooftops.data.description, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+        class="btn-secondary"
+      >
+        📤 Share
+      </button>
+    </div>
+
+    <!-- Related Places -->
+    {relatedEntries && relatedEntries.length > 0 && (
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">More Places to Eat & Drink</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {relatedEntries.slice(0, 2).map(relatedEntry => (
+            <a 
+              href={`/places/eat-drink/${relatedEntry.data.category}`}
+              class="restaurant-card p-4 hover:shadow-md transition-all"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">{relatedEntry.data.title}</h3>
+              <p class="text-gray-600 text-sm line-clamp-2">{relatedEntry.data.description}</p>
+              {relatedEntry.data.rating && (
+                <div class="rating-stars mt-2">
+                  <span class="text-sm text-gray-600 mr-1">{relatedEntry.data.rating}</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span class={`star text-sm ${star <= relatedEntry.data.rating! ? '' : 'empty'}`}>★</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
   </div>
-</BaseLayout>
+</EatDrinkLayout>

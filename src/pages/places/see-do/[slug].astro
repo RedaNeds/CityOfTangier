@@ -1,0 +1,205 @@
+---
+import SeeDoLayout from '../../../layouts/SeeDoLayout.astro';
+import { client } from '../../../lib/sanity';
+import SanityContent from '../../../components/SanityContent.astro';
+
+export async function getStaticPaths() {
+  try {
+    const places = await client.fetch(`
+      *[_type == "place" && category == "See & Do"] {
+        "slug": slug.current
+      }
+    `);
+    
+    return places.map((place) => ({
+      params: { slug: place.slug },
+      props: { slug: place.slug },
+    }));
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.props;
+
+// Get the specific place from Sanity
+const place = await client.fetch(`
+  *[_type == "place" && category == "See & Do" && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    subcategory,
+    rating,
+    priceLevel,
+    tags,
+    highlights,
+    location,
+    coordinates,
+    featuredImage,
+    content
+  }
+`, { slug });
+
+// Get related places
+const relatedPlaces = await client.fetch(`
+  *[_type == "place" && category == "See & Do" && slug.current != $slug && subcategory == $subcategory] | order(title asc) [0...2] {
+    _id,
+    title,
+    slug,
+    description,
+    rating
+  }
+`, { slug, subcategory: place.subcategory });
+---
+
+<SeeDoLayout 
+  title={place.title}
+  description={place.description}
+  category={place.category}
+  tags={place.tags}
+  featuredImage={place.featuredImage}
+  rating={place.rating}
+  priceLevel={place.priceLevel}
+  location={place.location}
+  coordinates={place.coordinates}
+  highlights={place.highlights}
+>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <div class="mb-8">
+      {place.featuredImage && (
+        <div class="mb-6">
+          <img 
+            src={place.featuredImage} 
+            alt={place.title}
+            class="w-full h-64 md:h-96 object-cover rounded-2xl"
+          />
+        </div>
+      )}
+      
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{place.title}</h1>
+          <p class="text-xl text-gray-600">{place.description}</p>
+        </div>
+        
+        <div class="flex items-center gap-4 mt-4 md:mt-0">
+          {place.rating && (
+            <div class="rating-stars">
+              <span class="text-lg font-semibold text-gray-700 mr-2">{place.rating}</span>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span class={`star ${star <= place.rating! ? '' : 'empty'}`}>★</span>
+              ))}
+            </div>
+          )}
+          
+          {place.priceLevel && (
+            <div class="price-level">
+              <span class="text-lg font-semibold text-gray-700 mr-1">Price:</span>
+              <span class="price-symbol text-xl">{place.priceLevel}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-3 mb-6">
+        <span class="category-badge">
+          {place.subcategory}
+        </span>
+        {place.tags?.map(tag => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Key Information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {place.location && (
+        <div class="location-info">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">📍</span>
+            Location
+          </h3>
+          <p class="text-gray-600">{place.location}</p>
+          {place.coordinates && (
+            <p class="text-sm text-gray-500 mt-1">
+              {place.coordinates.lat}, {place.coordinates.lng}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+
+    <!-- Highlights -->
+    {place.highlights && place.highlights.length > 0 && (
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
+        <ul class="highlights-list">
+          {place.highlights.map(highlight => (
+            <li class="text-gray-700">{highlight}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Main Content -->
+    <SanityContent content={place.content} />
+
+    <!-- Action Buttons -->
+    <div class="action-buttons mb-8">
+      {place.coordinates && (
+        <a 
+          href={`https://www.google.com/maps?q=${place.coordinates.lat},${place.coordinates.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          📍 Get Directions
+        </a>
+      )}
+      
+      <button 
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        🖨️ Print Guide
+      </button>
+      
+      <button 
+        onclick="navigator.share ? navigator.share({title: place.title, text: place.description, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+        class="btn-secondary"
+      >
+        📤 Share
+      </button>
+    </div>
+
+    <!-- Related Places -->
+    {relatedPlaces && relatedPlaces.length > 0 && (
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">More Places to See & Do</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {relatedPlaces.map(relatedPlace => (
+            <a 
+              href={`/places/see-do/${relatedPlace.slug.current}`}
+              class="place-card p-4 hover:shadow-md transition-all"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">{relatedPlace.title}</h3>
+              <p class="text-gray-600 text-sm line-clamp-2">{relatedPlace.description}</p>
+              {relatedPlace.rating && (
+                <div class="rating-stars mt-2">
+                  <span class="text-sm text-gray-600 mr-1">{relatedPlace.rating}</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span class={`star text-sm ${star <= relatedPlace.rating! ? '' : 'empty'}`}>★</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</SeeDoLayout>

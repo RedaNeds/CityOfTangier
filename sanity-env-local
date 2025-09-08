@@ -1,0 +1,7 @@
+# Configuration temporaire - copiez ce contenu dans .env.local
+SANITY_PROJECT_ID=your-project-id-here
+SANITY_DATASET=production
+SANITY_API_TOKEN=your-api-token-here
+
+
+

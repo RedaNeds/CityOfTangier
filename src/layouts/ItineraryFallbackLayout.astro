@@ -1,0 +1,38 @@
+---
+import ItineraryLayout from './ItineraryLayout.astro';
+import ItineraryGenerator from '../components/Itinerary/ItineraryGenerator.astro';
+
+export interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+
+// Fallback data for when collection fails
+const fallbackData = {
+  id: slug,
+  title: 'Itinerary Not Found',
+  description: 'This itinerary could not be loaded.',
+  duration: '1 day',
+  difficulty: 'easy' as const,
+  budget: '€50',
+  tags: ['error'],
+  totalStops: 0,
+  totalDuration: '1 day',
+  periods: [],
+  tips: [],
+  transportation: null
+};
+---
+
+<ItineraryLayout 
+  title={fallbackData.title}
+  description={fallbackData.description}
+  duration={fallbackData.duration}
+  difficulty={fallbackData.difficulty}
+  budget={fallbackData.budget}
+  tags={fallbackData.tags}
+  featuredImage={fallbackData.featuredImage}
+>
+  <ItineraryGenerator itinerary={fallbackData} />
+</ItineraryLayout>

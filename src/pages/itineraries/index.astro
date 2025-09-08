@@ -1,238 +1,156 @@
 ---
-import ItineraryLayout from '../../layouts/ItineraryLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+
+// Get all itineraries from Sanity
+const itineraries = await client.fetch(`
+  *[_type == "itinerary"] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    description,
+    duration,
+    difficulty,
+    budget,
+    tags,
+    totalStops,
+    totalDuration,
+    featuredImage,
+    _createdAt
+  }
+`);
+
+const sortedItineraries = itineraries;
+
+const difficultyColors = {
+  easy: 'bg-green-100 text-green-800',
+  moderate: 'bg-yellow-100 text-yellow-800',
+  challenging: 'bg-red-100 text-red-800'
+};
+
+const difficultyIcons = {
+  easy: '😊',
+  moderate: '😐',
+  challenging: '😤'
+};
 ---
 
-<ItineraryLayout 
-  title="Tangier Itineraries - Perfect Trip Plans"
-  description="Discover the best itineraries for Tangier. From 24-hour quick visits to 3-day comprehensive tours, find your perfect trip plan."
+<BaseLayout 
+  title="Itineraries - City of Tangier"
+  description="Discover the best itineraries for exploring Tangier, from quick day trips to extended weekend getaways."
 >
   <div class="max-w-7xl mx-auto px-4 py-16">
     <!-- Header -->
     <div class="text-center mb-16">
-      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Tangier Itineraries</h1>
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+        Explore Tangier
+      </h1>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-        Whether you have 24 hours or a week, we've created the perfect itineraries 
-        to help you make the most of your time in Tangier.
+        Discover carefully crafted itineraries to make the most of your time in Tangier. 
+        From quick day trips to extended adventures, find the perfect route for your journey.
       </p>
     </div>
 
-    <!-- Duration Filter -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-12">
-      <div class="flex flex-wrap gap-4 items-center justify-center">
-        <span class="text-gray-700 font-medium">Filter by duration:</span>
-        <button class="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium">All</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">24 Hours</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">48 Hours</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">3+ Days</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Family</button>
-        <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200">Budget</button>
-      </div>
-    </div>
 
     <!-- Itineraries Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- 24 Hours -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="text-4xl mb-2">⚡</div>
-            <h3 class="text-xl font-bold">24 Hours</h3>
+      {sortedItineraries.length > 0 ? sortedItineraries.map((itinerary) => (
+        <a 
+          href={`/itineraries/${itinerary.slug.current}`}
+          class="group block bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all duration-300 hover:-translate-y-1"
+        >
+          <!-- Image -->
+          <div class="h-48 bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center">
+            {itinerary.featuredImage ? (
+              <img 
+                src={itinerary.featuredImage} 
+                alt={itinerary.title}
+                class="w-full h-full object-cover"
+              />
+            ) : (
+              <span class="text-white text-2xl font-semibold">🗺️</span>
+            )}
           </div>
+          
+          <!-- Content -->
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-3">
+              <span class={`px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[itinerary.difficulty]}`}>
+                {difficultyIcons[itinerary.difficulty]} {itinerary.difficulty}
+              </span>
+              <span class="text-sm text-gray-500">{itinerary.duration}</span>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
+              {itinerary.title}
+            </h3>
+            
+            <p class="text-gray-600 mb-4 line-clamp-2">
+              {itinerary.description}
+            </p>
+            
+            <!-- Stats -->
+            <div class="flex flex-wrap gap-3 text-sm text-gray-500 mb-4">
+              <span>⏱️ {itinerary.totalStops} stops</span>
+              <span>🚶 {itinerary.totalDuration}</span>
+              <span>💰 {itinerary.budget}</span>
+            </div>
+            
+            <!-- Tags -->
+            {itinerary.tags && itinerary.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2">
+                {itinerary.tags.slice(0, 3).map(tag => (
+                  <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                    #{tag}
+                  </span>
+                ))}
+                {itinerary.tags.length > 3 && (
+                  <span class="text-gray-500 text-xs">+{itinerary.tags.length - 3} more</span>
+                )}
+              </div>
+            )}
+          </div>
+        </a>
+      )) : (
+        <div class="col-span-full text-center py-12">
+          <p class="text-gray-500 text-lg">No itineraries found. Please check the content files.</p>
         </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-3">Tangier in 24 Hours</h3>
-          <p class="text-gray-600 mb-4">Perfect for a quick visit or stopover. See the highlights of Tangier in one action-packed day.</p>
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Kasbah Museum & Medina
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Café Hafa & Sea Views
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Cap Spartel & Hercules Caves
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">8 stops • 12 hours</span>
-            <a href="/itineraries/tangier-in-24-hours" class="text-teal-600 hover:text-teal-800 font-medium">View itinerary →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 48 Hours -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="text-4xl mb-2">🌟</div>
-            <h3 class="text-xl font-bold">48 Hours</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-3">Tangier in 48 Hours</h3>
-          <p class="text-gray-600 mb-4">The perfect weekend getaway. Experience Tangier's culture, cuisine, and coastline at a relaxed pace.</p>
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Historic Kasbah & Museums
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Traditional Markets & Food
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Beach Time & Sunset Views
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">15 stops • 2 days</span>
-            <a href="/itineraries/tangier-in-48-hours" class="text-teal-600 hover:text-teal-800 font-medium">View itinerary →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- 72 Hours -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="text-4xl mb-2">🎯</div>
-            <h3 class="text-xl font-bold">72 Hours</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-3">Tangier in 72 Hours</h3>
-          <p class="text-gray-600 mb-4">The ultimate Tangier experience. Dive deep into the city's culture, history, and hidden gems.</p>
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              All Major Attractions
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Local Experiences & Food
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Day Trip to Chefchaouen
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">25 stops • 3 days</span>
-            <a href="/itineraries/tangier-in-72-hours" class="text-teal-600 hover:text-teal-800 font-medium">View itinerary →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Family Plan -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="text-4xl mb-2">👨‍👩‍👧‍👦</div>
-            <h3 class="text-xl font-bold">Family Plan</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-3">Family 3-Day Plan</h3>
-          <p class="text-gray-600 mb-4">Kid-friendly activities and attractions perfect for families with children of all ages.</p>
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Interactive Museums
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Beach Activities
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Family-Friendly Restaurants
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">18 stops • 3 days</span>
-            <a href="/itineraries/family-3-day-plan" class="text-teal-600 hover:text-teal-800 font-medium">View itinerary →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Budget Plan -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="text-4xl mb-2">💰</div>
-            <h3 class="text-xl font-bold">Budget Plan</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-3">Budget 48h Under €150</h3>
-          <p class="text-gray-600 mb-4">Experience Tangier on a budget without missing out on the best attractions and experiences.</p>
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Free Attractions
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Local Street Food
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Budget Accommodation
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">12 stops • 2 days</span>
-            <a href="/itineraries/budget-48h-under-150" class="text-teal-600 hover:text-teal-800 font-medium">View itinerary →</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Luxury Weekend -->
-      <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-        <div class="h-48 bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="text-4xl mb-2">💎</div>
-            <h3 class="text-xl font-bold">Luxury Weekend</h3>
-          </div>
-        </div>
-        <div class="p-6">
-          <h3 class="text-xl font-semibold mb-3">Luxury Weekend</h3>
-          <p class="text-gray-600 mb-4">Indulge in Tangier's finest experiences with luxury accommodations, fine dining, and exclusive access.</p>
-          <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Luxury Hotels & Spas
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Fine Dining Experiences
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-              <span class="w-2 h-2 bg-teal-600 rounded-full mr-2"></span>
-              Private Tours & Access
-            </div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">20 stops • 3 days</span>
-            <a href="/itineraries/luxury-weekend" class="text-teal-600 hover:text-teal-800 font-medium">View itinerary →</a>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
 
-    <!-- Custom Itinerary CTA -->
-    <div class="mt-16 bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl p-8 text-white text-center">
-      <h2 class="text-3xl font-bold mb-4">Need a Custom Itinerary?</h2>
-      <p class="text-xl mb-6 opacity-90">
-        Our local experts can create a personalized itinerary based on your interests, budget, and time.
-      </p>
-      <button class="bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
-        Get Custom Itinerary
-      </button>
+    <!-- Call to Action -->
+    <div class="mt-16 text-center">
+      <div class="bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          Can't Find What You're Looking For?
+        </h2>
+        <p class="text-gray-600 mb-6">
+          We're constantly adding new itineraries. Check back soon or contact us for custom recommendations.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a 
+            href="/contact" 
+            class="bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors"
+          >
+            Contact Us
+          </a>
+          <a 
+            href="/places" 
+            class="bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
+          >
+            Browse Places
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-</ItineraryLayout>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
