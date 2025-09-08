@@ -1,43 +1,72 @@
-# Astro Starter Kit: Minimal
+# City of Tangier
 
-```sh
-npm create astro@latest -- --template minimal
-```
+City of Tangier is a tourism website built with [Astro](https://astro.build) and [Sanity](https://sanity.io). It provides pages for events, places, itineraries and guides. Astro renders the frontend while Sanity manages the content.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Project Setup
 
-## 🚀 Project Structure
+### Prerequisites
+- Node.js 18+
 
-Inside of your Astro project, you'll see the following folders and files:
+### Installation
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Copy the environment example and fill in your details:
+   ```bash
+   cp sanity-env.example .env.local
+   ```
+3. Start the Astro development server:
+   ```bash
+   npm run dev
+   ```
+4. (Optional) Start Sanity Studio locally:
+   ```bash
+   npm run sanity:dev
+   ```
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Sanity Integration
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Sanity schemas live in the `sanity/` directory and the frontend queries Sanity through `src/lib/sanity.ts`. Use the provided scripts to manage the Studio:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+- `npm run sanity:dev` – run Sanity Studio in development mode.
+- `npm run sanity:build` – build the Studio for production.
+- `npm run sanity:deploy` – deploy the Studio to Sanity hosting.
+- `npm run sanity:start` – preview the built Studio locally.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Environment Variables
 
-## 🧞 Commands
+Add the following variables to `.env.local`:
 
-All commands are run from the root of the project, from a terminal:
+| Variable | Description |
+| --- | --- |
+| `SANITY_PROJECT_ID` | Sanity project ID. |
+| `SANITY_DATASET` | Dataset to query (default `production`). |
+| `SANITY_API_TOKEN` | Token for read access. |
+| `SANITY_WRITE_TOKEN` | Optional token for write operations. |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+See `sanity-env.example` for a complete template.
 
-## 👀 Want to learn more?
+## Development Commands
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start Astro dev server. |
+| `npm run build` | Build the site for production. |
+| `npm run preview` | Preview the production build. |
+| `npm run astro ...` | Run Astro CLI commands. |
+| `npm run sanity:dev` | Run Sanity Studio locally. |
+| `npm run sanity:build` | Build Sanity Studio. |
+| `npm run sanity:deploy` | Deploy Sanity Studio. |
+| `npm run sanity:start` | Preview built Studio. |
+| `npm run migrate:sanity` | Migrate existing content to Sanity. |
+| `npm run migrate:all` | Migrate all local content. |
+| `npm run migrate:places` | Migrate places content. |
+
+## Contributing
+
+1. Fork the repository and create a feature branch.
+2. Make your changes and ensure `npm run build` succeeds.
+3. Commit with clear messages and open a pull request.
+
+---
