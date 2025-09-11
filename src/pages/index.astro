@@ -30,233 +30,247 @@ import QuickCategories from '../components/HomePage/QuickCategories.astro';
 		<!-- Quick Categories -->
 		<QuickCategories />
 
-		<!-- Things to do Section -->
-		<section id="see-do" class="py-20 bg-white">
+		<!-- Things to do Section - Design System -->
+		<section id="see-do" class="py-4xl bg-white">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex justify-between items-center mb-16">
+				<!-- Section Header -->
+				<div class="flex justify-between items-center mb-3xl">
 					<div>
-						<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Things to do</h2>
-						<p class="text-xl text-gray-600">
+						<h2 class="text-h1 font-display font-bold text-dark-brown mb-4">Things to do</h2>
+						<p class="text-xl text-warm-gray font-primary">
 							Discover the best attractions and experiences Tangier has to offer
 						</p>
 					</div>
-					<a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+					<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary flex items-center group transition-colors">
 						See all
-						<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 						</svg>
 					</a>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+				<!-- Cards Grid -->
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+					<!-- Card 1: Kasbah Museum -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Kasbah Museum</span>
+							<div class="h-64 bg-gradient-to-br from-teal to-dark-teal flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Kasbah Museum</span>
 							</div>
-							<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+							<div class="absolute top-4 right-4 bg-coral text-white px-3 py-1 rounded-full text-small font-medium">
 								Open now
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Kasbah Museum</h3>
-							<p class="text-gray-500 text-sm mb-3">Kasbah</p>
-							<p class="text-gray-600 mb-4">Explore Morocco's rich history in this beautifully restored 17th-century palace with stunning views.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Kasbah Museum</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Kasbah</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Explore Morocco's rich history in this beautifully restored 17th-century palace with stunning views.</p>
 							<div class="flex flex-wrap gap-2 mb-4">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">museum</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">history</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">views</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">museum</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">history</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">views</span>
 							</div>
-							<div class="text-lg font-semibold text-gray-900">€</div>
+							<div class="text-lg font-semibold text-dark-brown">€</div>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Card 2: Hercules Caves -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Hercules Caves</span>
+							<div class="h-64 bg-gradient-to-br from-warm-orange to-coral flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Hercules Caves</span>
 							</div>
-							<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+							<div class="absolute top-4 right-4 bg-coral text-white px-3 py-1 rounded-full text-small font-medium">
 								Open now
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Hercules Caves</h3>
-							<p class="text-gray-500 text-sm mb-3">Achakar</p>
-							<p class="text-gray-600 mb-4">Legendary cave with a natural window opening to the Atlantic Ocean, perfect for sunset views.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Hercules Caves</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Achakar</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Legendary cave with a natural window opening to the Atlantic Ocean, perfect for sunset views.</p>
 							<div class="flex flex-wrap gap-2 mb-4">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">nature</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">sunset</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">legend</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">nature</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">sunset</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">legend</span>
 							</div>
-							<div class="text-lg font-semibold text-gray-900">€</div>
+							<div class="text-lg font-semibold text-dark-brown">€</div>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Card 3: Cap Spartel Lighthouse -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Cap Spartel Lighthouse</span>
+							<div class="h-64 bg-gradient-to-br from-deep-blue to-teal flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Cap Spartel Lighthouse</span>
 							</div>
-							<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+							<div class="absolute top-4 right-4 bg-coral text-white px-3 py-1 rounded-full text-small font-medium">
 								Open now
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Cap Spartel Lighthouse</h3>
-							<p class="text-gray-500 text-sm mb-3">Cap Spartel</p>
-							<p class="text-gray-600 mb-4">Historic lighthouse marking the meeting point of the Atlantic Ocean and Mediterranean Sea.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Cap Spartel Lighthouse</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Cap Spartel</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Historic lighthouse marking the meeting point of the Atlantic Ocean and Mediterranean Sea.</p>
 							<div class="flex flex-wrap gap-2 mb-4">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">lighthouse</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">ocean</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">lighthouse</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">ocean</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">historic</span>
 							</div>
-							<div class="text-lg font-semibold text-gray-900">€</div>
+							<div class="text-lg font-semibold text-dark-brown">€</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Food & drink Section -->
-		<section id="eat-drink" class="py-20 bg-stone-50">
+		<!-- Food & drink Section - Design System -->
+		<section id="eat-drink" class="py-4xl bg-light-beige">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex justify-between items-center mb-16">
+				<!-- Section Header -->
+				<div class="flex justify-between items-center mb-3xl">
 					<div>
-						<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Food & drink</h2>
-						<p class="text-xl text-gray-600">
+						<h2 class="text-h1 font-display font-bold text-dark-brown mb-4">Food & drink</h2>
+						<p class="text-xl text-warm-gray font-primary">
 							From traditional mint tea to fresh seafood, taste the flavors of Tangier
 						</p>
 					</div>
-					<a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+					<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary flex items-center group transition-colors">
 						See all
-						<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 						</svg>
 					</a>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+				<!-- Cards Grid -->
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+					<!-- Card 1: Café Hafa -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Café Hafa</span>
+							<div class="h-64 bg-gradient-to-br from-gold to-warm-orange flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Café Hafa</span>
 							</div>
-							<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+							<div class="absolute top-4 right-4 bg-coral text-white px-3 py-1 rounded-full text-small font-medium">
 								Open now
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Café Hafa</h3>
-							<p class="text-gray-500 text-sm mb-3">Kasbah</p>
-							<p class="text-gray-600 mb-4">Historic café with stunning sea views, famous for its mint tea and bohemian atmosphere.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Café Hafa</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Kasbah</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Historic café with stunning sea views, famous for its mint tea and bohemian atmosphere.</p>
 							<div class="flex flex-wrap gap-2 mb-4">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">sea-view</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">historic</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">mint tea</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">sea-view</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">historic</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">mint tea</span>
 							</div>
-							<div class="text-lg font-semibold text-gray-900">€</div>
+							<div class="text-lg font-semibold text-dark-brown">€</div>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Card 2: Restaurant Saveur de Poisson -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Restaurant Saveur de Poisson</span>
+							<div class="h-64 bg-gradient-to-br from-light-teal to-teal flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Restaurant Saveur de Poisson</span>
 							</div>
-							<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+							<div class="absolute top-4 right-4 bg-coral text-white px-3 py-1 rounded-full text-small font-medium">
 								Open now
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Restaurant Saveur de Poisson</h3>
-							<p class="text-gray-500 text-sm mb-3">Medina</p>
-							<p class="text-gray-600 mb-4">Fresh seafood restaurant serving traditional Moroccan dishes with a modern twist.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Restaurant Saveur de Poisson</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Medina</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Fresh seafood restaurant serving traditional Moroccan dishes with a modern twist.</p>
 							<div class="flex flex-wrap gap-2 mb-4">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">seafood</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">traditional</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">family</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">seafood</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">traditional</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">family</span>
 							</div>
-							<div class="text-lg font-semibold text-gray-900">€€</div>
+							<div class="text-lg font-semibold text-dark-brown">€€</div>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Card 3: Achakar Beach Club -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Achakar Beach Club</span>
+							<div class="h-64 bg-gradient-to-br from-coral to-soft-pink flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Achakar Beach Club</span>
 							</div>
-							<div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+							<div class="absolute top-4 right-4 bg-coral text-white px-3 py-1 rounded-full text-small font-medium">
 								Open now
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Achakar Beach Club</h3>
-							<p class="text-gray-500 text-sm mb-3">Achakar</p>
-							<p class="text-gray-600 mb-4">Luxury beach club with cocktails, fresh seafood, and stunning Atlantic views.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Achakar Beach Club</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Achakar</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Luxury beach club with cocktails, fresh seafood, and stunning Atlantic views.</p>
 							<div class="flex flex-wrap gap-2 mb-4">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">beach</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">cocktails</span>
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">luxury</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">beach</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">cocktails</span>
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">luxury</span>
 							</div>
-							<div class="text-lg font-semibold text-gray-900">€€€</div>
+							<div class="text-lg font-semibold text-dark-brown">€€€</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- What's on Section -->
-		<section id="events" class="py-20 bg-white">
+		<!-- What's on Section - Design System -->
+		<section id="events" class="py-4xl bg-white">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex justify-between items-center mb-16">
+				<!-- Section Header -->
+				<div class="flex justify-between items-center mb-3xl">
 					<div>
-						<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">What's on</h2>
-						<p class="text-xl text-gray-600">
+						<h2 class="text-h1 font-display font-bold text-dark-brown mb-4">What's on</h2>
+						<p class="text-xl text-warm-gray font-primary">
 							Events and experiences happening in Tangier this week
 						</p>
 					</div>
-					<a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+					<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary flex items-center group transition-colors">
 						See all events
-						<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 						</svg>
 					</a>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+				<!-- Events Grid -->
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+					<!-- Event Card 1: Tanjazz Festival -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Tanjazz Festival</span>
+							<div class="h-64 bg-gradient-to-br from-deep-blue to-teal flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Tanjazz Festival</span>
 							</div>
-							<div class="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">
+							<div class="absolute top-4 left-4 bg-white text-dark-brown px-3 py-1 rounded-full text-small font-bold">
 								SEP 21
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Tanjazz Festival</h3>
-							<p class="text-gray-500 text-sm mb-3">Kasbah Amphitheater</p>
-							<p class="text-gray-600 text-sm mb-3">Sat, Sep 21, 08:00 PM</p>
-							<p class="text-gray-600 mb-4">International jazz festival featuring world-class musicians in the historic Kasbah amphitheater.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Tanjazz Festival</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Kasbah Amphitheater</p>
+							<p class="text-warm-gray text-small mb-3 font-primary">Sat, Sep 21, 08:00 PM</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">International jazz festival featuring world-class musicians in the historic Kasbah amphitheater.</p>
 							<div class="flex justify-between items-center">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">music</span>
-								<button class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">music</span>
+								<button class="bg-gradient-to-r from-teal to-dark-teal text-white px-4 py-2 rounded-lg text-small font-medium font-primary hover:from-teal/90 hover:to-dark-teal/90 transition-all duration-300">
 									Get Tickets
 								</button>
 							</div>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Event Card 2: Contemporary Art at the Kasbah -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Contemporary Art at the Kasbah</span>
+							<div class="h-64 bg-gradient-to-br from-warm-orange to-coral flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Contemporary Art at the Kasbah</span>
 							</div>
-							<div class="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">
+							<div class="absolute top-4 left-4 bg-white text-dark-brown px-3 py-1 rounded-full text-small font-bold">
 								SEP 25
 							</div>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Contemporary Art at the Kasbah</h3>
-							<p class="text-gray-500 text-sm mb-3">Kasbah Museum</p>
-							<p class="text-gray-600 text-sm mb-3">Wed, Sep 25, 06:00 PM</p>
-							<p class="text-gray-600 mb-4">Exhibition showcasing contemporary Moroccan and international artists in the historic museum.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Contemporary Art at the Kasbah</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">Kasbah Museum</p>
+							<p class="text-warm-gray text-small mb-3 font-primary">Wed, Sep 25, 06:00 PM</p>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Exhibition showcasing contemporary Moroccan and international artists in the historic museum.</p>
 							<div class="flex justify-between items-center">
-								<span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">culture</span>
-								<button class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors">
+								<span class="bg-light-beige text-dark-brown px-3 py-1 rounded-full text-small font-medium">culture</span>
+								<button class="bg-gradient-to-r from-warm-orange to-coral text-white px-4 py-2 rounded-lg text-small font-medium font-primary hover:from-warm-orange/90 hover:to-coral/90 transition-all duration-300">
 									Learn More
 								</button>
 							</div>
@@ -266,140 +280,160 @@ import QuickCategories from '../components/HomePage/QuickCategories.astro';
 			</div>
 		</section>
 
-		<!-- Guides Section -->
-		<section id="guides" class="py-20 bg-stone-50">
+		<!-- Guides Section - Design System -->
+		<section id="guides" class="py-4xl bg-light-beige">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="flex justify-between items-center mb-16">
+				<!-- Section Header -->
+				<div class="flex justify-between items-center mb-3xl">
 					<div>
-						<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Guides</h2>
-						<p class="text-xl text-gray-600">
+						<h2 class="text-h1 font-display font-bold text-dark-brown mb-4">Guides</h2>
+						<p class="text-xl text-warm-gray font-primary">
 							Local insights and expert recommendations for the perfect Tangier experience
 						</p>
 					</div>
-					<a href="#" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+					<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary flex items-center group transition-colors">
 						Read all guides
-						<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 						</svg>
 					</a>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+				<!-- Guides Grid -->
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+					<!-- Guide Card 1: Best rooftops for sunset -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Best rooftops for sunset</span>
+							<div class="h-64 bg-gradient-to-br from-gold to-warm-orange flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Best rooftops for sunset</span>
 							</div>
-							<div class="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">
+							<div class="absolute top-4 left-4 bg-white text-dark-brown px-3 py-1 rounded-full text-small font-bold">
 								Views
 							</div>
 						</div>
 						<div class="p-6">
-							<p class="text-gray-500 text-sm mb-2">5 min read • by Local Guide</p>
-							<h3 class="text-xl font-semibold mb-2">Best rooftops for sunset in Tangier</h3>
-							<p class="text-gray-600 mb-4">Discover the most spectacular rooftop bars and terraces for watching the sunset over the Strait of Gibraltar.</p>
-							<a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Read more →</a>
+							<p class="text-warm-gray text-small mb-2 font-primary">5 min read • by Local Guide</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Best rooftops for sunset in Tangier</h3>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Discover the most spectacular rooftop bars and terraces for watching the sunset over the Strait of Gibraltar.</p>
+							<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary group transition-colors">
+								Read more 
+								<span class="group-hover:translate-x-1 inline-block transition-transform">→</span>
+							</a>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Guide Card 2: Seafood guide to Tangier -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">Seafood guide to Tangier</span>
+							<div class="h-64 bg-gradient-to-br from-light-teal to-teal flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">Seafood guide to Tangier</span>
 							</div>
-							<div class="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">
+							<div class="absolute top-4 left-4 bg-white text-dark-brown px-3 py-1 rounded-full text-small font-bold">
 								Food
 							</div>
 						</div>
 						<div class="p-6">
-							<p class="text-gray-500 text-sm mb-2">7 min read • by Food Expert</p>
-							<h3 class="text-xl font-semibold mb-2">Seafood guide to Tangier</h3>
-							<p class="text-gray-600 mb-4">From traditional fish markets to fine dining, explore Tangier's incredible seafood scene.</p>
-							<a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Read more →</a>
+							<p class="text-warm-gray text-small mb-2 font-primary">7 min read • by Food Expert</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Seafood guide to Tangier</h3>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">From traditional fish markets to fine dining, explore Tangier's incredible seafood scene.</p>
+							<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary group transition-colors">
+								Read more 
+								<span class="group-hover:translate-x-1 inline-block transition-transform">→</span>
+							</a>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
+					<!-- Guide Card 3: First timer's guide to Tangier -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
 						<div class="relative">
-							<div class="h-64 bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
-								<span class="text-white text-lg font-semibold">First timer's guide to Tangier</span>
+							<div class="h-64 bg-gradient-to-br from-coral to-soft-pink flex items-center justify-center">
+								<span class="text-white text-lg font-semibold font-primary">First timer's guide to Tangier</span>
 							</div>
-							<div class="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 rounded-full text-sm font-bold">
+							<div class="absolute top-4 left-4 bg-white text-dark-brown px-3 py-1 rounded-full text-small font-bold">
 								Guide
 							</div>
 						</div>
 						<div class="p-6">
-							<p class="text-gray-500 text-sm mb-2">10 min read • by Travel Writer</p>
-							<h3 class="text-xl font-semibold mb-2">First timer's guide to Tangier</h3>
-							<p class="text-gray-600 mb-4">Everything you need to know for your first visit to Tangier, from getting around to must-see attractions.</p>
-							<a href="#" class="text-blue-600 hover:text-blue-800 font-medium">Read more →</a>
+							<p class="text-warm-gray text-small mb-2 font-primary">10 min read • by Travel Writer</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">First timer's guide to Tangier</h3>
+							<p class="text-warm-gray mb-4 font-primary leading-normal">Everything you need to know for your first visit to Tangier, from getting around to must-see attractions.</p>
+							<a href="#" class="text-teal hover:text-dark-teal font-medium font-primary group transition-colors">
+								Read more 
+								<span class="group-hover:translate-x-1 inline-block transition-transform">→</span>
+							</a>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Explore by neighborhood Section -->
-		<section id="neighborhoods" class="py-20 bg-white">
+		<!-- Explore by neighborhood Section - Design System -->
+		<section id="neighborhoods" class="py-4xl bg-white">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div class="text-center mb-16">
-					<h2 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">Explore by neighborhood</h2>
-					<p class="text-xl text-gray-600">
+				<!-- Section Header -->
+				<div class="text-center mb-3xl">
+					<h2 class="text-h1 font-display font-bold text-dark-brown mb-4">Explore by neighborhood</h2>
+					<p class="text-xl text-warm-gray font-primary">
 						Each area of Tangier has its own character and charm
 					</p>
 				</div>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
-						<div class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-							<span class="text-white text-lg font-semibold">Marshan</span>
+				<!-- Neighborhoods Grid -->
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+					<!-- Neighborhood Card 1: Marshan -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
+						<div class="h-48 bg-gradient-to-br from-teal to-dark-teal flex items-center justify-center">
+							<span class="text-white text-lg font-semibold font-primary">Marshan</span>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Marshan</h3>
-							<p class="text-gray-500 text-sm mb-3">12 places</p>
-							<p class="text-gray-600">Historic residential area with stunning views and colonial architecture.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Marshan</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">12 places</p>
+							<p class="text-warm-gray font-primary leading-normal">Historic residential area with stunning views and colonial architecture.</p>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
-						<div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-							<span class="text-white text-lg font-semibold">Kasbah</span>
+					<!-- Neighborhood Card 2: Kasbah -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
+						<div class="h-48 bg-gradient-to-br from-warm-orange to-coral flex items-center justify-center">
+							<span class="text-white text-lg font-semibold font-primary">Kasbah</span>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Kasbah</h3>
-							<p class="text-gray-500 text-sm mb-3">18 places</p>
-							<p class="text-gray-600">Ancient fortress district with museums, palaces, and panoramic views.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Kasbah</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">18 places</p>
+							<p class="text-warm-gray font-primary leading-normal">Ancient fortress district with museums, palaces, and panoramic views.</p>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
-						<div class="h-48 bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-							<span class="text-white text-lg font-semibold">Medina</span>
+					<!-- Neighborhood Card 3: Medina -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
+						<div class="h-48 bg-gradient-to-br from-deep-blue to-teal flex items-center justify-center">
+							<span class="text-white text-lg font-semibold font-primary">Medina</span>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">Medina</h3>
-							<p class="text-gray-500 text-sm mb-3">21 places</p>
-							<p class="text-gray-600">Traditional old town with narrow streets, souks, and authentic Moroccan life.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">Medina</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">21 places</p>
+							<p class="text-warm-gray font-primary leading-normal">Traditional old town with narrow streets, souks, and authentic Moroccan life.</p>
 						</div>
 					</div>
-					<div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all">
-						<div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
-							<span class="text-white text-lg font-semibold">City Center</span>
+					<!-- Neighborhood Card 4: City Center -->
+					<div class="bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-elevated hover:-translate-y-1">
+						<div class="h-48 bg-gradient-to-br from-gold to-warm-orange flex items-center justify-center">
+							<span class="text-white text-lg font-semibold font-primary">City Center</span>
 						</div>
 						<div class="p-6">
-							<h3 class="text-xl font-semibold mb-2">City Center</h3>
-							<p class="text-gray-500 text-sm mb-3">20 places</p>
-							<p class="text-gray-600">Modern commercial district with shops, restaurants, and contemporary architecture.</p>
+							<h3 class="text-h4 font-semibold font-primary mb-2 text-dark-brown">City Center</h3>
+							<p class="text-warm-gray text-small mb-3 font-primary">20 places</p>
+							<p class="text-warm-gray font-primary leading-normal">Modern commercial district with shops, restaurants, and contemporary architecture.</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Stay in the know Section -->
-		<section class="py-20 bg-[#094C61] text-white">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-				<h2 class="text-4xl md:text-5xl font-serif font-bold mb-6">Stay in the know</h2>
-				<p class="text-xl mb-12 max-w-3xl mx-auto">
+		<!-- Stay in the know Section - Design System -->
+		<section class="py-4xl bg-gradient-to-br from-deep-blue via-dark-teal to-teal text-white">
+			<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+				<h2 class="text-h1 font-display font-bold mb-6">Stay in the know</h2>
+				<p class="text-xl mb-3xl max-w-3xl mx-auto font-primary opacity-90 leading-relaxed">
 					Get the latest updates on events, new places, and insider tips delivered to your inbox
 				</p>
-				<div class="max-w-md mx-auto flex">
-					<input type="email" placeholder="Enter your email" class="flex-1 px-4 py-3 rounded-l-xl text-gray-900 focus:outline-none">
-					<button class="bg-orange-500 text-white px-8 py-3 rounded-r-xl font-semibold hover:bg-orange-600 transition-colors">
+				<div class="max-w-md mx-auto flex bg-white rounded-xl overflow-hidden shadow-elevated">
+					<input type="email" placeholder="Enter your email" class="flex-1 px-6 py-4 text-dark-brown font-primary focus:outline-none placeholder-warm-gray">
+					<button class="bg-gradient-to-r from-coral to-warm-orange text-white px-8 py-4 font-medium font-primary hover:from-coral/90 hover:to-warm-orange/90 transition-all duration-300">
 						Subscribe
 					</button>
 				</div>
