@@ -1,0 +1,46 @@
+---
+import type { ItineraryTips } from '../../lib/itinerary-data.ts';
+
+export interface Props {
+  tips: ItineraryTips;
+}
+
+const { tips } = Astro.props;
+
+const colorClasses = {
+  teal: 'from-teal-50 to-blue-50',
+  orange: 'from-orange-50 to-red-50',
+  blue: 'from-blue-50 to-indigo-50',
+  purple: 'from-purple-50 to-pink-50',
+  green: 'from-green-50 to-emerald-50',
+  red: 'from-red-50 to-rose-50'
+};
+
+const iconColors = {
+  teal: 'text-teal-600',
+  orange: 'text-orange-600',
+  blue: 'text-blue-600',
+  purple: 'text-purple-600',
+  green: 'text-green-600',
+  red: 'text-red-600'
+};
+---
+
+<div class={`bg-gradient-to-r ${colorClasses[tips.color as keyof typeof colorClasses] || 'from-gray-50 to-gray-100'} rounded-2xl p-8`}>
+  <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+    <span class={`mr-3 ${iconColors[tips.color as keyof typeof iconColors] || 'text-gray-600'}`}>
+      {tips.icon}
+    </span>
+    {tips.title}
+  </h3>
+  <ul class="space-y-4">
+    {tips.items.map(item => (
+      <li class="flex items-start">
+        <span class={`${iconColors[tips.color as keyof typeof iconColors] || 'text-gray-600'} mr-3 mt-1`}>
+          {tips.icon === '✓' ? '✓' : '•'}
+        </span>
+        <span class="text-gray-700">{item}</span>
+      </li>
+    ))}
+  </ul>
+</div>

@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+
+// Get counts for stats
+const [attractionsCount, restaurantsCount] = await Promise.all([
+  client.fetch(`count(*[_type == "place" && (category == "attractions" || category == "See & Do")])`),
+  client.fetch(`count(*[_type == "place" && (category == "restaurants" || category == "Eat & Drink")])`)
+]);
+---
+
+<BaseLayout
+  title="Discover Tangier - Attractions & Restaurants"
+  description="Explore the best of Tangier. From historic attractions to amazing restaurants, discover what makes this city special."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Discover Tangier</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Explore the best of Tangier. From historic attractions and stunning viewpoints
+        to rooftop restaurants and traditional cafes, discover what makes this city special.
+      </p>
+    </div>
+
+    <!-- Main Categories -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+      <!-- Attractions -->
+      <a href="/discover/attractions" class="group">
+        <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+          <div class="h-64 bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-20"></div>
+            <div class="relative text-center text-white z-10">
+              <div class="text-6xl mb-4">🎯</div>
+              <h2 class="text-3xl font-bold mb-2">Attractions</h2>
+              <p class="text-lg text-teal-100">{attractionsCount} places to explore</p>
+            </div>
+          </div>
+          <div class="p-8">
+            <h3 class="text-2xl font-semibold mb-3 text-gray-900 group-hover:text-teal-600 transition-colors">
+              See & Do
+            </h3>
+            <p class="text-gray-600 mb-4">
+              Discover museums, historic sites, beautiful beaches, and stunning photo spots.
+              Experience the culture and natural beauty of Tangier.
+            </p>
+            <div class="flex items-center text-teal-600 font-medium">
+              Explore attractions
+              <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Restaurants -->
+      <a href="/discover/restaurants" class="group">
+        <div class="bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2">
+          <div class="h-64 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-black opacity-20"></div>
+            <div class="relative text-center text-white z-10">
+              <div class="text-6xl mb-4">🍽️</div>
+              <h2 class="text-3xl font-bold mb-2">Restaurants & Cafes</h2>
+              <p class="text-lg text-orange-100">{restaurantsCount} dining experiences</p>
+            </div>
+          </div>
+          <div class="p-8">
+            <h3 class="text-2xl font-semibold mb-3 text-gray-900 group-hover:text-orange-600 transition-colors">
+              Eat & Drink
+            </h3>
+            <p class="text-gray-600 mb-4">
+              From rooftop bars with panoramic views to traditional Moroccan restaurants,
+              discover the best places to eat and drink in Tangier.
+            </p>
+            <div class="flex items-center text-orange-600 font-medium">
+              Explore restaurants
+              <svg class="ml-2 w-5 h-5 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Quick Links Grid -->
+    <div class="bg-gray-50 rounded-2xl p-8 mb-16">
+      <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Popular Categories</h2>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <a href="/discover/restaurants/categories/rooftops" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">🏢</div>
+          <div class="font-medium text-gray-900">Rooftops</div>
+        </a>
+
+        <a href="/discover/restaurants/categories/seafood" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">🐟</div>
+          <div class="font-medium text-gray-900">Seafood</div>
+        </a>
+
+        <a href="/discover/attractions?category=museums" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">🏛️</div>
+          <div class="font-medium text-gray-900">Museums</div>
+        </a>
+
+        <a href="/discover/attractions?category=beaches" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">🏖️</div>
+          <div class="font-medium text-gray-900">Beaches</div>
+        </a>
+
+        <a href="/discover/restaurants/categories/moroccan-restaurants" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">🍽️</div>
+          <div class="font-medium text-gray-900">Moroccan</div>
+        </a>
+
+        <a href="/discover/restaurants/categories/sea-view-cafes" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">☕</div>
+          <div class="font-medium text-gray-900">Sea View Cafes</div>
+        </a>
+
+        <a href="/discover/attractions?category=photo-spots" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">📸</div>
+          <div class="font-medium text-gray-900">Photo Spots</div>
+        </a>
+
+        <a href="/discover/attractions?category=nightlife" class="p-4 bg-white rounded-xl hover:shadow-md transition-all text-center">
+          <div class="text-3xl mb-2">🌃</div>
+          <div class="font-medium text-gray-900">Nightlife</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="text-center">
+        <div class="text-4xl font-bold text-teal-600 mb-2">{attractionsCount + restaurantsCount}</div>
+        <div class="text-gray-600">Total Places</div>
+      </div>
+      <div class="text-center">
+        <div class="text-4xl font-bold text-teal-600 mb-2">{attractionsCount}</div>
+        <div class="text-gray-600">Attractions</div>
+      </div>
+      <div class="text-center">
+        <div class="text-4xl font-bold text-teal-600 mb-2">{restaurantsCount}</div>
+        <div class="text-gray-600">Restaurants</div>
+      </div>
+      <div class="text-center">
+        <div class="text-4xl font-bold text-teal-600 mb-2">24/7</div>
+        <div class="text-gray-600">Updated</div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

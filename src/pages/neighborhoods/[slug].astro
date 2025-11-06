@@ -1,0 +1,261 @@
+---
+import NeighborhoodLayout from '../../layouts/NeighborhoodLayout.astro';
+import { client } from '../../lib/sanity';
+import type { SanityNeighborhood, SanityPlace } from '../../lib/sanity';
+import SanityContent from '../../components/SanityContent.astro';
+import OptimizedImage from '../../components/UI/OptimizedImage.astro';
+import PlaceCard from '../../components/CartesListes/PlaceCard.astro';
+
+export async function getStaticPaths() {
+  try {
+    const neighborhoods = await client.fetch(`
+      *[_type == "neighborhood"] {
+        "slug": slug.current
+      }
+    `);
+    
+    return neighborhoods.map((neighborhood) => ({
+      params: { slug: neighborhood.slug },
+      props: { slug: neighborhood.slug },
+    }));
+  } catch (error) {
+    console.error('Error in getStaticPaths for neighborhoods:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.props;
+
+// Get the specific neighborhood from Sanity
+let neighborhood: SanityNeighborhood | null = null;
+let placesInNeighborhood: SanityPlace[] = [];
+
+try {
+  [neighborhood, placesInNeighborhood] = await Promise.all([
+    client.fetch(`
+      *[_type == "neighborhood" && slug.current == $slug][0] {
+        _id,
+        title,
+        slug,
+        description,
+        content,
+        featuredImage {
+          asset->{
+            _id,
+            url
+          },
+          alt
+        },
+        location {
+          coordinates,
+          bounds
+        },
+        characteristics,
+        places,
+        tags,
+        featured,
+        publishedAt
+      }
+    `, { slug }) as SanityNeighborhood,
+    
+    // Get places in this neighborhood (if we have bounds)
+    client.fetch(`
+      *[_type == "place" && defined(location.coordinates)] {
+        _id,
+        title,
+        slug,
+        description,
+        category,
+        subcategory,
+        featuredImage {
+          asset->{
+            _id,
+            url
+          },
+          alt
+        },
+        location {
+          address,
+          coordinates
+        },
+        rating,
+        priceLevel,
+        tags,
+        featured,
+        publishedAt
+      }
+    `) as SanityPlace[]
+  ]);
+
+  // Filter places by neighborhood bounds if available
+  if (neighborhood?.location?.bounds && placesInNeighborhood.length > 0) {
+    const bounds = neighborhood.location.bounds;
+    placesInNeighborhood = placesInNeighborhood.filter(place => {
+      const coords = place.location?.coordinates;
+      if (!coords) return false;
+      return coords.lat >= bounds.south && 
+             coords.lat <= bounds.north && 
+             coords.lng >= bounds.west && 
+             coords.lng <= bounds.east;
+    });
+  }
+} catch (error) {
+  console.error('Error fetching neighborhood data:', error);
+  neighborhood = null;
+  placesInNeighborhood = [];
+}
+---
+
+{neighborhood && neighborhood.title ? (
+  <NeighborhoodLayout 
+    title={`${neighborhood.title} - Tangier Neighborhood`}
+    description={neighborhood.description}
+    featuredImage={neighborhood.featuredImage?.asset?.url}
+  >
+    <div class="max-w-7xl mx-auto px-4 py-16">
+      <!-- Hero Section -->
+      <div class="relative mb-16">
+        {neighborhood.featuredImage ? (
+          <div class="relative h-96 rounded-2xl overflow-hidden">
+            <OptimizedImage 
+              image={neighborhood.featuredImage}
+              alt={neighborhood.featuredImage.alt || `${neighborhood.title} neighborhood in Tangier`}
+              width={1200}
+              height={400}
+              className="w-full h-full object-cover"
+              priority={true}
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-6 left-6 text-white">
+              <h1 class="text-4xl md:text-5xl font-display font-bold mb-2">{neighborhood.title}</h1>
+              <p class="text-xl opacity-90">{neighborhood.description}</p>
+            </div>
+          </div>
+        ) : (
+          <div class="bg-gradient-to-br from-strait-blue to-kasbah-navy rounded-2xl p-12 text-center text-white">
+            <h1 class="text-4xl md:text-5xl font-display font-bold mb-4">{neighborhood.title}</h1>
+            <p class="text-xl opacity-90">{neighborhood.description}</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Content Section -->
+      {neighborhood.content && neighborhood.content.length > 0 && (
+        <section class="mb-16">
+          <div class="prose prose-lg max-w-none">
+            <SanityContent content={neighborhood.content} />
+          </div>
+        </section>
+      )}
+
+      <!-- Characteristics -->
+      {neighborhood.characteristics && neighborhood.characteristics.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-display font-bold text-dark-brown mb-8">What Makes This Area Special</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {neighborhood.characteristics.map((characteristic, index) => (
+              <div class="bg-light-beige rounded-xl p-6 border border-gray-200">
+                <div class="text-2xl mb-3">✨</div>
+                <h3 class="text-lg font-semibold text-dark-brown mb-2">{characteristic.title || `Characteristic ${index + 1}`}</h3>
+                <p class="text-warm-gray">{characteristic.description || characteristic}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Places in this Neighborhood -->
+      {placesInNeighborhood.length > 0 && (
+        <section class="mb-16">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-3xl font-display font-bold text-dark-brown">Places in {neighborhood.title}</h2>
+            <div class="w-16 h-1 bg-strait-blue rounded-full"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {placesInNeighborhood.slice(0, 6).map((place) => (
+              <PlaceCard place={place} />
+            ))}
+          </div>
+
+          {placesInNeighborhood.length > 6 && (
+            <div class="text-center mt-8">
+              <a
+                href="/map"
+                class="bg-strait-blue text-white px-8 py-3 rounded-xl font-semibold hover:bg-kasbah-navy transition-colors"
+              >
+                View All Places on Map
+              </a>
+            </div>
+          )}
+        </section>
+      )}
+
+      <!-- Tags -->
+      {neighborhood.tags && neighborhood.tags.length > 0 && (
+        <section class="mb-16">
+          <h3 class="text-xl font-semibold text-dark-brown mb-4">Tags</h3>
+          <div class="flex flex-wrap gap-2">
+            {neighborhood.tags.map((tag) => (
+              <span class="bg-strait-blue text-white px-3 py-1 rounded-full text-sm font-medium">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Call to Action -->
+      <section class="bg-gradient-to-br from-strait-blue to-kasbah-navy rounded-2xl p-12 text-center text-white">
+        <h2 class="text-3xl font-display font-bold mb-4">Explore More of Tangier</h2>
+        <p class="text-xl mb-8 opacity-90">
+          Discover other neighborhoods and plan your perfect Tangier experience
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/neighborhoods" 
+            class="bg-white text-strait-blue px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+          >
+            All Neighborhoods
+          </a>
+          <a 
+            href="/map" 
+            class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-strait-blue transition-colors"
+          >
+            Interactive Map
+          </a>
+        </div>
+      </section>
+    </div>
+  </NeighborhoodLayout>
+) : (
+  <NeighborhoodLayout 
+    title="Neighborhood Not Found"
+    description="The requested neighborhood could not be found."
+  >
+    <div class="max-w-4xl mx-auto px-4 py-16 text-center">
+      <div class="text-6xl mb-4">🏘️</div>
+      <h1 class="text-4xl font-display font-bold text-dark-brown mb-4">Neighborhood Not Found</h1>
+      <p class="text-xl text-warm-gray mb-8">
+        The neighborhood you're looking for doesn't exist or has been moved.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a 
+          href="/neighborhoods" 
+          class="bg-strait-blue text-white px-8 py-4 rounded-xl font-semibold hover:bg-kasbah-navy transition-colors"
+        >
+          Browse All Neighborhoods
+        </a>
+        <a 
+          href="/" 
+          class="border-2 border-strait-blue text-strait-blue px-8 py-4 rounded-xl font-semibold hover:bg-strait-blue hover:text-white transition-colors"
+        >
+          Go Home
+        </a>
+      </div>
+    </div>
+  </NeighborhoodLayout>
+)}
+
+
+

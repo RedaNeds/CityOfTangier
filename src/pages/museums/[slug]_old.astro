@@ -1,0 +1,483 @@
+---
+import MuseumLayout from '../../layouts/MuseumLayout.astro';
+import { client } from '../../lib/sanity';
+import { imageUrlBuilder } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  try {
+    const museums = await client.fetch(`
+      *[_type == "place" && (subcategory == "museums" || subcategory == "art-galleries" || subcategory == "cultural-centers")] {
+        "slug": slug.current
+      }
+    `);
+
+    return museums.map((museum) => ({
+      params: { slug: museum.slug },
+      props: { slug: museum.slug },
+    }));
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return [];
+  }
+}
+
+const { slug } = Astro.props;
+
+// Fetch museum data from Sanity
+const museum = await client.fetch(`
+  *[_type == "place" && subcategory in ["museums", "art-galleries", "cultural-centers"] && slug.current == $slug][0] {
+    _id,
+    title,
+    slug,
+    description,
+    mainDescription,
+    category,
+    subcategory,
+    tags,
+    featuredImage,
+    gallery,
+    rating,
+    priceLevel,
+    openingHours,
+    location,
+    address,
+    coordinates,
+    highlights,
+    contact,
+    amenities,
+    accessibility,
+    museumFields {
+      visitDuration,
+      bestTimeToVisit,
+      admissionPrices,
+      collections[] {
+        name,
+        description,
+        image
+      },
+      exhibitions[] {
+        title,
+        description,
+        temporary,
+        startDate,
+        endDate,
+        image
+      },
+      museumRules,
+      extendedAccessibility
+    },
+    contentSections
+  }
+`, { slug });
+
+if (!museum) {
+  return Astro.redirect('/404');
+}
+
+// Helper function to get image URL from Sanity
+function getImageUrl(image: any) {
+  if (!image) return '';
+  const builder = imageUrlBuilder(client);
+  return builder.image(image).url();
+}
+
+// Prepare data for MuseumLayout
+const layoutProps = {
+  title: museum.title,
+  description: museum.description,
+  category: 'museum' as const,
+  subcategory: museum.subcategory,
+  tags: museum.tags || [],
+  featuredImage: getImageUrl(museum.featuredImage),
+  gallery: museum.gallery?.map((img: any) => getImageUrl(img)) || [],
+  rating: museum.rating,
+  priceLevel: museum.priceLevel,
+  location: museum.location,
+  address: museum.address,
+  coordinates: museum.coordinates,
+  openingHours: museum.openingHours || [],
+  admissionPrices: museum.museumFields?.admissionPrices || {},
+  highlights: museum.highlights || [],
+  collections: museum.museumFields?.collections?.map((col: any) => ({
+    name: col.name,
+    description: col.description
+  })) || [],
+  exhibitions: museum.museumFields?.exhibitions?.map((ex: any) => ({
+    title: ex.title,
+    description: ex.description,
+    temporary: ex.temporary,
+    startDate: ex.startDate,
+    endDate: ex.endDate
+  })) || [],
+  contact: museum.contact || {},
+  amenities: museum.amenities || [],
+  accessibility: {
+    wheelchairAccessible: museum.accessibility?.wheelchairAccessible || false,
+    parking: museum.accessibility?.parking || false,
+    audioGuides: museum.museumFields?.extendedAccessibility?.audioGuides || false,
+    guidedTours: museum.museumFields?.extendedAccessibility?.guidedTours || false,
+    restrooms: museum.museumFields?.extendedAccessibility?.restrooms || false,
+    cafe: museum.museumFields?.extendedAccessibility?.cafe || false,
+    giftShop: museum.museumFields?.extendedAccessibility?.giftShop || false
+  },
+  visitDuration: museum.museumFields?.visitDuration || '1-2 hours',
+  bestTimeToVisit: museum.museumFields?.bestTimeToVisit || 'Weekday mornings',
+  rules: museum.museumFields?.museumRules || []
+};
+---
+
+<MuseumLayout {...layoutProps}>
+  <!-- Hero Section -->
+  <div class="museum-hero">
+    <img src={layoutProps.featuredImage} alt={museum.title} />
+    <div class="hero-overlay">
+      <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl md:text-5xl font-bold mb-2">{museum.title}</h1>
+        <p class="text-lg md:text-xl opacity-90">{museum.description}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- Quick Info Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 -mt-16 relative z-10">
+      <div class="info-card">
+        <div class="info-card-icon">⭐</div>
+        <div class="info-card-title">Rating</div>
+        {museum.rating ? (
+          <div class="rating-stars">
+            <span class="info-card-value mr-2">{museum.rating}</span>
+            {[1, 2, 3, 4, 5].map((star: number) => (
+              <span class={`star ${star <= museum.rating! ? '' : 'empty'}`}>★</span>
+            ))}
+          </div>
+        ) : (
+          <div class="info-card-value text-sm">Not rated</div>
+        )}
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-icon">💰</div>
+        <div class="info-card-title">Admission</div>
+        <div class="info-card-value">{museum.museumFields?.admissionPrices?.adult || museum.priceLevel || 'Free'}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-icon">⏱️</div>
+        <div class="info-card-title">Duration</div>
+        <div class="info-card-value">{layoutProps.visitDuration}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-icon">📍</div>
+        <div class="info-card-title">Location</div>
+        <div class="info-card-value text-sm">{museum.location?.split(',')[0] || 'Tangier'}</div>
+      </div>
+    </div>
+
+    <!-- Museum Badge and Tags -->
+    <div class="flex flex-wrap gap-3 mb-8">
+      <span class="museum-badge">
+        {museum.subcategory.replace('-', ' ')}
+      </span>
+      {museum.tags?.map((tag: string) => (
+        <span class="tag-chip">{tag}</span>
+      ))}
+    </div>
+
+    <!-- About This Museum -->
+    {museum.mainDescription && (
+      <section class="mb-12">
+        <h2 class="section-header">About This Museum</h2>
+        <div class="prose max-w-none">
+          {museum.mainDescription.map((block: any) => {
+            if (block._type === 'block') {
+              return (
+                <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                  {block.children?.map((child: any) => child.text).join('')}
+                </p>
+              );
+            }
+            return null;
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- Visitor Information Grid -->
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+
+      <!-- Opening Hours -->
+      {museum.openingHours && museum.openingHours.length > 0 && (
+        <div class="info-card">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="text-2xl">🕐</span>
+            Opening Hours
+          </h3>
+          <table class="hours-table">
+            <tbody>
+              {museum.openingHours.map((schedule: any) => (
+                <tr class={schedule.hours === "Closed" ? "closed" : ""}>
+                  <td>{schedule.day}</td>
+                  <td>{schedule.hours}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {museum.museumFields?.bestTimeToVisit && (
+            <p class="text-sm text-gray-500 mt-4">
+              <strong>Best time to visit:</strong> {museum.museumFields.bestTimeToVisit}
+            </p>
+          )}
+        </div>
+      )}
+
+      <!-- Admission Prices -->
+      {museum.museumFields?.admissionPrices && Object.keys(museum.museumFields.admissionPrices).length > 0 && (
+        <div class="info-card">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="text-2xl">🎫</span>
+            Admission Prices
+          </h3>
+          <table class="prices-table">
+            <tbody>
+              {Object.entries(museum.museumFields.admissionPrices)
+                .filter(([key]) => key !== 'notes')
+                .map(([type, price]) => (
+                  price && (
+                    <tr>
+                      <td class="capitalize">{type}</td>
+                      <td>{price as string}</td>
+                    </tr>
+                  )
+                ))}
+            </tbody>
+          </table>
+          {museum.museumFields.admissionPrices.notes && (
+            <p class="text-sm text-gray-500 mt-4">
+              <strong>Note:</strong> {museum.museumFields.admissionPrices.notes}
+            </p>
+          )}
+        </div>
+      )}
+
+    </div>
+
+    <!-- Highlights -->
+    {museum.highlights && museum.highlights.length > 0 && (
+      <section class="mb-12">
+        <h2 class="section-header">Museum Highlights</h2>
+        <ul class="highlights-list">
+          {museum.highlights.map((highlight: string) => (
+            <li>{highlight}</li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- Collections & Exhibitions -->
+    {(museum.museumFields?.collections?.length > 0 || museum.museumFields?.exhibitions?.length > 0) && (
+      <section class="mb-12">
+        <h2 class="section-header">Collections & Exhibitions</h2>
+
+        {museum.museumFields.collections && museum.museumFields.collections.length > 0 && (
+          <>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6">Permanent Collections</h3>
+            <div class="collections-grid">
+              {museum.museumFields.collections.map((collection: any) => (
+                <div class="collection-card">
+                  <h3>{collection.name}</h3>
+                  <p class="text-gray-600">{collection.description}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {museum.museumFields.exhibitions && museum.museumFields.exhibitions.length > 0 && (
+          <>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4 mt-8">Current Exhibitions</h3>
+            {museum.museumFields.exhibitions.map((exhibition: any) => (
+              <div class={`exhibition-card ${exhibition.temporary ? 'exhibition-temporary' : ''}`}>
+                <div class="flex items-start justify-between mb-2">
+                  <h4 class="text-xl font-bold text-gray-900">{exhibition.title}</h4>
+                  <span class={`exhibition-badge ${exhibition.temporary ? 'temporary' : ''}`}>
+                    {exhibition.temporary ? 'Temporary' : 'Permanent'}
+                  </span>
+                </div>
+                <p class="text-gray-700 mb-2">{exhibition.description}</p>
+                {exhibition.temporary && exhibition.startDate && exhibition.endDate && (
+                  <p class="text-sm text-gray-600">
+                    <strong>Duration:</strong> {new Date(exhibition.startDate).toLocaleDateString()} - {new Date(exhibition.endDate).toLocaleDateString()}
+                  </p>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+      </section>
+    )}
+
+    <!-- Gallery -->
+    {museum.gallery && museum.gallery.length > 0 && (
+      <section class="mb-12">
+        <h2 class="section-header">Gallery</h2>
+        <div class="image-gallery">
+          {museum.gallery.map((image: any, index: number) => (
+            <div class="gallery-item">
+              <img src={getImageUrl(image)} alt={`${museum.title} - Image ${index + 1}`} loading="lazy" />
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Visitor Amenities -->
+    {museum.museumFields?.extendedAccessibility && (
+      <section class="mb-12">
+        <h2 class="section-header">Visitor Amenities</h2>
+        <div class="amenities-grid">
+          <div class={`amenity-item ${museum.accessibility?.wheelchairAccessible ? 'available' : 'unavailable'}`}>
+            <span class={`amenity-icon ${museum.accessibility?.wheelchairAccessible ? 'available' : 'unavailable'}`}>♿</span>
+            <span>Wheelchair Access</span>
+          </div>
+          <div class={`amenity-item ${museum.museumFields.extendedAccessibility.audioGuides ? 'available' : 'unavailable'}`}>
+            <span class={`amenity-icon ${museum.museumFields.extendedAccessibility.audioGuides ? 'available' : 'unavailable'}`}>🎧</span>
+            <span>Audio Guides</span>
+          </div>
+          <div class={`amenity-item ${museum.museumFields.extendedAccessibility.guidedTours ? 'available' : 'unavailable'}`}>
+            <span class={`amenity-icon ${museum.museumFields.extendedAccessibility.guidedTours ? 'available' : 'unavailable'}`}>👥</span>
+            <span>Guided Tours</span>
+          </div>
+          <div class={`amenity-item ${museum.museumFields.extendedAccessibility.giftShop ? 'available' : 'unavailable'}`}>
+            <span class={`amenity-icon ${museum.museumFields.extendedAccessibility.giftShop ? 'available' : 'unavailable'}`}>🛍️</span>
+            <span>Gift Shop</span>
+          </div>
+          <div class={`amenity-item ${museum.museumFields.extendedAccessibility.restrooms ? 'available' : 'unavailable'}`}>
+            <span class={`amenity-icon ${museum.museumFields.extendedAccessibility.restrooms ? 'available' : 'unavailable'}`}>🚻</span>
+            <span>Restrooms</span>
+          </div>
+          <div class={`amenity-item ${museum.museumFields.extendedAccessibility.cafe ? 'available' : 'unavailable'}`}>
+            <span class={`amenity-icon ${museum.museumFields.extendedAccessibility.cafe ? 'available' : 'unavailable'}`}>☕</span>
+            <span>Café</span>
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Museum Rules -->
+    {museum.museumFields?.museumRules && museum.museumFields.museumRules.length > 0 && (
+      <section class="mb-12">
+        <h2 class="section-header">Museum Rules & Guidelines</h2>
+        <ul class="rules-list">
+          {museum.museumFields.museumRules.map((rule: string) => (
+            <li>{rule}</li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <!-- Location & Contact -->
+    <section class="mb-12">
+      <h2 class="section-header">Location & Contact</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <div class="info-card">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="text-2xl">📍</span>
+            Location
+          </h3>
+          {museum.address && (
+            <>
+              <p class="text-gray-700 mb-2"><strong>Address:</strong></p>
+              <p class="text-gray-600 mb-4">{museum.address}</p>
+            </>
+          )}
+          {museum.location && (
+            <p class="text-gray-600 mb-4">{museum.location}</p>
+          )}
+        </div>
+
+        <div class="info-card">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="text-2xl">📞</span>
+            Contact Information
+          </h3>
+          <div class="space-y-2 text-gray-700">
+            {museum.contact?.phone && (
+              <p><strong>Phone:</strong> <a href={`tel:${museum.contact.phone}`} class="text-teal-700 hover:underline">{museum.contact.phone}</a></p>
+            )}
+            {museum.contact?.email && (
+              <p><strong>Email:</strong> <a href={`mailto:${museum.contact.email}`} class="text-teal-700 hover:underline">{museum.contact.email}</a></p>
+            )}
+            {museum.contact?.website && (
+              <p><strong>Website:</strong> <a href={museum.contact.website} target="_blank" rel="noopener noreferrer" class="text-teal-700 hover:underline">Visit Website</a></p>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Map -->
+      {museum.coordinates && (
+        <div class="mt-6 bg-gray-200 rounded-2xl overflow-hidden" style="height: 400px;">
+          <iframe
+            src={`https://www.google.com/maps?q=${museum.coordinates.lat},${museum.coordinates.lng}&output=embed`}
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      )}
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      {museum.coordinates && (
+        <a
+          href={`https://www.google.com/maps/dir/?api=1&destination=${museum.coordinates.lat},${museum.coordinates.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          <span>📍</span>
+          Get Directions
+        </a>
+      )}
+
+      {museum.contact?.website && (
+        <a
+          href={museum.contact.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          <span>🌐</span>
+          Visit Website
+        </a>
+      )}
+
+      <button
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        <span>🖨️</span>
+        Print Guide
+      </button>
+
+      <button
+        onclick="if(navigator.share) { navigator.share({title: document.title, text: 'Check out this museum in Tangier!', url: window.location.href}); } else { navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!'); }"
+        class="btn-secondary"
+      >
+        <span>📤</span>
+        Share
+      </button>
+    </div>
+
+  </div>
+</MuseumLayout>

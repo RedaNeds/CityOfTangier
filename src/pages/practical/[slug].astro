@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, queries } from '../../lib/sanity';
+import type { SanityGuide } from '../../lib/sanity';
+import { PortableText } from '@portabletext/react';
+
+export async function getStaticPaths() {
+  const guides = await client.fetch(queries.allGuides);
+  
+  return guides.map((guide: SanityGuide) => ({
+    params: { slug: guide.slug.current },
+    props: { guide }
+  }));
+}
+
+const { guide } = Astro.props;
+---
+
+<BaseLayout 
+  title={`${guide.title} - Practical Guide for Tangier`}
+  description={guide.excerpt}
+>
+  <div class="max-w-4xl mx-auto px-4 py-16">
+    <!-- Breadcrumb -->
+    <nav class="mb-8">
+      <a href="/practical" class="text-teal-600 hover:text-teal-800 font-medium">← Back to Practical Guides</a>
+    </nav>
+
+    <!-- Header -->
+    <div class="mb-12">
+      <div class="flex items-center space-x-4 mb-4">
+        {guide.category && (
+          <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-medium">
+            {guide.category}
+          </span>
+        )}
+        {guide.featured && (
+          <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+            Featured
+          </span>
+        )}
+      </div>
+      
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+        {guide.title}
+      </h1>
+      
+      <p class="text-xl text-gray-600 mb-6">
+        {guide.excerpt}
+      </p>
+      
+      {guide.author && (
+        <div class="flex items-center space-x-4 text-sm text-gray-500">
+          <div class="flex items-center space-x-2">
+            {guide.author.avatar && (
+              <img 
+                src={client.image(guide.author.avatar).width(32).height(32).url()} 
+                alt={guide.author.name}
+                class="w-8 h-8 rounded-full"
+              />
+            )}
+            <span>By {guide.author.name}</span>
+          </div>
+          <span>•</span>
+          <span>{new Date(guide.publishedAt).toLocaleDateString()}</span>
+        </div>
+      )}
+    </div>
+
+    <!-- Featured Image -->
+    {guide.featuredImage && (
+      <div class="mb-12">
+        <img 
+          src={client.image(guide.featuredImage).width(800).height(400).url()} 
+          alt={guide.featuredImage.alt || guide.title}
+          class="w-full h-64 md:h-96 object-cover rounded-2xl"
+        />
+      </div>
+    )}
+
+    <!-- Content -->
+    <div class="prose prose-lg max-w-none mb-12">
+      {guide.content && (
+        <PortableText value={guide.content} />
+      )}
+    </div>
+
+    <!-- Tags -->
+    {guide.tags && guide.tags.length > 0 && (
+      <div class="mb-12">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
+        <div class="flex flex-wrap gap-2">
+          {guide.tags.map((tag) => (
+            <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+              #{tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Related Guides -->
+    <div class="border-t border-gray-200 pt-12">
+      <h3 class="text-2xl font-bold text-gray-900 mb-8">More Practical Guides</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- You can add related guides here -->
+        <a href="/practical/money-tipping" class="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+          <h4 class="text-lg font-semibold text-gray-900 mb-2">Money & Tipping</h4>
+          <p class="text-gray-600 text-sm">Currency, ATMs, exchange rates, and tipping customs in Tangier.</p>
+        </a>
+        
+        <a href="/practical/taxis" class="block bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+          <h4 class="text-lg font-semibold text-gray-900 mb-2">Taxis in Tangier</h4>
+          <p class="text-gray-600 text-sm">Everything you need to know about taking taxis in Tangier.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .prose h1 {
+    @apply text-3xl font-bold text-gray-900 mb-6;
+  }
+  
+  .prose h2 {
+    @apply text-2xl font-bold text-gray-900 mb-4 mt-8;
+  }
+  
+  .prose h3 {
+    @apply text-xl font-bold text-gray-900 mb-3 mt-6;
+  }
+  
+  .prose p {
+    @apply text-gray-700 mb-4 leading-relaxed;
+  }
+  
+  .prose ul, .prose ol {
+    @apply mb-4 pl-6;
+  }
+  
+  .prose li {
+    @apply text-gray-700 mb-2;
+  }
+  
+  .prose blockquote {
+    @apply border-l-4 border-teal-500 pl-6 italic text-gray-600 my-6;
+  }
+  
+  .prose code {
+    @apply bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm;
+  }
+  
+  .prose pre {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6;
+  }
+  
+  .prose pre code {
+    @apply bg-transparent text-gray-100 p-0;
+  }
+</style>
+
+

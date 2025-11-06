@@ -1,0 +1,91 @@
+---
+import MapLayout from '../layouts/MapLayout.astro';
+import MapWrapper from '../components/InteractiveMaps/MapWrapper.tsx';
+import { client, queries } from '../lib/sanity';
+import type { SanityPlace, SanityNeighborhood } from '../lib/sanity';
+
+// Get all places with coordinates from Sanity - Optimized query with error handling
+let places: SanityPlace[] = [];
+let neighborhoods: SanityNeighborhood[] = [];
+
+try {
+  [places, neighborhoods] = await Promise.all([
+    client.fetch(`
+      *[_type == "place" && defined(location.coordinates)] | order(publishedAt desc) {
+        _id,
+        title,
+        slug,
+        description,
+        category,
+        subcategory,
+        featuredImage {
+          asset->{
+            _id,
+            url
+          },
+          alt
+        },
+        location {
+          address,
+          coordinates
+        },
+        rating,
+        priceLevel,
+        tags,
+        featured,
+        publishedAt
+      }
+    `) as SanityPlace[],
+    client.fetch(`
+      *[_type == "neighborhood" && defined(location.coordinates)] | order(publishedAt desc) {
+        _id,
+        title,
+        slug,
+        description,
+        location {
+          coordinates,
+          bounds
+        },
+        characteristics,
+        tags,
+        featured,
+        publishedAt
+      }
+    `) as SanityNeighborhood[]
+  ]);
+} catch (error) {
+  console.error('Error fetching data from Sanity:', error);
+  // Fallback data structure
+  places = [];
+  neighborhoods = [];
+}
+
+// Data is already fetched above in the try-catch block
+
+// Group places by category for filtering
+const placesByCategory = places.reduce((acc, place) => {
+  const category = place.category;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(place);
+  return acc;
+}, {} as Record<string, typeof places>);
+
+// Get unique categories
+const categories = Object.keys(placesByCategory);
+---
+
+<MapLayout 
+  title="Interactive Map of Tangier - Discover Places & Neighborhoods"
+  description="Explore Tangier with our interactive map. Find places to visit, eat, and stay in each neighborhood of the city."
+>
+  <div class="h-full">
+    <MapWrapper 
+      client:only="react"
+      places={places}
+      neighborhoods={neighborhoods}
+      categories={categories}
+    />
+  </div>
+</MapLayout>

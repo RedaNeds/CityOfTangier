@@ -1,0 +1,164 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+import { urlFor } from '../../lib/sanity';
+
+// Fetch all blog posts from Sanity
+const blogPosts = await client.fetch(`
+  *[_type == "blogPost"] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    featuredImage,
+    publishedAt,
+    author,
+    category,
+    tags,
+    readTime
+  }
+`);
+
+const title = "Blog - City of Tangier";
+const description = "Discover stories, guides, and insights about Tangier. From local culture to travel tips, explore everything this magical city has to offer.";
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-teal-700 to-teal-900 text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-5xl md:text-6xl font-serif font-bold mb-6">
+          Tangier Stories
+        </h1>
+        <p class="text-xl md:text-2xl max-w-3xl mx-auto font-light">
+          Dive into the heart of Morocco's gateway city through stories, guides, and local insights
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Posts Grid -->
+  <section class="py-16 bg-stone-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {blogPosts.length === 0 ? (
+        <div class="text-center py-12">
+          <p class="text-gray-600 text-lg">No blog posts available yet. Check back soon!</p>
+        </div>
+      ) : (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogPosts.map((post) => (
+            <article class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
+              <a href={`/blog/${post.slug.current}`}>
+                <!-- Featured Image -->
+                <div class="relative h-56 overflow-hidden">
+                  {post.featuredImage?.asset ? (
+                    <img
+                      src={urlFor(post.featuredImage).width(800).height(450).url()}
+                      alt={post.featuredImage.alt || post.title}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div class="w-full h-full bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
+                      <span class="text-6xl">📝</span>
+                    </div>
+                  )}
+
+                  <!-- Category Badge -->
+                  {post.category && (
+                    <span class="absolute top-4 left-4 px-3 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full">
+                      {post.category}
+                    </span>
+                  )}
+                </div>
+
+                <!-- Content -->
+                <div class="p-6">
+                  <!-- Title -->
+                  <h2 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-teal-700 transition-colors line-clamp-2">
+                    {post.title}
+                  </h2>
+
+                  <!-- Excerpt -->
+                  {post.excerpt && (
+                    <p class="text-gray-600 mb-4 line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                  )}
+
+                  <!-- Meta Info -->
+                  <div class="flex items-center justify-between text-sm text-gray-500">
+                    <div class="flex items-center space-x-4">
+                      {post.author?.name && (
+                        <span class="flex items-center">
+                          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                          </svg>
+                          {post.author.name}
+                        </span>
+                      )}
+                      {post.readTime && (
+                        <span class="flex items-center">
+                          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                          </svg>
+                          {post.readTime} min read
+                        </span>
+                      )}
+                    </div>
+                    {post.publishedAt && (
+                      <time datetime={post.publishedAt}>
+                        {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </time>
+                    )}
+                  </div>
+
+                  <!-- Tags -->
+                  {post.tags && post.tags.length > 0 && (
+                    <div class="mt-4 flex flex-wrap gap-2">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Newsletter CTA -->
+  <section class="py-16 bg-teal-900 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">
+        Stay Updated
+      </h2>
+      <p class="text-xl mb-8 text-teal-100">
+        Get the latest stories and travel tips delivered to your inbox
+      </p>
+      <form class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+        <input
+          type="email"
+          placeholder="Your email address"
+          class="flex-1 px-6 py-3 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          required
+        />
+        <button
+          type="submit"
+          class="px-8 py-3 bg-orange-500 hover:bg-orange-600 rounded-full font-semibold transition-colors"
+        >
+          Subscribe
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

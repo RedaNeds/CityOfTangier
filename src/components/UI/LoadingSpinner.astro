@@ -1,0 +1,38 @@
+---
+export interface Props {
+  size?: 'sm' | 'md' | 'lg';
+  text?: string;
+  className?: string;
+}
+
+const { 
+  size = 'md', 
+  text = 'Loading...', 
+  className = '' 
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'w-4 h-4',
+  md: 'w-8 h-8', 
+  lg: 'w-12 h-12'
+};
+---
+
+<div class={`flex flex-col items-center justify-center p-8 ${className}`} role="status" aria-label={text}>
+  <div class={`${sizeClasses[size]} border-2 border-strait-blue border-t-transparent rounded-full animate-spin`}></div>
+  {text && (
+    <p class="mt-2 text-sm text-slate-600 font-medium">{text}</p>
+  )}
+</div>
+
+<style>
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>
+

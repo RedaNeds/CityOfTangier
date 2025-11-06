@@ -1,0 +1,55 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ItineraryLayout from './ItineraryLayout.astro';
+import ItineraryGenerator from '../components/Itinerary/ItineraryGenerator.astro';
+
+export interface Props {
+  entry: CollectionEntry<'itineraries'> | any; // Allow both Astro and Sanity formats
+}
+
+const { entry } = Astro.props;
+
+// Handle both Astro content collection format and Sanity format
+const isAstroFormat = entry && entry.data;
+const data = isAstroFormat ? entry.data : entry;
+const slug = isAstroFormat ? entry.slug : entry.slug?.current;
+
+// Convert the data to the format expected by ItineraryGenerator
+const itineraryData = {
+  id: slug,
+  title: data.title,
+  description: data.description,
+  duration: data.duration,
+  difficulty: data.difficulty,
+  budget: data.budget,
+  tags: data.tags,
+  featuredImage: data.featuredImage,
+  totalStops: data.totalStops,
+  totalDuration: data.totalDuration,
+  periods: data.periods || [],
+  tips: data.tips || [],
+  transportation: data.transportation,
+};
+
+---
+
+<ItineraryLayout 
+  title={data.title}
+  description={data.description}
+  duration={data.duration}
+  difficulty={data.difficulty}
+  budget={data.budget}
+  tags={data.tags}
+  featuredImage={data.featuredImage}
+>
+  <ItineraryGenerator itinerary={itineraryData} />
+  
+  <!-- Additional content from markdown if any -->
+  {entry.body && (
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      <div class="prose prose-lg max-w-none">
+        <div set:html={entry.body} />
+      </div>
+    </div>
+  )}
+</ItineraryLayout>

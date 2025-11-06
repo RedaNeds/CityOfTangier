@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const markets = await client.fetch(`*[_type == "market"]{ "slug": slug.current }`);
+  return markets.map((market: any) => ({
+    params: { slug: market.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const market = await client.fetch(`
+  *[_type == "market" && slug.current == $slug][0]{
+    title,
+    subtitle,
+    description,
+    heroImage,
+    gallery,
+    location,
+    openingHours,
+    marketType,
+    marketDays,
+    bestTimeToVisit,
+    specialties,
+    vendors,
+    bargaining,
+    priceLevel,
+    indoorOutdoor,
+    crowdLevel,
+    localTips,
+    contact
+  }
+`, { slug });
+
+function getImageUrl(image: any) {
+  if (!image) return '';
+  return imageUrlBuilder(client).image(image).url();
+}
+---
+
+<BaseLayout title={market.title}>
+  <div class="bg-[#F5F1E8]">
+
+    <!-- Hero Section with large image -->
+    <div class="relative h-[500px] w-full">
+      <img
+        src={getImageUrl(market.heroImage)}
+        alt={market.title}
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+        <div class="max-w-6xl mx-auto">
+          <div class="flex items-center gap-3 mb-2">
+            <p class="text-sm uppercase tracking-wider">Market</p>
+            {market.priceLevel && (
+              <span class="bg-orange-600 px-3 py-1 rounded-full text-xs font-semibold">
+                {market.priceLevel}
+              </span>
+            )}
+          </div>
+          <h1 class="text-5xl font-serif mb-2">{market.title}</h1>
+          {market.subtitle && <p class="text-xl opacity-90">{market.subtitle}</p>}
+          {market.marketType && <p class="text-lg opacity-80 mt-2 capitalize">{market.marketType.replace('-', ' ')}</p>}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-6 py-16">
+
+      <!-- About -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-6">About This Market</h2>
+        <p class="text-lg text-[#5C5550] leading-relaxed max-w-4xl mb-6">
+          {market.description}
+        </p>
+        <div class="flex flex-wrap gap-3">
+          {market.indoorOutdoor && (
+            <div class="bg-[#E8DCC8] px-4 py-2 rounded-lg">
+              <span class="text-sm text-[#5C5550]">Type: </span>
+              <span class="text-[#2C2416] font-semibold capitalize">{market.indoorOutdoor}</span>
+            </div>
+          )}
+          {market.crowdLevel && (
+            <div class="bg-[#E8DCC8] px-4 py-2 rounded-lg">
+              <span class="text-sm text-[#5C5550]">Crowd Level: </span>
+              <span class="text-[#2C2416] font-semibold capitalize">{market.crowdLevel.replace('-', ' ')}</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <!-- Specialties -->
+      {market.specialties && market.specialties.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-6">What You'll Find</h2>
+          <div class="flex flex-wrap gap-2">
+            {market.specialties.map((specialty: string) => (
+              <span class="bg-orange-100 text-orange-800 px-4 py-2 rounded-full text-sm font-medium">
+                {specialty}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Bargaining Info -->
+      {market.bargaining && (
+        <section class="mb-16">
+          <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-10">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Bargaining Tips</h2>
+            {market.bargaining.expected !== undefined && (
+              <p class="text-[#2C2416] font-semibold mb-4">
+                {market.bargaining.expected ? '✓ Bargaining is expected and encouraged' : '✗ Fixed prices - bargaining not expected'}
+              </p>
+            )}
+            {market.bargaining.tips && (
+              <p class="text-[#5C5550] leading-relaxed">
+                {market.bargaining.tips}
+              </p>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- Gallery -->
+      {market.gallery && market.gallery.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Gallery</h2>
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
+            {market.gallery.map((image: any, idx: number) => (
+              <div class="aspect-square overflow-hidden rounded cursor-pointer hover:opacity-75 transition-opacity">
+                <img
+                  src={getImageUrl(image)}
+                  alt={`Gallery image ${idx + 1}`}
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Local Tips -->
+      {market.localTips && market.localTips.length > 0 && (
+        <section class="mb-16">
+          <div class="bg-white rounded-2xl p-10 shadow-sm">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Insider Tips</h2>
+            <ul class="space-y-4">
+              {market.localTips.map((tip: string) => (
+                <li class="flex items-start gap-3">
+                  <span class="text-orange-600 text-xl">💡</span>
+                  <span class="text-[#5C5550]">{tip}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      <!-- Vendor Information -->
+      {market.vendors && (
+        <section class="mb-16">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-10">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Vendors</h2>
+            {market.vendors.approximateNumber && (
+              <p class="text-[#2C2416] font-semibold mb-4">
+                Approximately {market.vendors.approximateNumber} vendors
+              </p>
+            )}
+            {market.vendors.types && market.vendors.types.length > 0 && (
+              <div>
+                <p class="text-[#5C5550] mb-3">Vendor Types:</p>
+                <div class="flex flex-wrap gap-2">
+                  {market.vendors.types.map((type: string) => (
+                    <span class="bg-white px-3 py-1 rounded-full text-sm text-[#5C5550]">
+                      {type}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- Plan Your Visit -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Plan Your Visit</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+          <!-- Opening Hours -->
+          {market.openingHours && market.openingHours.length > 0 && (
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Opening Hours</h3>
+              <div class="space-y-2">
+                {market.openingHours.map((schedule: any) => (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550] capitalize">{schedule.day}</span>
+                    <span class={schedule.isOpen ? 'text-[#2C2416]' : 'text-red-600'}>
+                      {schedule.hours}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Market Days & Best Time -->
+          <div class="bg-white rounded-lg p-6 shadow-sm">
+            <h3 class="font-serif text-xl text-[#2C2416] mb-4">Best Time to Visit</h3>
+            {market.marketDays && market.marketDays.length > 0 && (
+              <div class="mb-4">
+                <p class="text-sm text-[#5C5550] mb-2">Market Days:</p>
+                <div class="flex flex-wrap gap-2">
+                  {market.marketDays.map((day: string) => (
+                    <span class="bg-[#E8DCC8] px-3 py-1 rounded-full text-xs text-[#2C2416] capitalize">
+                      {day}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {market.bestTimeToVisit && (
+              <div>
+                <p class="text-sm text-[#5C5550] mb-2">Recommended Time:</p>
+                <p class="text-[#2C2416] font-semibold capitalize">{market.bestTimeToVisit.replace('-', ' ')}</p>
+              </div>
+            )}
+          </div>
+
+        </div>
+
+        <!-- Location & Contact -->
+        <div class="mt-8 bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl text-[#2C2416] mb-4">Location & Contact</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            {market.location && (
+              <div>
+                <p class="text-sm text-[#5C5550] mb-1">Address</p>
+                <p class="text-[#2C2416]">{market.location.address}</p>
+                <p class="text-[#2C2416]">{market.location.city}</p>
+              </div>
+            )}
+            {market.contact && (
+              <div class="space-y-2 text-sm">
+                {market.contact.phone && (
+                  <div>
+                    <span class="text-[#5C5550]">Phone: </span>
+                    <a href={`tel:${market.contact.phone}`} class="text-[#2C2416] hover:underline">
+                      {market.contact.phone}
+                    </a>
+                  </div>
+                )}
+                {market.contact.website && (
+                  <div>
+                    <span class="text-[#5C5550]">Website: </span>
+                    <a href={market.contact.website} target="_blank" class="text-[#2C2416] hover:underline">
+                      Visit website
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+</BaseLayout>
+
+

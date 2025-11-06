@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+import EventsCalendar from '../../components/EventsCalendar.tsx';
+import EventsPage from '../../components/EventsPage.tsx';
+
+// Get all events from Sanity
+const events = await client.fetch(`
+  *[_type == "event"] | order(eventDate asc) {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    eventDate,
+    endDate,
+    location,
+    price,
+    featuredImage,
+    featured,
+    tags
+  }
+`);
+
+// Get featured events
+const featuredEvents = events.filter(event => event.featured);
+
+// Get upcoming events (next 7 days)
+const now = new Date();
+const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+const upcomingEvents = events.filter(event => {
+  const eventDate = new Date(event.eventDate);
+  return eventDate >= now && eventDate <= nextWeek;
+});
+
+// Group events by category
+const eventsByCategory = events.reduce((acc, event) => {
+  const category = event.category || 'other';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(event);
+  return acc;
+}, {} as Record<string, typeof events>);
+---
+
+<BaseLayout 
+  title="Events in Tangier - What's Happening"
+  description="Discover the latest events, festivals, and cultural happenings in Tangier. From Tanjazz to art exhibitions, find what's on in the city."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">What's On in Tangier</h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Stay updated with the latest events, festivals, and cultural happenings in Tangier. 
+        From music festivals to art exhibitions, there's always something exciting happening.
+      </p>
+    </div>
+
+    <!-- Events with Filters -->
+    <EventsPage events={events} client:load />
+
+    <!-- Interactive Calendar -->
+    <div class="mb-16">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold text-gray-900">Event Calendar</h2>
+        <a href="/events/calendar" class="text-teal-600 hover:text-teal-800 font-medium">View Full Calendar →</a>
+      </div>
+      <EventsCalendar events={events} client:load />
+    </div>
+
+    <!-- Event Submission -->
+    <div class="bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl p-8 text-white text-center">
+      <h2 class="text-3xl font-bold mb-4">Have an Event?</h2>
+      <p class="text-xl mb-6 opacity-90">
+        Submit your event to be featured on our calendar and reach thousands of visitors.
+      </p>
+      <button class="bg-white text-teal-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+        Submit Event
+      </button>
+    </div>
+  </div>
+</BaseLayout>

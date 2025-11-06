@@ -1,0 +1,177 @@
+---
+import { client } from '../../lib/sanity';
+
+let eatDrinkPlaces = [];
+
+try {
+  eatDrinkPlaces = await client.fetch(`
+    *[_type == "place" && category == "eat-drink"] | order(publishedAt desc)[0...3] {
+      _id,
+      title,
+      slug,
+      description,
+      featuredImage { asset->{ url } },
+      location { address },
+      priceLevel,
+      tags,
+      openingHours
+    }
+  `);
+} catch (error) {
+  console.error('Error fetching eat & drink places:', error);
+}
+
+// Fallback data if no places from Sanity
+if (eatDrinkPlaces.length === 0) {
+  eatDrinkPlaces = [
+    {
+      title: 'Café Hafa',
+      slug: { current: 'cafe-hafa' },
+      description: 'Legendary cliffside café where Rolling Stones once sipped mint tea while watching spectacular sunsets.',
+      featuredImage: { asset: { url: '/images/cafe-hafa.jpg' } },
+      location: { address: 'Marshan' },
+      priceLevel: '€ €',
+      tags: ['sea-view', 'historic', 'mint tea'],
+      isOpen: true
+    },
+    {
+      title: 'Restaurant Saveur de Poisson',
+      slug: { current: 'saveur-de-poisson' },
+      description: 'Fresh seafood specialties in a charming medina setting with traditional Moroccan hospitality.',
+      featuredImage: { asset: { url: '/images/saveur.jpg' } },
+      location: { address: 'Medina' },
+      priceLevel: '€ €€',
+      tags: ['seafood', 'traditional', 'family'],
+      isOpen: false
+    },
+    {
+      title: 'Achakar Beach Club',
+      slug: { current: 'achakar-beach-club' },
+      description: 'Upscale beachfront dining with Mediterranean cuisine and cocktails overlooking the Atlantic.',
+      featuredImage: { asset: { url: '/images/achakar.jpg' } },
+      location: { address: 'Achakar' },
+      priceLevel: '€ €€€',
+      tags: ['beach', 'cocktails', 'luxury'],
+      isOpen: true
+    }
+  ];
+}
+---
+
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-12">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900 mb-2">
+          Food & drink
+        </h2>
+        <p class="text-lg text-gray-600">
+          From traditional mint tea to fresh seafood, taste the flavors of Tangier
+        </p>
+      </div>
+      <a
+        href="/guides#eat-drink"
+        class="text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 group"
+      >
+        See all
+        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {eatDrinkPlaces.map((place, index) => (
+        <a
+          href={`/places/${place.slug.current}`}
+          class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+        >
+          <!-- Image -->
+          <div class="relative h-64 overflow-hidden">
+            <img
+              src={place.featuredImage?.asset?.url || '/placeholder.jpg'}
+              alt={place.title}
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            <!-- Open/Closed badge -->
+            {place.isOpen !== undefined ? (
+              place.isOpen ? (
+                <div class="absolute top-4 left-4 bg-teal-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="8" />
+                  </svg>
+                  Open now
+                </div>
+              ) : (
+                <div class="absolute top-4 left-4 bg-gray-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="8" />
+                  </svg>
+                  Closed
+                </div>
+              )
+            ) : (
+              index === 1 ? (
+                <div class="absolute top-4 left-4 bg-gray-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="8" />
+                  </svg>
+                  Closed
+                </div>
+              ) : (
+                <div class="absolute top-4 left-4 bg-teal-500 text-white px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="8" />
+                  </svg>
+                  Open now
+                </div>
+              )
+            )}
+          </div>
+
+          <!-- Content -->
+          <div class="p-6">
+            <!-- Title & Price -->
+            <div class="flex items-start justify-between mb-3">
+              <h3 class="text-2xl font-bold text-gray-900 group-hover:text-teal-600 transition-colors flex-1">
+                {place.title}
+              </h3>
+              {place.priceLevel && (
+                <span class="text-gray-900 font-semibold ml-2">{place.priceLevel}</span>
+              )}
+            </div>
+
+            <!-- Location -->
+            {place.location?.address && (
+              <div class="flex items-center gap-2 mb-3 text-gray-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span class="text-sm">{place.location.address}</span>
+              </div>
+            )}
+
+            <!-- Description -->
+            <p class="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+              {place.description}
+            </p>
+
+            <!-- Tags -->
+            {place.tags && place.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2">
+                {place.tags.slice(0, 3).map((tag) => (
+                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

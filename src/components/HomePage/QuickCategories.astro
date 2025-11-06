@@ -1,0 +1,70 @@
+---
+// Quick Categories Component
+const categories = [
+  {
+    name: 'Sea-view rooftops',
+    count: '12 amazing spots',
+    bgColor: 'bg-gradient-to-br from-[#c56e56] to-[#b8624a]',
+    iconBg: 'bg-white/20',
+    href: '/guides/rooftops',
+    icon: 'sunset'
+  },
+  {
+    name: 'Things to do',
+    count: '50+ experiences',
+    bgColor: 'bg-gradient-to-br from-[#2b7a88] to-[#256b77]',
+    iconBg: 'bg-white/20',
+    href: '/guides',
+    icon: 'activities'
+  },
+  {
+    name: 'Events this week',
+    count: '8 happening now',
+    bgColor: 'bg-gradient-to-br from-[#5eb9d1] to-[#4ba8bf]',
+    iconBg: 'bg-white/20',
+    href: '/events',
+    icon: 'calendar'
+  },
+];
+---
+
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {categories.map((category) => (
+        <a
+          href={category.href}
+          class={`relative ${category.bgColor} rounded-2xl p-8 text-white hover:shadow-2xl transition-all duration-300 group overflow-hidden`}
+        >
+          <!-- Content -->
+          <div class="relative z-10">
+            <h3 class="text-2xl font-bold mb-2">{category.name}</h3>
+            <p class="text-white/90 font-medium">{category.count}</p>
+          </div>
+
+          <!-- Icon -->
+          <div class={`absolute top-4 right-4 w-16 h-16 ${category.iconBg} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+            {category.icon === 'sunset' && (
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+            {category.icon === 'activities' && (
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+            )}
+            {category.icon === 'calendar' && (
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            )}
+          </div>
+
+          <!-- Hover effect gradient overlay -->
+          <div class="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors duration-300"></div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,278 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const beaches = await client.fetch(`*[_type == "beach"]{ "slug": slug.current }`);
+  return beaches.map((beach: any) => ({
+    params: { slug: beach.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const beach = await client.fetch(`
+  *[_type == "beach" && slug.current == $slug][0]{
+    title,
+    subtitle,
+    description,
+    heroImage,
+    gallery,
+    location,
+    beachType,
+    accessibility,
+    facilities,
+    waterSports,
+    lifeguard,
+    blueFlag,
+    restaurants,
+    bestTimeToVisit,
+    wavesInfo,
+    familyFriendly,
+    parking,
+    contact
+  }
+`, { slug });
+
+function getImageUrl(image: any) {
+  if (!image) return '';
+  return imageUrlBuilder(client).image(image).url();
+}
+---
+
+<BaseLayout title={beach.title}>
+  <div class="bg-[#F5F1E8]">
+
+    <!-- Hero Section with large image -->
+    <div class="relative h-[500px] w-full">
+      <img
+        src={getImageUrl(beach.heroImage)}
+        alt={beach.title}
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+        <div class="max-w-6xl mx-auto">
+          <div class="flex items-center gap-3 mb-2">
+            <p class="text-sm uppercase tracking-wider">Beach</p>
+            {beach.blueFlag && (
+              <span class="bg-blue-600 px-3 py-1 rounded-full text-xs font-semibold">
+                Blue Flag Certified
+              </span>
+            )}
+            {beach.familyFriendly && (
+              <span class="bg-green-600 px-3 py-1 rounded-full text-xs font-semibold">
+                Family Friendly
+              </span>
+            )}
+          </div>
+          <h1 class="text-5xl font-serif mb-2">{beach.title}</h1>
+          {beach.subtitle && <p class="text-xl opacity-90">{beach.subtitle}</p>}
+          {beach.beachType && <p class="text-lg opacity-80 mt-2 capitalize">{beach.beachType.replace('-', ' ')}</p>}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-6 py-16">
+
+      <!-- About -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-6">About This Beach</h2>
+        <p class="text-lg text-[#5C5550] leading-relaxed max-w-4xl mb-6">
+          {beach.description}
+        </p>
+        <div class="flex flex-wrap gap-3">
+          {beach.accessibility && (
+            <div class="bg-[#E8DCC8] px-4 py-2 rounded-lg">
+              <span class="text-sm text-[#5C5550]">Accessibility: </span>
+              <span class="text-[#2C2416] font-semibold capitalize">{beach.accessibility}</span>
+            </div>
+          )}
+          {beach.wavesInfo && (
+            <div class="bg-[#E8DCC8] px-4 py-2 rounded-lg">
+              <span class="text-sm text-[#5C5550]">Waves: </span>
+              <span class="text-[#2C2416] font-semibold capitalize">{beach.wavesInfo.replace('-', ' ')}</span>
+            </div>
+          )}
+          {beach.lifeguard && (
+            <div class="bg-green-100 px-4 py-2 rounded-lg">
+              <span class="text-green-800 font-semibold">✓ Lifeguard on Duty</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <!-- Water Sports & Activities -->
+      {beach.waterSports && beach.waterSports.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Water Sports & Activities</h2>
+          <div class="flex flex-wrap gap-2">
+            {beach.waterSports.map((sport: string) => (
+              <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">
+                {sport}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Facilities -->
+      {beach.facilities && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Facilities</h2>
+          <div class="grid md:grid-cols-3 gap-4">
+            {beach.facilities.showers && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">🚿</span>
+                <span class="text-[#5C5550]">Showers</span>
+              </div>
+            )}
+            {beach.facilities.lockers && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">🔒</span>
+                <span class="text-[#5C5550]">Lockers</span>
+              </div>
+            )}
+            {beach.facilities.parking && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">🅿️</span>
+                <span class="text-[#5C5550]">Parking</span>
+              </div>
+            )}
+            {beach.facilities.sunbeds && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">🏖️</span>
+                <span class="text-[#5C5550]">Sunbeds</span>
+              </div>
+            )}
+            {beach.facilities.umbrellas && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">☂️</span>
+                <span class="text-[#5C5550]">Umbrellas</span>
+              </div>
+            )}
+            {beach.facilities.restrooms && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">🚻</span>
+                <span class="text-[#5C5550]">Restrooms</span>
+              </div>
+            )}
+            {beach.facilities.changeRooms && (
+              <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3">
+                <span class="text-2xl">👕</span>
+                <span class="text-[#5C5550]">Change Rooms</span>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- Gallery -->
+      {beach.gallery && beach.gallery.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Gallery</h2>
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
+            {beach.gallery.map((image: any, idx: number) => (
+              <div class="aspect-square overflow-hidden rounded cursor-pointer hover:opacity-75 transition-opacity">
+                <img
+                  src={getImageUrl(image)}
+                  alt={`Gallery image ${idx + 1}`}
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Beach Restaurants & Clubs -->
+      {beach.restaurants && beach.restaurants.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Beach Restaurants & Clubs</h2>
+          <div class="grid md:grid-cols-2 gap-6">
+            {beach.restaurants.map((restaurant: any) => (
+              <div class="bg-white rounded-lg p-6 shadow-sm">
+                <h3 class="font-serif text-xl text-[#2C2416] mb-2">{restaurant.name}</h3>
+                {restaurant.type && (
+                  <p class="text-sm text-blue-600 mb-3">{restaurant.type}</p>
+                )}
+                {restaurant.description && (
+                  <p class="text-[#5C5550] text-sm">{restaurant.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Best Time to Visit & Parking -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Practical Information</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+          {/* Best Time to Visit */}
+          {beach.bestTimeToVisit && (
+            <div class="bg-blue-50 rounded-lg p-6">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Best Time to Visit</h3>
+              <p class="text-[#5C5550]">{beach.bestTimeToVisit}</p>
+            </div>
+          )}
+
+          {/* Parking */}
+          {beach.parking && beach.parking.available && (
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Parking</h3>
+              {beach.parking.cost && (
+                <p class="text-[#2C2416] font-semibold mb-2">{beach.parking.cost}</p>
+              )}
+              {beach.parking.notes && (
+                <p class="text-[#5C5550] text-sm">{beach.parking.notes}</p>
+              )}
+            </div>
+          )}
+
+        </div>
+
+        <!-- Location & Contact -->
+        <div class="mt-8 bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl text-[#2C2416] mb-4">Location & Contact</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            {beach.location && (
+              <div>
+                <p class="text-sm text-[#5C5550] mb-1">Address</p>
+                <p class="text-[#2C2416]">{beach.location.address}</p>
+                <p class="text-[#2C2416]">{beach.location.city}</p>
+              </div>
+            )}
+            {beach.contact && (
+              <div class="space-y-2 text-sm">
+                {beach.contact.phone && (
+                  <div>
+                    <span class="text-[#5C5550]">Phone: </span>
+                    <a href={`tel:${beach.contact.phone}`} class="text-[#2C2416] hover:underline">
+                      {beach.contact.phone}
+                    </a>
+                  </div>
+                )}
+                {beach.contact.website && (
+                  <div>
+                    <span class="text-[#5C5550]">Website: </span>
+                    <a href={beach.contact.website} target="_blank" class="text-[#2C2416] hover:underline">
+                      Visit website
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+</BaseLayout>
+
+

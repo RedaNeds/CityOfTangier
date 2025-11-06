@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const museums = await client.fetch(`*[_type == "museum"]{ "slug": slug.current }`);
+  return museums.map((museum: any) => ({
+    params: { slug: museum.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const museum = await client.fetch(`
+  *[_type == "museum" && slug.current == $slug][0]{
+    title,
+    subtitle,
+    description,
+    heroImage,
+    gallery,
+    location,
+    openingHours,
+    ticketPrices,
+    collections,
+    history,
+    contact
+  }
+`, { slug });
+
+function getImageUrl(image: any) {
+  if (!image) return '';
+  return imageUrlBuilder(client).image(image).url();
+}
+---
+
+<BaseLayout title={museum.title}>
+  <div class="bg-[#F5F1E8]">
+
+    <!-- Hero Section with large image -->
+    <div class="relative h-[500px] w-full">
+      <img
+        src={getImageUrl(museum.heroImage)}
+        alt={museum.title}
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+        <div class="max-w-6xl mx-auto">
+          <p class="text-sm uppercase tracking-wider mb-2">Museum</p>
+          <h1 class="text-5xl font-serif mb-2">{museum.title}</h1>
+          {museum.subtitle && <p class="text-xl opacity-90">{museum.subtitle}</p>}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-6 py-16">
+
+      <!-- About This Museum -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-6">About This Museum</h2>
+        <p class="text-lg text-[#5C5550] leading-relaxed max-w-4xl">
+          {museum.description}
+        </p>
+      </section>
+
+      <!-- Collections & Exhibitions -->
+      {museum.collections && museum.collections.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Collections & Exhibitions</h2>
+          <div class="grid md:grid-cols-3 gap-6">
+            {museum.collections.map((collection: any) => (
+              <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                {collection.image && (
+                  <img
+                    src={getImageUrl(collection.image)}
+                    alt={collection.title}
+                    class="w-full h-48 object-cover"
+                  />
+                )}
+                <div class="p-5">
+                  <h3 class="font-serif text-xl text-[#2C2416] mb-2">{collection.title}</h3>
+                  <p class="text-[#5C5550] text-sm leading-relaxed">{collection.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Gallery -->
+      {museum.gallery && museum.gallery.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Gallery</h2>
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
+            {museum.gallery.map((image: any, idx: number) => (
+              <div class="aspect-square overflow-hidden rounded cursor-pointer hover:opacity-75 transition-opacity">
+                <img
+                  src={getImageUrl(image)}
+                  alt={`Gallery image ${idx + 1}`}
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- History Section -->
+      {museum.history && (
+        <section class="mb-16">
+          <div class="bg-[#E8DCC8] rounded-2xl p-10">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">
+              {museum.history.title || 'History'}
+            </h2>
+            {museum.history.description && (
+              <p class="text-[#5C5550] leading-relaxed mb-8">
+                {museum.history.description}
+              </p>
+            )}
+            {museum.history.timeline && museum.history.timeline.length > 0 && (
+              <div class="space-y-4">
+                {museum.history.timeline.map((item: any) => (
+                  <div class="flex gap-4">
+                    <div class="text-[#8B7355] font-semibold min-w-[80px]">{item.year}</div>
+                    <div class="text-[#5C5550]">{item.event}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- Plan Your Visit -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Plan Your Visit</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+          <!-- Opening Hours -->
+          {museum.openingHours && museum.openingHours.length > 0 && (
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Opening Hours</h3>
+              <div class="space-y-2">
+                {museum.openingHours.map((schedule: any) => (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">{schedule.day}</span>
+                    <span class={schedule.isOpen ? 'text-[#2C2416]' : 'text-red-600'}>
+                      {schedule.hours}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Ticket Prices -->
+          {museum.ticketPrices && (
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Admission Prices</h3>
+              <div class="space-y-2">
+                {museum.ticketPrices.adult && (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">Adults</span>
+                    <span class="text-[#2C2416] font-semibold">{museum.ticketPrices.adult}</span>
+                  </div>
+                )}
+                {museum.ticketPrices.student && (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">Students</span>
+                    <span class="text-[#2C2416] font-semibold">{museum.ticketPrices.student}</span>
+                  </div>
+                )}
+                {museum.ticketPrices.child && (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">Children (under 12)</span>
+                    <span class="text-[#2C2416] font-semibold">{museum.ticketPrices.child}</span>
+                  </div>
+                )}
+              </div>
+              {museum.ticketPrices.groupNote && (
+                <p class="text-xs text-[#5C5550] mt-4 italic">{museum.ticketPrices.groupNote}</p>
+              )}
+            </div>
+          )}
+
+        </div>
+
+        <!-- Location & Contact -->
+        <div class="mt-8 bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl text-[#2C2416] mb-4">Location & Contact</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            {museum.location && (
+              <div>
+                <p class="text-sm text-[#5C5550] mb-1">Address</p>
+                <p class="text-[#2C2416]">{museum.location.address}</p>
+                <p class="text-[#2C2416]">{museum.location.city}</p>
+              </div>
+            )}
+            {museum.contact && (
+              <div class="space-y-2 text-sm">
+                {museum.contact.phone && (
+                  <div>
+                    <span class="text-[#5C5550]">Phone: </span>
+                    <a href={`tel:${museum.contact.phone}`} class="text-[#2C2416] hover:underline">
+                      {museum.contact.phone}
+                    </a>
+                  </div>
+                )}
+                {museum.contact.website && (
+                  <div>
+                    <span class="text-[#5C5550]">Website: </span>
+                    <a href={museum.contact.website} target="_blank" class="text-[#2C2416] hover:underline">
+                      Visit website
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  /* Custom scrollbar for gallery */
+  .gallery-scroll::-webkit-scrollbar {
+    height: 6px;
+  }
+  .gallery-scroll::-webkit-scrollbar-track {
+    background: #E8DCC8;
+    border-radius: 3px;
+  }
+  .gallery-scroll::-webkit-scrollbar-thumb {
+    background: #8B7355;
+    border-radius: 3px;
+  }
+</style>

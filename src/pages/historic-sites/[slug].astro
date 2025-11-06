@@ -1,0 +1,265 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const sites = await client.fetch(`*[_type == "historicSite"]{ "slug": slug.current }`);
+  return sites.map((site: any) => ({
+    params: { slug: site.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const site = await client.fetch(`
+  *[_type == "historicSite" && slug.current == $slug][0]{
+    title,
+    subtitle,
+    description,
+    heroImage,
+    gallery,
+    location,
+    openingHours,
+    ticketPrices,
+    historicalPeriod,
+    architecturalStyle,
+    significance,
+    history,
+    restorationInfo,
+    UNESCO,
+    guidedToursRequired,
+    contact
+  }
+`, { slug });
+
+function getImageUrl(image: any) {
+  if (!image) return '';
+  return imageUrlBuilder(client).image(image).url();
+}
+---
+
+<BaseLayout title={site.title}>
+  <div class="bg-[#F5F1E8]">
+
+    <!-- Hero Section with large image -->
+    <div class="relative h-[500px] w-full">
+      <img
+        src={getImageUrl(site.heroImage)}
+        alt={site.title}
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+        <div class="max-w-6xl mx-auto">
+          <div class="flex items-center gap-3 mb-2">
+            <p class="text-sm uppercase tracking-wider">Historic Site</p>
+            {site.UNESCO && (
+              <span class="bg-[#8B7355] px-3 py-1 rounded-full text-xs font-semibold">
+                UNESCO World Heritage
+              </span>
+            )}
+          </div>
+          <h1 class="text-5xl font-serif mb-2">{site.title}</h1>
+          {site.subtitle && <p class="text-xl opacity-90">{site.subtitle}</p>}
+          {site.historicalPeriod && <p class="text-lg opacity-80 mt-2">{site.historicalPeriod}</p>}
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-6 py-16">
+
+      <!-- About This Site -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-6">About This Site</h2>
+        <p class="text-lg text-[#5C5550] leading-relaxed max-w-4xl mb-6">
+          {site.description}
+        </p>
+        {site.architecturalStyle && (
+          <div class="inline-block bg-[#E8DCC8] px-4 py-2 rounded-lg">
+            <span class="text-sm text-[#5C5550]">Architectural Style: </span>
+            <span class="text-[#2C2416] font-semibold">{site.architecturalStyle}</span>
+          </div>
+        )}
+      </section>
+
+      <!-- Historical Significance -->
+      {site.significance && (
+        <section class="mb-16">
+          <div class="bg-[#E8DCC8] rounded-2xl p-10">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Historical Significance</h2>
+            <p class="text-[#5C5550] leading-relaxed text-lg">
+              {site.significance}
+            </p>
+          </div>
+        </section>
+      )}
+
+      <!-- Gallery -->
+      {site.gallery && site.gallery.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Gallery</h2>
+          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
+            {site.gallery.map((image: any, idx: number) => (
+              <div class="aspect-square overflow-hidden rounded cursor-pointer hover:opacity-75 transition-opacity">
+                <img
+                  src={getImageUrl(image)}
+                  alt={`Gallery image ${idx + 1}`}
+                  class="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- History Timeline -->
+      {site.history && (
+        <section class="mb-16">
+          <div class="bg-white rounded-2xl p-10 shadow-sm">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">
+              {site.history.title || 'History'}
+            </h2>
+            {site.history.description && (
+              <p class="text-[#5C5550] leading-relaxed mb-8">
+                {site.history.description}
+              </p>
+            )}
+            {site.history.timeline && site.history.timeline.length > 0 && (
+              <div class="space-y-4 border-l-2 border-[#8B7355] pl-6">
+                {site.history.timeline.map((item: any) => (
+                  <div class="relative">
+                    <div class="absolute -left-[29px] top-2 w-4 h-4 bg-[#8B7355] rounded-full"></div>
+                    <div class="text-[#8B7355] font-semibold text-lg mb-1">{item.year}</div>
+                    <div class="text-[#5C5550]">{item.event}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- Restoration Information -->
+      {site.restorationInfo?.hasBeenRestored && (
+        <section class="mb-16">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-10">
+            <h2 class="text-3xl font-serif text-[#2C2416] mb-6">Restoration</h2>
+            {site.restorationInfo.restorationYear && (
+              <p class="text-[#2C2416] font-semibold mb-4">
+                Restored in {site.restorationInfo.restorationYear}
+              </p>
+            )}
+            {site.restorationInfo.details && (
+              <p class="text-[#5C5550] leading-relaxed">
+                {site.restorationInfo.details}
+              </p>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- Plan Your Visit -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-serif text-[#2C2416] mb-8">Plan Your Visit</h2>
+
+        {site.guidedToursRequired && (
+          <div class="mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
+            <p class="text-amber-900">
+              <strong>Note:</strong> Guided tours are required to visit this site.
+            </p>
+          </div>
+        )}
+
+        <div class="grid md:grid-cols-2 gap-8">
+
+          <!-- Opening Hours -->
+          {site.openingHours && site.openingHours.length > 0 && (
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Opening Hours</h3>
+              <div class="space-y-2">
+                {site.openingHours.map((schedule: any) => (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">{schedule.day}</span>
+                    <span class={schedule.isOpen ? 'text-[#2C2416]' : 'text-red-600'}>
+                      {schedule.hours}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <!-- Ticket Prices -->
+          {site.ticketPrices && (
+            <div class="bg-white rounded-lg p-6 shadow-sm">
+              <h3 class="font-serif text-xl text-[#2C2416] mb-4">Admission Prices</h3>
+              <div class="space-y-2">
+                {site.ticketPrices.adult && (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">Adults</span>
+                    <span class="text-[#2C2416] font-semibold">{site.ticketPrices.adult}</span>
+                  </div>
+                )}
+                {site.ticketPrices.student && (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">Students</span>
+                    <span class="text-[#2C2416] font-semibold">{site.ticketPrices.student}</span>
+                  </div>
+                )}
+                {site.ticketPrices.child && (
+                  <div class="flex justify-between text-sm">
+                    <span class="text-[#5C5550]">Children (under 12)</span>
+                    <span class="text-[#2C2416] font-semibold">{site.ticketPrices.child}</span>
+                  </div>
+                )}
+              </div>
+              {site.ticketPrices.groupNote && (
+                <p class="text-xs text-[#5C5550] mt-4 italic">{site.ticketPrices.groupNote}</p>
+              )}
+            </div>
+          )}
+
+        </div>
+
+        <!-- Location & Contact -->
+        <div class="mt-8 bg-white rounded-lg p-6 shadow-sm">
+          <h3 class="font-serif text-xl text-[#2C2416] mb-4">Location & Contact</h3>
+          <div class="grid md:grid-cols-2 gap-6">
+            {site.location && (
+              <div>
+                <p class="text-sm text-[#5C5550] mb-1">Address</p>
+                <p class="text-[#2C2416]">{site.location.address}</p>
+                <p class="text-[#2C2416]">{site.location.city}</p>
+              </div>
+            )}
+            {site.contact && (
+              <div class="space-y-2 text-sm">
+                {site.contact.phone && (
+                  <div>
+                    <span class="text-[#5C5550]">Phone: </span>
+                    <a href={`tel:${site.contact.phone}`} class="text-[#2C2416] hover:underline">
+                      {site.contact.phone}
+                    </a>
+                  </div>
+                )}
+                {site.contact.website && (
+                  <div>
+                    <span class="text-[#5C5550]">Website: </span>
+                    <a href={site.contact.website} target="_blank" class="text-[#2C2416] hover:underline">
+                      Visit website
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+</BaseLayout>
+
+

@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+// Fetch all beaches from Sanity
+const beaches = await client.fetch(`
+  *[_type == "beach"] | order(title asc) {
+    _id,
+    title,
+    subtitle,
+    slug,
+    description,
+    heroImage,
+    beachType,
+    blueFlag
+  }
+`);
+
+// Helper function to get image URL from Sanity
+function getImageUrl(image: any) {
+  if (!image) return '/images/beach-default.jpg';
+  const builder = imageUrlBuilder(client);
+  return builder.image(image).url();
+}
+
+const pageTitle = "Beaches in Tangier";
+const pageDescription = "Discover Tangier's beautiful beaches, from golden sands to private beach clubs along the Mediterranean coast.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <div class="bg-[#F5F1E8] min-h-screen">
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <h1 class="text-5xl font-serif mb-4">Beaches in Tangier</h1>
+        <p class="text-xl opacity-90 max-w-2xl">
+          Explore the stunning Mediterranean and Atlantic coastlines with pristine beaches and crystal-clear waters
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+
+      {beaches.length === 0 ? (
+        <div class="text-center py-20">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">No Beaches Found</h2>
+          <p class="text-gray-600">Check back soon for new beach listings!</p>
+        </div>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {beaches.map((beach: any) => (
+            <a
+              href={`/beaches/${beach.slug.current}`}
+              class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div class="aspect-[4/3] overflow-hidden relative">
+                <img
+                  src={getImageUrl(beach.heroImage)}
+                  alt={beach.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                {beach.blueFlag && (
+                  <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    Blue Flag
+                  </div>
+                )}
+              </div>
+              <div class="p-6">
+                <h2 class="font-serif text-2xl text-[#2C2416] mb-2 group-hover:text-blue-600 transition-colors">
+                  {beach.title}
+                </h2>
+                {beach.beachType && (
+                  <p class="text-sm text-blue-600 mb-3 capitalize">{beach.beachType.replace('-', ' ')}</p>
+                )}
+                <p class="text-[#5C5550] text-sm line-clamp-3">
+                  {beach.description}
+                </p>
+                <div class="mt-4 text-blue-600 font-semibold text-sm group-hover:underline">
+                  Discover →
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+
+    </section>
+
+    <!-- Tips Section -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+      <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-3xl p-8 md:p-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Beach Tips & Safety</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">🏖️</span>
+              What to Bring
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Sunscreen (SPF 30+) and reapply regularly</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Beach towels, umbrella, and comfortable swimwear</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Water and snacks to stay hydrated and energized</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Waterproof bag for phones and valuables</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">⚠️</span>
+              Safety & Etiquette
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Swim near lifeguard stations when available</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Check wave conditions before entering the water</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Keep beaches clean - take your trash with you</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-blue-600 font-bold">•</span>
+                <span>Respect local customs and dress codes</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+
+

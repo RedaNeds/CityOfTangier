@@ -1,0 +1,481 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { client } from '../../../lib/sanity';
+
+// Get all attraction places from Sanity
+const seeDoEntries = await client.fetch(`
+  *[_type == "place" && (category == "attractions" || category == "See & Do")] | order(title asc) {
+    _id,
+    title,
+    slug,
+    description,
+    category,
+    subcategory,
+    rating,
+    priceLevel,
+    tags,
+    highlights,
+    neighborhood
+  }
+`);
+
+// Fallback data
+const fallbackAttractions = [
+  {
+    title: "Kasbah Museum",
+    slug: { current: "kasbah-museum" },
+    description: "A historic, preserved palace and home to an interesting collection of artifacts from Tangier's rich past.",
+    subcategory: "Museum",
+    rating: 4.6,
+    priceLevel: "€€",
+    duration: "1-2 hours",
+    tags: ["Museum", "History", "Views"],
+    neighborhood: "Kasbah",
+    badge: "Museum"
+  },
+  {
+    title: "American Legation Museum",
+    slug: { current: "american-legation" },
+    description: "First American public property outside US, showcasing art and diplomatic history.",
+    subcategory: "Museum",
+    rating: 4.5,
+    priceLevel: "€",
+    duration: "1-2 hours",
+    tags: ["Museum", "Art", "History"],
+    neighborhood: "Medina",
+    badge: "Cultural"
+  },
+  {
+    title: "Tangier Old Medina",
+    slug: { current: "medina" },
+    description: "Wander through ancient narrow streets and colorful traditional markets in one of Morocco's most vibrant medinas.",
+    subcategory: "Historic Sites",
+    rating: 4.7,
+    priceLevel: "Free",
+    duration: "2-3 hours",
+    tags: ["Historic Sites", "Shopping", "Culture"],
+    neighborhood: "Medina",
+    badge: "Must-See"
+  },
+  {
+    title: "Hercules Caves",
+    slug: { current: "hercules-caves" },
+    description: "Historic caves with stunning Atlantic views where ancient legends come alive.",
+    subcategory: "Nature",
+    rating: 4.4,
+    priceLevel: "€",
+    duration: "30 min",
+    tags: ["Nature", "Photo", "History"],
+    neighborhood: "Cap Spartel",
+    badge: "Photo Spot"
+  },
+  {
+    title: "Cap Spartel Lighthouse",
+    slug: { current: "cap-spartel" },
+    description: "Watch the sun set at the northwestern point of Africa where two seas meet.",
+    subcategory: "Landmark",
+    rating: 4.6,
+    priceLevel: "Free",
+    duration: "30 min",
+    tags: ["Landmark", "Sunset", "Views"],
+    neighborhood: "Cap Spartel",
+    badge: "Sunset"
+  },
+  {
+    title: "Achakkar Beach",
+    slug: { current: "achakkar-beach" },
+    description: "Beautiful sandy beach perfect for relaxing walks and swimming with expansive ocean views.",
+    subcategory: "Beach",
+    rating: 4.3,
+    priceLevel: "Free",
+    duration: "2+ hours",
+    tags: ["Beach", "Swimming", "Nature"],
+    neighborhood: "Achakkar",
+    badge: "Beach"
+  },
+  {
+    title: "A Day to Visit",
+    slug: { current: "market" },
+    description: "Explore vibrant spice stalls and artisan shops in Tangier's traditional market scene.",
+    subcategory: "Market",
+    rating: 4.5,
+    priceLevel: "Free",
+    duration: "1-2 hours",
+    tags: ["Shopping", "Culture", "Food"],
+    neighborhood: "Medina",
+    badge: "Market"
+  }
+];
+
+const attractions = seeDoEntries.length > 0 ? seeDoEntries : fallbackAttractions;
+
+// Group by neighborhood
+const byNeighborhood = attractions.reduce((acc, attraction) => {
+  const neighborhood = attraction.neighborhood || 'Other';
+  if (!acc[neighborhood]) {
+    acc[neighborhood] = [];
+  }
+  acc[neighborhood].push(attraction);
+  return acc;
+}, {} as Record<string, typeof attractions>);
+---
+
+<BaseLayout
+  title="Tangier Tangier - See & Do - City of Tangier"
+  description="Explore must-see attractions, historic sites and hidden gems in Tangier"
+>
+  <!-- Hero Section with dark overlay -->
+  <div class="relative h-[350px] overflow-hidden bg-gray-900">
+    <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 to-gray-800/70"></div>
+    <div class="relative h-full max-w-7xl mx-auto px-4 flex flex-col justify-center text-white">
+      <h1 class="text-4xl md:text-5xl font-bold mb-3">Tangier Tangier</h1>
+      <p class="text-lg md:text-xl max-w-3xl mb-6 text-gray-100">
+        Immerse yourself in Tangier's most popular sites, explore old city souks and winding medina lanes, and admire beautiful sunsets at Cap Spartel.
+      </p>
+
+      <!-- Simple Search Bar -->
+      <div class="w-full max-w-xl bg-white rounded-lg shadow-lg flex items-center overflow-hidden">
+        <svg class="w-5 h-5 text-gray-400 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input
+          type="text"
+          placeholder="Search attractions..."
+          class="flex-1 px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none"
+        />
+        <button class="bg-strait-blue text-white px-8 py-3 font-medium hover:bg-kasbah-navy transition-colors">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-gray-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <!-- Category Pills -->
+      <div class="mb-8">
+        <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          <button class="px-5 py-2 rounded-full bg-strait-blue text-white font-medium whitespace-nowrap text-sm">
+            All
+          </button>
+          <button class="px-5 py-2 rounded-full bg-white text-gray-700 font-medium whitespace-nowrap text-sm hover:bg-gray-100 border border-gray-200">
+            Museums
+          </button>
+          <button class="px-5 py-2 rounded-full bg-white text-gray-700 font-medium whitespace-nowrap text-sm hover:bg-gray-100 border border-gray-200">
+            Historic Sites
+          </button>
+          <button class="px-5 py-2 rounded-full bg-white text-gray-700 font-medium whitespace-nowrap text-sm hover:bg-gray-100 border border-gray-200">
+            Nature
+          </button>
+          <button class="px-5 py-2 rounded-full bg-white text-gray-700 font-medium whitespace-nowrap text-sm hover:bg-gray-100 border border-gray-200">
+            Beaches
+          </button>
+          <button class="px-5 py-2 rounded-full bg-white text-gray-700 font-medium whitespace-nowrap text-sm hover:bg-gray-100 border border-gray-200">
+            Markets
+          </button>
+        </div>
+      </div>
+
+      <!-- Must-See Attractions -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Must-See Attractions</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {attractions.slice(0, 4).map((attraction) => (
+            <a href={`/discover/attractions/${attraction.slug.current}`} class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+              <div class="relative h-44 bg-gradient-to-br from-gray-100 to-gray-200">
+                <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                  <div class="text-7xl">
+                    {attraction.subcategory === 'Museum' ? '🏛️' :
+                     attraction.subcategory === 'Beach' ? '🏖️' :
+                     attraction.subcategory === 'Nature' ? '🌄' :
+                     attraction.subcategory === 'Market' ? '🛍️' : '🏰'}
+                  </div>
+                </div>
+                {attraction.badge && (
+                  <div class="absolute top-2.5 left-2.5 bg-strait-blue text-white px-2.5 py-1 rounded-md text-xs font-semibold">
+                    {attraction.badge}
+                  </div>
+                )}
+              </div>
+
+              <div class="p-4">
+                <h3 class="font-bold text-gray-900 mb-1 text-base group-hover:text-strait-blue transition-colors line-clamp-1">
+                  {attraction.title}
+                </h3>
+
+                <div class="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+                  {attraction.rating && (
+                    <>
+                      <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span class="font-semibold text-gray-900">{attraction.rating}</span>
+                    </>
+                  )}
+                  {attraction.duration && (
+                    <>
+                      <span class="text-gray-400">•</span>
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>{attraction.duration}</span>
+                    </>
+                  )}
+                  {attraction.priceLevel && (
+                    <>
+                      <span class="text-gray-400">•</span>
+                      <span>{attraction.priceLevel}</span>
+                    </>
+                  )}
+                </div>
+
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2 leading-snug">
+                  {attraction.description}
+                </p>
+
+                <div class="flex flex-wrap gap-1.5">
+                  {attraction.tags?.slice(0, 3).map((tag) => (
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Visitor Info Section - Blue Background -->
+      <section class="mb-12 bg-strait-blue text-white rounded-xl p-10">
+        <h2 class="text-2xl font-bold mb-8 text-center">Visitor Information</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="font-bold mb-1.5 text-base">Best Time to Visit</h3>
+            <p class="text-white/90 text-sm leading-relaxed">
+              Early morning or late afternoon to capture the best golden-hour lighting photos and beat the crowds.
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 class="font-bold mb-1.5 text-base">Plan Your Visit</h3>
+            <p class="text-white/90 text-sm leading-relaxed">
+              Most museums close on Mondays. Check attraction opening hours before visiting to avoid disappointment.
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </div>
+            <h3 class="font-bold mb-1.5 text-base">Local Guides</h3>
+            <p class="text-white/90 text-sm leading-relaxed">
+              Licensed guides enhance your experience at historic sites with fascinating stories about Tangier's past.
+            </p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+            </div>
+            <h3 class="font-bold mb-1.5 text-base">Combine Visits</h3>
+            <p class="text-white/90 text-sm leading-relaxed">
+              Group nearby attractions together for efficient touring. Medina sites work well as walking routes.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Museums Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Museums</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {attractions.filter(a => a.subcategory === 'Museum').map((attraction) => (
+            <a href={`/discover/attractions/${attraction.slug.current}`} class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+              <div class="relative h-44 bg-gradient-to-br from-blue-50 to-indigo-100">
+                <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                  <div class="text-7xl">🏛️</div>
+                </div>
+                <div class="absolute top-2.5 left-2.5 bg-indigo-600 text-white px-2.5 py-1 rounded-md text-xs font-semibold">
+                  Museum
+                </div>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-gray-900 mb-1 text-base group-hover:text-strait-blue transition-colors">
+                  {attraction.title}
+                </h3>
+                <div class="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+                  <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span class="font-semibold text-gray-900">{attraction.rating}</span>
+                  <span class="text-gray-400">•</span>
+                  <span>{attraction.duration || '1-2 hours'}</span>
+                  <span class="text-gray-400">•</span>
+                  <span>{attraction.priceLevel || '€'}</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2 leading-snug">
+                  {attraction.description}
+                </p>
+                <div class="flex flex-wrap gap-1.5">
+                  {attraction.tags?.map((tag) => (
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Historic Sites Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Historic Sites</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {attractions.filter(a => a.subcategory === 'Historic Sites' || a.subcategory === 'Landmark').map((attraction) => (
+            <a href={`/discover/attractions/${attraction.slug.current}`} class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+              <div class="relative h-44 bg-gradient-to-br from-amber-50 to-orange-100">
+                <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                  <div class="text-7xl">🏰</div>
+                </div>
+                <div class="absolute top-2.5 left-2.5 bg-orange-600 text-white px-2.5 py-1 rounded-md text-xs font-semibold">
+                  {attraction.badge || 'Historic'}
+                </div>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-gray-900 mb-1 text-base group-hover:text-strait-blue transition-colors">
+                  {attraction.title}
+                </h3>
+                <div class="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+                  <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span class="font-semibold text-gray-900">{attraction.rating}</span>
+                  <span class="text-gray-400">•</span>
+                  <span>{attraction.duration || '1 hour'}</span>
+                  <span class="text-gray-400">•</span>
+                  <span>{attraction.priceLevel || 'Free'}</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2 leading-snug">
+                  {attraction.description}
+                </p>
+                <div class="flex flex-wrap gap-1.5">
+                  {attraction.tags?.map((tag) => (
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Markets Section -->
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Markets</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {attractions.filter(a => a.subcategory === 'Market').map((attraction) => (
+            <a href={`/discover/attractions/${attraction.slug.current}`} class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all">
+              <div class="relative h-44 bg-gradient-to-br from-green-50 to-emerald-100">
+                <div class="absolute inset-0 flex items-center justify-center opacity-20">
+                  <div class="text-7xl">🛍️</div>
+                </div>
+                <div class="absolute top-2.5 left-2.5 bg-emerald-600 text-white px-2.5 py-1 rounded-md text-xs font-semibold">
+                  Market
+                </div>
+              </div>
+              <div class="p-4">
+                <h3 class="font-bold text-gray-900 mb-1 text-base group-hover:text-strait-blue transition-colors">
+                  {attraction.title}
+                </h3>
+                <div class="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+                  <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span class="font-semibold text-gray-900">{attraction.rating}</span>
+                  <span class="text-gray-400">•</span>
+                  <span>{attraction.duration || '1-2 hours'}</span>
+                  <span class="text-gray-400">•</span>
+                  <span>{attraction.priceLevel || 'Free'}</span>
+                </div>
+                <p class="text-gray-600 text-sm mb-3 line-clamp-2 leading-snug">
+                  {attraction.description}
+                </p>
+                <div class="flex flex-wrap gap-1.5">
+                  {attraction.tags?.map((tag) => (
+                    <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Explore by Neighborhood - Beige Background -->
+      <section class="bg-sand/30 rounded-xl p-8 mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Explore by Neighborhood</h2>
+        <p class="text-gray-600 mb-6">Discover attractions in Tangier's most vibrant districts</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {Object.entries(byNeighborhood).map(([neighborhood, items]) => (
+            <a href={`/neighborhoods/${neighborhood.toLowerCase().replace(/\s+/g, '-')}`} class="group bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-all">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-9 h-9 bg-seafoam/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg class="w-5 h-5 text-strait-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-gray-900 group-hover:text-strait-blue transition-colors text-base">{neighborhood}</h3>
+                    <p class="text-xs text-gray-600">{items.length}</p>
+                  </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-400 group-hover:text-strait-blue group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              {items.length > 0 && (
+                <div class="space-y-1 mt-3">
+                  {items.slice(0, 3).map((item) => (
+                    <div class="text-sm text-gray-700">{item.title}</div>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title: string;
+  description: string;
+  featuredImage?: string;
+}
+
+const { 
+  title, 
+  description, 
+  featuredImage 
+} = Astro.props;
+---
+
+<BaseLayout 
+  title={title}
+  description={description}
+  ogImage={featuredImage}
+  ogType="article"
+>
+  <slot />
+</BaseLayout>
+
+<style>
+  /* Neighborhood-specific styles */
+  .neighborhood-hero {
+    background: linear-gradient(135deg, var(--deep-blue) 0%, var(--dark-teal) 50%, var(--teal) 100%);
+  }
+  
+  .neighborhood-card {
+    transition: all 0.3s ease;
+  }
+  
+  .neighborhood-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .characteristic-icon {
+    font-size: 2rem;
+    line-height: 1;
+  }
+  
+  .neighborhood-tag {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--strait-blue);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .neighborhood-stats {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+</style>

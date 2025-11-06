@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://cityoftangier.com/sitemap-index.xml
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /sanity/
+
+# Allow all other content
+Allow: /places/
+Allow: /events/
+Allow: /itineraries/
+Allow: /guides/
+Allow: /neighborhoods/
+

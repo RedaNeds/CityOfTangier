@@ -1,0 +1,88 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/NavStruct/navbar.astro';
+import Footer from '../components/NavStruct/footer.astro';
+import { generateStructuredData, generateOrganizationSchema, type SEOProps } from '../lib/seo';
+
+export interface Props extends SEOProps {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: string;
+  canonical?: string;
+  structuredData?: any;
+  breadcrumbs?: Array<{name: string, url: string}>;
+}
+
+const { 
+  title = "City Of Tangier - Your Perfect Tangier Experience", 
+  description = "Discover the magic where Africa meets Europe. From ancient kasbahs to modern rooftops, find your next adventure in Morocco's gateway city.",
+  ogImage = "/og-image.jpg",
+  ogType = "website",
+  canonical = Astro.url.href,
+  structuredData,
+  breadcrumbs,
+  ...seoProps
+} = Astro.props;
+
+// Generate structured data if not provided
+const finalStructuredData = structuredData || generateStructuredData({
+  title,
+  description,
+  image: ogImage,
+  url: canonical,
+  type: ogType as any,
+  ...seoProps
+});
+---
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="generator" content={Astro.generator} />
+		
+		<!-- SEO Meta Tags -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+		
+		<!-- Open Graph / Facebook -->
+		<meta property="og:type" content={ogType} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		
+		<!-- Twitter -->
+		<meta property="twitter:card" content="summary_large_image" />
+		<meta property="twitter:url" content={canonical} />
+		<meta property="twitter:title" content={title} />
+		<meta property="twitter:description" content={description} />
+		<meta property="twitter:image" content={ogImage} />
+		
+		<!-- Fonts -->
+		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+		
+		<!-- Structured Data -->
+		<script type="application/ld+json" set:html={JSON.stringify(finalStructuredData)} />
+		<script type="application/ld+json" set:html={JSON.stringify(generateOrganizationSchema())} />
+		
+		<!-- Additional head content slot -->
+		<slot name="head" />
+	</head>
+	<body class="bg-stone-50 text-gray-900 font-sans">
+		<!-- Navigation -->
+		<Navbar />
+
+		<!-- Main Content -->
+		<main>
+			<slot />
+		</main>
+
+		<!-- Footer -->
+		<Footer />
+	</body>
+</html>

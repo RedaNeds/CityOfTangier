@@ -1,0 +1,160 @@
+---
+import { client } from '../../lib/sanity';
+
+let guides = [];
+
+try {
+  guides = await client.fetch(`
+    *[_type == "guide"] | order(publishedAt desc)[0...3] {
+      _id,
+      title,
+      slug,
+      description,
+      featuredImage { asset->{ url } },
+      category,
+      readTime,
+      author
+    }
+  `);
+} catch (error) {
+  console.error('Error fetching guides:', error);
+}
+
+// Fallback data if no guides from Sanity
+if (guides.length === 0) {
+  guides = [
+    {
+      title: 'Best rooftops for sunset in Tangier',
+      slug: { current: 'best-rooftops-sunset' },
+      description: 'Discover the most spectacular sunset viewing spots across the city, from traditional cafés to modern rooftops.',
+      featuredImage: { asset: { url: '/images/sunset-rooftop.jpg' } },
+      category: 'Views',
+      readTime: '5 min read',
+      author: 'Local Guide'
+    },
+    {
+      title: 'Seafood guide to Tangier',
+      slug: { current: 'seafood-guide-tangier' },
+      description: 'From street food to fine dining, explore the best places to enjoy fresh Atlantic catch in Morocco\'s port city.',
+      featuredImage: { asset: { url: '/images/seafood.jpg' } },
+      category: 'Food',
+      readTime: '7 min read',
+      author: 'Food Expert'
+    },
+    {
+      title: 'First timer\'s guide to Tangier',
+      slug: { current: 'first-timer-guide-tangier' },
+      description: 'Essential tips and must-see spots for your first visit to Morocco\'s gateway city between two continents.',
+      featuredImage: { asset: { url: '/images/tangier-overview.jpg' } },
+      category: 'Guide',
+      readTime: '10 min read',
+      author: 'Travel Writer'
+    }
+  ];
+}
+
+// Category colors
+function getCategoryColor(category: string) {
+  const colors = {
+    'Views': 'bg-teal-600',
+    'Food': 'bg-orange-500',
+    'Guide': 'bg-blue-600',
+    'Culture': 'bg-purple-600',
+    'Nightlife': 'bg-pink-600',
+    'Shopping': 'bg-green-600'
+  };
+  return colors[category] || 'bg-gray-600';
+}
+---
+
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-12">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900 mb-2">
+          Guides
+        </h2>
+        <p class="text-lg text-gray-600">
+          Local insights and expert recommendations for the perfect Tangier experience
+        </p>
+      </div>
+      <a
+        href="/guides"
+        class="text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 group"
+      >
+        Read all guides
+        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Guides Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {guides.map((guide) => (
+        <a
+          href={`/guides/${guide.slug.current}`}
+          class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+        >
+          <!-- Image with Category Badge -->
+          <div class="relative h-56 overflow-hidden">
+            <img
+              src={guide.featuredImage?.asset?.url || '/placeholder.jpg'}
+              alt={guide.title}
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            {/* Category Badge */}
+            {guide.category && (
+              <div class={`absolute top-4 left-4 ${getCategoryColor(guide.category)} text-white px-4 py-1.5 rounded-lg text-sm font-bold`}>
+                {guide.category}
+              </div>
+            )}
+          </div>
+
+          <!-- Content -->
+          <div class="p-6">
+            <!-- Meta Info -->
+            <div class="flex items-center gap-3 mb-3 text-sm text-gray-600">
+              {/* Read Time */}
+              {guide.readTime && (
+                <div class="flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{guide.readTime}</span>
+                </div>
+              )}
+              {/* Separator */}
+              {guide.readTime && guide.author && (
+                <span class="text-gray-400">•</span>
+              )}
+              {/* Author */}
+              {guide.author && (
+                <span>by {guide.author}</span>
+              )}
+            </div>
+
+            <!-- Title -->
+            <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors leading-tight">
+              {guide.title}
+            </h3>
+
+            <!-- Description -->
+            <p class="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+              {guide.description}
+            </p>
+
+            <!-- Read More Link -->
+            <div class="flex items-center gap-2 text-teal-600 font-semibold group-hover:gap-3 transition-all">
+              <span>Read more</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

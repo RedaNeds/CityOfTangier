@@ -1,0 +1,16 @@
+---
+// Redirect old URLs to new structure
+const redirects = {
+  '/places/see-do': '/discover/attractions',
+  '/places/see-do/*': '/discover/attractions/:splat',
+  '/places/eat-drink': '/discover/restaurants',
+  '/places/eat-drink/*': '/discover/restaurants/categories/:splat',
+  '/places/neighborhoods': '/neighborhoods',
+  '/places/neighborhoods/*': '/neighborhoods/:splat',
+  '/practical': '/guides',
+  '/practical/*': '/guides/:splat',
+};
+
+// Return Astro's redirect response
+return Astro.redirect('/');
+---

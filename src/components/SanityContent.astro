@@ -1,0 +1,100 @@
+---
+export interface Props {
+  content: any[]
+}
+
+const { content } = Astro.props
+
+// Enhanced function to convert Sanity blocks to HTML with better formatting
+function sanityBlocksToHtml(blocks: any[]): string {
+  if (!blocks || !Array.isArray(blocks)) return ''
+  
+  let inList = false;
+  let listType = '';
+  
+  return blocks.map((block, index) => {
+    if (block._type === 'block') {
+      const text = block.children?.map((child: any) => {
+        let childText = child.text || '';
+        
+        // Handle marks (bold, italic, etc.)
+        if (child.marks) {
+          child.marks.forEach((mark: any) => {
+            switch (mark._type) {
+              case 'strong':
+                childText = `<strong>${childText}</strong>`;
+                break;
+              case 'em':
+                childText = `<em>${childText}</em>`;
+                break;
+              case 'link':
+                childText = `<a href="${mark.href}" class="text-strait-blue hover:text-kasbah-navy underline" target="_blank" rel="noopener noreferrer">${childText}</a>`;
+                break;
+            }
+          });
+        }
+        
+        return childText;
+      }).join('') || '';
+      
+      // Handle lists
+      if (block.listItem) {
+        if (!inList) {
+          inList = true;
+          listType = block.listItem;
+          return `<${listType === 'bullet' ? 'ul' : 'ol'} class="list-disc list-inside mb-4 space-y-2">`;
+        }
+        return `<li class="mb-1">${text}</li>`;
+      } else {
+        let result = '';
+        if (inList) {
+          result += `</${listType === 'bullet' ? 'ul' : 'ol'}>`;
+          inList = false;
+          listType = '';
+        }
+        
+        switch (block.style) {
+          case 'h1':
+            return result + `<h1 class="text-4xl font-bold mb-6 text-dark-brown">${text}</h1>`;
+          case 'h2':
+            return result + `<h2 class="text-3xl font-semibold mb-4 text-dark-brown">${text}</h2>`;
+          case 'h3':
+            return result + `<h3 class="text-2xl font-semibold mb-3 text-dark-brown">${text}</h3>`;
+          case 'h4':
+            return result + `<h4 class="text-xl font-semibold mb-2 text-dark-brown">${text}</h4>`;
+          case 'blockquote':
+            return result + `<blockquote class="border-l-4 border-strait-blue pl-4 italic my-6 text-warm-gray bg-light-beige py-2 rounded-r-lg">${text}</blockquote>`;
+          case 'normal':
+          default:
+            return result + `<p class="mb-4 text-warm-gray leading-relaxed">${text}</p>`;
+        }
+      }
+    }
+    
+    // Handle other block types
+    if (block._type === 'image') {
+      return `<figure class="my-6">
+        <img src="${block.asset?.url}" alt="${block.alt || ''}" class="w-full rounded-lg shadow-md" loading="lazy" />
+        ${block.caption ? `<figcaption class="text-sm text-warm-gray mt-2 text-center italic">${block.caption}</figcaption>` : ''}
+      </figure>`;
+    }
+    
+    return '';
+  }).join('') + (inList ? `</${listType === 'bullet' ? 'ul' : 'ol'}>` : '');
+}
+
+const htmlContent = sanityBlocksToHtml(content)
+---
+
+{content && content.length > 0 ? (
+  <div class="prose prose-lg max-w-none" set:html={htmlContent} />
+) : (
+  <div class="text-gray-600">
+    <p>Contenu en cours de préparation...</p>
+  </div>
+)}
+
+
+
+
+

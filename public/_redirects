@@ -1,0 +1,26 @@
+# Netlify redirects for new site structure
+
+# Attractions (formerly see-do)
+/places/see-do              /discover/attractions       301
+/places/see-do/*            /discover/attractions/:splat 301
+
+# Restaurants (formerly eat-drink)
+/places/eat-drink           /discover/restaurants       301
+/places/eat-drink/rooftops  /discover/restaurants/categories/rooftops 301
+/places/eat-drink/seafood   /discover/restaurants/categories/seafood 301
+/places/eat-drink/sea-view-cafes /discover/restaurants/categories/sea-view-cafes 301
+/places/eat-drink/moroccan-restaurants /discover/restaurants/categories/moroccan-restaurants 301
+/places/eat-drink/brunch-breakfast /discover/restaurants/categories/brunch-breakfast 301
+/places/eat-drink/vegetarian-vegan /discover/restaurants/categories/vegetarian-vegan 301
+/places/eat-drink/*         /discover/restaurants/categories/:splat 301
+
+# Neighborhoods (moved to root)
+/places/neighborhoods       /neighborhoods              301
+/places/neighborhoods/*     /neighborhoods/:splat       301
+
+# Practical renamed to guides (keeping old guides too)
+/practical                  /guides                     301
+/practical/*                /guides/:splat              301
+
+# Generic places fallback
+/places/*                   /discover/attractions/:splat 301

@@ -1,0 +1,126 @@
+---
+import { client } from '../../lib/sanity';
+import type { SanityNeighborhood } from '../../lib/sanity';
+
+let neighborhoods: SanityNeighborhood[] = [];
+
+try {
+  neighborhoods = await client.fetch(`
+    *[_type == "neighborhood"] | order(featured desc, publishedAt desc)[0...4] {
+      _id,
+      title,
+      slug,
+      description,
+      featuredImage {
+        asset->{ url }
+      },
+      places,
+      featured
+    }
+  `);
+} catch (error) {
+  console.error('Error fetching neighborhoods:', error);
+}
+
+// Fallback data if no neighborhoods from Sanity
+if (neighborhoods.length === 0) {
+  neighborhoods = [
+    {
+      _id: '1',
+      title: 'Marshan',
+      slug: { current: 'marshan' },
+      description: 'Upscale cliffside district with stunning sea views and luxury cafés',
+      featuredImage: { asset: { url: '/images/marshan.jpg' } },
+      places: Array(12).fill(null),
+      featured: true
+    },
+    {
+      _id: '2',
+      title: 'Kasbah',
+      slug: { current: 'kasbah' },
+      description: 'Historic fortress quarter with ancient walls and traditional architecture',
+      featuredImage: { asset: { url: '/images/kasbah.jpg' } },
+      places: Array(18).fill(null),
+      featured: true
+    },
+    {
+      _id: '3',
+      title: 'Medina',
+      slug: { current: 'medina' },
+      description: 'Bustling old town with souks, traditional restaurants and local life',
+      featuredImage: { asset: { url: '/images/medina.jpg' } },
+      places: Array(25).fill(null),
+      featured: true
+    },
+    {
+      _id: '4',
+      title: 'City Center',
+      slug: { current: 'city-center' },
+      description: 'Modern commercial hub with international dining and shopping',
+      featuredImage: { asset: { url: '/images/city-center.jpg' } },
+      places: Array(20).fill(null),
+      featured: false
+    }
+  ];
+}
+---
+
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-12">
+      <h2 class="text-4xl font-bold text-gray-900 mb-2">
+        Explore by neighborhood
+      </h2>
+      <p class="text-lg text-gray-600">
+        Each area of Tangier has its own character and charm
+      </p>
+    </div>
+
+    <!-- Neighborhoods Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {neighborhoods.map((neighborhood) => (
+        <a
+          href={`/neighborhoods/${neighborhood.slug.current}`}
+          class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+        >
+          <!-- Image with Overlay -->
+          <div class="relative h-80 overflow-hidden">
+            {neighborhood.featuredImage?.asset?.url ? (
+              <img
+                src={neighborhood.featuredImage.asset.url}
+                alt={neighborhood.title}
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            ) : (
+              <div class="w-full h-full bg-gradient-to-br from-teal-500 to-blue-700" />
+            )}
+
+            <!-- Dark gradient overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+
+            <!-- Content overlay on image -->
+            <div class="absolute inset-0 p-6 flex flex-col justify-end">
+              <!-- Title and count -->
+              <div class="text-white mb-3">
+                <h3 class="text-3xl font-bold mb-1 group-hover:text-teal-300 transition-colors">
+                  {neighborhood.title}
+                </h3>
+                {neighborhood.places && neighborhood.places.length > 0 && (
+                  <p class="text-sm font-medium opacity-90">
+                    {neighborhood.places.length} places
+                  </p>
+                )}
+              </div>
+
+              <!-- Description -->
+              <p class="text-white/90 text-sm leading-relaxed">
+                {neighborhood.description}
+              </p>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

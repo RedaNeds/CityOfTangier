@@ -1,0 +1,66 @@
+---
+import type { SanityNeighborhood } from '../../lib/sanity';
+
+interface Props {
+  neighborhood: SanityNeighborhood;
+  featured?: boolean;
+}
+
+const { neighborhood, featured = false } = Astro.props;
+---
+
+<a
+  href={`/neighborhoods/${neighborhood.slug.current}`}
+  class:list={[
+    "group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300",
+    { "ring-2 ring-blue-500": featured }
+  ]}
+>
+  <!-- Image -->
+  <div class="relative h-56 overflow-hidden">
+    {neighborhood.featuredImage?.asset?.url ? (
+      <img
+        src={neighborhood.featuredImage.asset.url}
+        alt={neighborhood.featuredImage.alt || neighborhood.title}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    ) : (
+      <div class="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
+        <span class="text-7xl">🏘️</span>
+      </div>
+    )}
+
+    {featured && (
+      <div class="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+        Featured
+      </div>
+    )}
+  </div>
+
+  <!-- Content -->
+  <div class="p-6">
+    <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+      {neighborhood.title}
+    </h3>
+
+    {neighborhood.description && (
+      <p class="text-gray-600 mb-4 line-clamp-3">
+        {neighborhood.description}
+      </p>
+    )}
+
+    {neighborhood.tags && neighborhood.tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mt-4">
+        {neighborhood.tags.slice(0, 3).map((tag) => (
+          <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    <div class="mt-4 text-blue-600 font-semibold group-hover:translate-x-1 transition-transform inline-block">
+      Explore →
+    </div>
+  </div>
+</a>

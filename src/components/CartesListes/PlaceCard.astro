@@ -1,0 +1,64 @@
+---
+import type { SanityPlace } from '../../lib/sanity';
+
+interface Props {
+  place: SanityPlace;
+}
+
+const { place } = Astro.props;
+---
+
+<a
+  href={`/places/${place.slug.current}`}
+  class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300"
+>
+  <!-- Image -->
+  <div class="relative h-48 overflow-hidden">
+    {place.featuredImage?.asset?.url ? (
+      <img
+        src={place.featuredImage.asset.url}
+        alt={place.featuredImage.alt || place.title}
+        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    ) : (
+      <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+        <span class="text-6xl">📍</span>
+      </div>
+    )}
+  </div>
+
+  <!-- Content -->
+  <div class="p-6">
+    <!-- Category Badge -->
+    {place.category && (
+      <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full mb-2">
+        {place.category.replace('-', ' ')}
+      </span>
+    )}
+
+    <!-- Title -->
+    <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+      {place.title}
+    </h3>
+
+    <!-- Description -->
+    {place.description && (
+      <p class="text-gray-600 mb-4 line-clamp-2">
+        {place.description}
+      </p>
+    )}
+
+    <!-- Rating & Price -->
+    <div class="flex items-center justify-between">
+      {place.rating && (
+        <div class="flex items-center">
+          <span class="text-yellow-500 mr-1">★</span>
+          <span class="text-gray-700 font-semibold">{place.rating}</span>
+        </div>
+      )}
+      {place.priceLevel && (
+        <span class="text-gray-500 font-medium">{place.priceLevel}</span>
+      )}
+    </div>
+  </div>
+</a>

@@ -1,0 +1,116 @@
+---
+// Map Legend Component
+// Displays the legend for different types of markers on the map
+---
+
+<div class="map-legend">
+  <h3 class="text-sm font-semibold text-gray-900 mb-3">Map Legend</h3>
+  
+  <div class="space-y-2">
+    <!-- Places Categories -->
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #3b82f6;"></div>
+      <span class="legend-label">See & Do</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #ef4444;"></div>
+      <span class="legend-label">Eat & Drink</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #10b981;"></div>
+      <span class="legend-label">Accommodation</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #8b5cf6;"></div>
+      <span class="legend-label">Shopping</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #6b7280;"></div>
+      <span class="legend-label">Services</span>
+    </div>
+    
+    <!-- Separator -->
+    <div class="border-t border-gray-200 my-2"></div>
+    
+    <!-- Neighborhoods -->
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #f59e0b;"></div>
+      <span class="legend-label">Neighborhoods</span>
+    </div>
+    
+    <!-- Separator -->
+    <div class="border-t border-gray-200 my-2"></div>
+    
+    <!-- Special Markers -->
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #fbbf24; font-size: 10px; display: flex; align-items: center; justify-content: center;">★</div>
+      <span class="legend-label">Featured Places</span>
+    </div>
+    
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: #f59e0b; font-size: 10px; display: flex; align-items: center; justify-content: center;">🏘️</div>
+      <span class="legend-label">Featured Neighborhoods</span>
+    </div>
+  </div>
+  
+  <!-- Map Controls Info -->
+  <div class="mt-4 pt-3 border-t border-gray-200">
+    <div class="text-xs text-gray-500 space-y-1">
+      <div>• Click markers for details</div>
+      <div>• Use filters to narrow results</div>
+      <div>• Search by name or tags</div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .map-legend {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    max-width: 200px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .legend-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .legend-color {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .legend-label {
+    font-size: 0.875rem;
+    color: #374151;
+    font-weight: 500;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .map-legend {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      left: 1rem;
+      max-width: none;
+      z-index: 1000;
+    }
+  }
+</style>

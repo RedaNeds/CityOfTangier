@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client } from '../../lib/sanity';
+
+// Get all itineraries from Sanity
+const itineraries = await client.fetch(`
+  *[_type == "itinerary"] | order(_createdAt desc) {
+    _id,
+    title,
+    slug,
+    description,
+    duration,
+    difficulty,
+    budget,
+    tags,
+    totalStops,
+    totalDuration,
+    featuredImage,
+    _createdAt
+  }
+`);
+
+const sortedItineraries = itineraries;
+
+const difficultyColors = {
+  easy: 'bg-green-100 text-green-800',
+  moderate: 'bg-yellow-100 text-yellow-800',
+  challenging: 'bg-red-100 text-red-800'
+};
+
+const difficultyIcons = {
+  easy: '😊',
+  moderate: '😐',
+  challenging: '😤'
+};
+---
+
+<BaseLayout 
+  title="Itineraries - City of Tangier"
+  description="Discover the best itineraries for exploring Tangier, from quick day trips to extended weekend getaways."
+>
+  <div class="max-w-7xl mx-auto px-4 py-16">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-6">
+        Explore Tangier
+      </h1>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Discover carefully crafted itineraries to make the most of your time in Tangier. 
+        From quick day trips to extended adventures, find the perfect route for your journey.
+      </p>
+    </div>
+
+
+    <!-- Itineraries Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {sortedItineraries.length > 0 ? sortedItineraries.map((itinerary) => (
+        <a 
+          href={`/itineraries/${itinerary.slug.current}`}
+          class="group block bg-white rounded-2xl border border-[#F0F0F0] overflow-hidden transition-all duration-300 hover:-translate-y-1"
+        >
+          <!-- Image -->
+          <div class="h-48 bg-gradient-to-br from-teal-400 to-blue-600 flex items-center justify-center">
+            {itinerary.featuredImage ? (
+              <img 
+                src={itinerary.featuredImage} 
+                alt={itinerary.title}
+                class="w-full h-full object-cover"
+              />
+            ) : (
+              <span class="text-white text-2xl font-semibold">🗺️</span>
+            )}
+          </div>
+          
+          <!-- Content -->
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-3">
+              <span class={`px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[itinerary.difficulty]}`}>
+                {difficultyIcons[itinerary.difficulty]} {itinerary.difficulty}
+              </span>
+              <span class="text-sm text-gray-500">{itinerary.duration}</span>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
+              {itinerary.title}
+            </h3>
+            
+            <p class="text-gray-600 mb-4 line-clamp-2">
+              {itinerary.description}
+            </p>
+            
+            <!-- Stats -->
+            <div class="flex flex-wrap gap-3 text-sm text-gray-500 mb-4">
+              <span>⏱️ {itinerary.totalStops} stops</span>
+              <span>🚶 {itinerary.totalDuration}</span>
+              <span>💰 {itinerary.budget}</span>
+            </div>
+            
+            <!-- Tags -->
+            {itinerary.tags && itinerary.tags.length > 0 && (
+              <div class="flex flex-wrap gap-2">
+                {itinerary.tags.slice(0, 3).map(tag => (
+                  <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                    #{tag}
+                  </span>
+                ))}
+                {itinerary.tags.length > 3 && (
+                  <span class="text-gray-500 text-xs">+{itinerary.tags.length - 3} more</span>
+                )}
+              </div>
+            )}
+          </div>
+        </a>
+      )) : (
+        <div class="col-span-full text-center py-12">
+          <p class="text-gray-500 text-lg">No itineraries found. Please check the content files.</p>
+        </div>
+      )}
+    </div>
+
+    <!-- Call to Action -->
+    <div class="mt-16 text-center">
+      <div class="bg-gradient-to-r from-teal-50 to-blue-50 rounded-2xl p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          Can't Find What You're Looking For?
+        </h2>
+        <p class="text-gray-600 mb-6">
+          We're constantly adding new itineraries. Check back soon or contact us for custom recommendations.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a 
+            href="/contact" 
+            class="bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors"
+          >
+            Contact Us
+          </a>
+          <a 
+            href="/places" 
+            class="bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-700 transition-colors"
+          >
+            Browse Places
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

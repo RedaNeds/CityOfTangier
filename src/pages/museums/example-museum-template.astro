@@ -1,0 +1,489 @@
+---
+/**
+ * Example Museum Page Template
+ *
+ * This is a template showing how to use the MuseumLayout for individual museum pages.
+ * Copy this file and customize it for each museum.
+ *
+ * Usage:
+ * 1. Copy this file to create a new museum page (e.g., kasbah-museum.astro)
+ * 2. Update all the props with the museum's specific information
+ * 3. Replace the content in the slot with museum-specific content
+ * 4. Update images paths to match your actual images
+ */
+
+import MuseumLayout from '../../layouts/MuseumLayout.astro';
+
+// Museum metadata and information
+const museumData = {
+  title: "Kasbah Museum - Museum of Mediterranean Cultures",
+  description: "Explore Tangier's rich history through this 17th-century palace turned museum, featuring Moroccan art, archaeological artifacts, and stunning views of the Strait of Gibraltar.",
+  category: "museum" as const,
+  subcategory: "history",
+  tags: ["history", "culture", "art", "archaeology", "kasbah", "heritage"],
+  featuredImage: "/images/kasbah-museum-hero.jpg",
+  gallery: [
+    "/images/kasbah-museum-1.jpg",
+    "/images/kasbah-museum-2.jpg",
+    "/images/kasbah-museum-3.jpg",
+    "/images/kasbah-museum-4.jpg",
+    "/images/kasbah-museum-5.jpg",
+    "/images/kasbah-museum-6.jpg",
+    "/images/kasbah-museum-7.jpg",
+    "/images/kasbah-museum-8.jpg"
+  ],
+  rating: 4.5,
+  priceLevel: "€",
+  location: "Kasbah, Tangier, Morocco",
+  address: "Place de la Kasbah, Tangier 90000, Morocco",
+  coordinates: {
+    lat: 35.7897,
+    lng: -5.8137
+  },
+  openingHours: [
+    { day: "Monday", hours: "9:00 AM - 4:00 PM" },
+    { day: "Tuesday", hours: "Closed" },
+    { day: "Wednesday", hours: "9:00 AM - 4:00 PM" },
+    { day: "Thursday", hours: "9:00 AM - 4:00 PM" },
+    { day: "Friday", hours: "9:00 AM - 4:00 PM" },
+    { day: "Saturday", hours: "9:00 AM - 4:00 PM" },
+    { day: "Sunday", hours: "9:00 AM - 4:00 PM" }
+  ],
+  admissionPrices: {
+    adult: "30 MAD (€3)",
+    student: "15 MAD (€1.50)",
+    child: "Free (under 12)",
+    senior: "15 MAD (€1.50)",
+    group: "20 MAD per person (€2)"
+  },
+  highlights: [
+    "17th-century palace with stunning architecture",
+    "Panoramic views of the Strait of Gibraltar",
+    "Extensive collection of Moroccan ceramics",
+    "Ancient Roman mosaics from Volubilis",
+    "Traditional Moroccan costumes and jewelry",
+    "Beautiful Andalusian gardens"
+  ],
+  collections: [
+    {
+      name: "Archaeological Collection",
+      description: "Roman and Phoenician artifacts including pottery, coins, and ancient tools discovered in and around Tangier."
+    },
+    {
+      name: "Moroccan Art & Crafts",
+      description: "Traditional ceramics, textiles, carpets, and metalwork showcasing Morocco's rich artistic heritage."
+    },
+    {
+      name: "Historical Documents",
+      description: "Manuscripts, maps, and documents tracing Tangier's multicultural history as an international zone."
+    },
+    {
+      name: "Traditional Costumes",
+      description: "Beautifully preserved traditional Moroccan clothing and jewelry from different regions and periods."
+    }
+  ],
+  exhibitions: [
+    {
+      title: "Contemporary Art at the Kasbah",
+      description: "A rotating exhibition featuring modern Moroccan artists interpreting traditional themes in contemporary ways.",
+      startDate: "2024-09-01",
+      endDate: "2024-12-31",
+      temporary: true
+    },
+    {
+      title: "Moroccan Musical Instruments",
+      description: "Permanent collection showcasing traditional instruments from across Morocco's diverse regions.",
+      temporary: false
+    }
+  ],
+  contact: {
+    phone: "+212 539 93 20 97",
+    email: "info@kasbahmuseum.ma",
+    website: "https://kasbahmuseum.ma"
+  },
+  amenities: [
+    "Audio guides",
+    "Guided tours",
+    "Gift shop",
+    "Restrooms",
+    "Photography allowed (no flash)",
+    "Wheelchair accessible (partial)"
+  ],
+  accessibility: {
+    wheelchairAccessible: true,
+    parking: false,
+    audioGuides: true,
+    guidedTours: true,
+    restrooms: true,
+    cafe: false,
+    giftShop: true
+  },
+  visitDuration: "1-2 hours",
+  bestTimeToVisit: "Weekday mornings (9-11 AM) for fewer crowds and better lighting for photos",
+  rules: [
+    "No flash photography inside exhibition halls",
+    "Do not touch artifacts or displays",
+    "Maintain a quiet atmosphere",
+    "Bags larger than 40x30cm must be left at reception",
+    "Food and beverages not allowed inside exhibition areas",
+    "Children must be accompanied by an adult"
+  ]
+};
+---
+
+<MuseumLayout {...museumData}>
+  <!-- Hero Section -->
+  <div class="museum-hero">
+    <img src={museumData.featuredImage} alt={museumData.title} />
+    <div class="hero-overlay">
+      <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl md:text-5xl font-bold mb-2">{museumData.title}</h1>
+        <p class="text-lg md:text-xl opacity-90">{museumData.description}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- Quick Info Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 -mt-16 relative z-10">
+      <div class="info-card">
+        <div class="info-card-icon">⭐</div>
+        <div class="info-card-title">Rating</div>
+        <div class="rating-stars">
+          <span class="info-card-value mr-2">{museumData.rating}</span>
+          {[1, 2, 3, 4, 5].map(star => (
+            <span class={`star ${star <= museumData.rating! ? '' : 'empty'}`}>★</span>
+          ))}
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-icon">💰</div>
+        <div class="info-card-title">Admission</div>
+        <div class="info-card-value">{museumData.admissionPrices.adult}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-icon">⏱️</div>
+        <div class="info-card-title">Duration</div>
+        <div class="info-card-value">{museumData.visitDuration}</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-icon">📍</div>
+        <div class="info-card-title">Location</div>
+        <div class="info-card-value text-sm">Kasbah</div>
+      </div>
+    </div>
+
+    <!-- Museum Badge and Tags -->
+    <div class="flex flex-wrap gap-3 mb-8">
+      <span class="museum-badge">
+        {museumData.subcategory} Museum
+      </span>
+      {museumData.tags.map(tag => (
+        <span class="tag-chip">{tag}</span>
+      ))}
+    </div>
+
+    <!-- About This Museum -->
+    <section class="mb-12">
+      <h2 class="section-header">About This Museum</h2>
+      <div class="prose max-w-none">
+        <p class="text-lg text-gray-700 leading-relaxed mb-4">
+          The Kasbah Museum of Mediterranean Cultures occupies the former Sultan's palace, Dar el-Makhzen,
+          in the heart of Tangier's historic Kasbah. Built in the 17th century by Sultan Moulay Ismail,
+          this stunning palace showcases the finest examples of Moroccan architecture and houses an
+          exceptional collection that tells the story of Morocco's rich cultural heritage.
+        </p>
+        <p class="text-lg text-gray-700 leading-relaxed mb-4">
+          The museum's collections span thousands of years, from prehistoric times through the Phoenician,
+          Roman, and Islamic periods to the modern era. Visitors can explore beautifully preserved mosaics,
+          ancient pottery, traditional crafts, and contemporary art, all within the palace's magnificent
+          courtyards and galleries.
+        </p>
+        <p class="text-lg text-gray-700 leading-relaxed">
+          Don't miss the panoramic terrace offering breathtaking views of the Strait of Gibraltar,
+          where on clear days you can see Spain across the water. The museum's Andalusian gardens
+          provide a peaceful retreat and showcase traditional Islamic garden design.
+        </p>
+      </div>
+    </section>
+
+    <!-- Visitor Information Grid -->
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+
+      <!-- Opening Hours -->
+      <div class="info-card">
+        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="text-2xl">🕐</span>
+          Opening Hours
+        </h3>
+        <table class="hours-table">
+          <tbody>
+            {museumData.openingHours.map(schedule => (
+              <tr class={schedule.hours === "Closed" ? "closed" : ""}>
+                <td>{schedule.day}</td>
+                <td>{schedule.hours}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="text-sm text-gray-500 mt-4">
+          <strong>Best time to visit:</strong> {museumData.bestTimeToVisit}
+        </p>
+      </div>
+
+      <!-- Admission Prices -->
+      <div class="info-card">
+        <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <span class="text-2xl">🎫</span>
+          Admission Prices
+        </h3>
+        <table class="prices-table">
+          <tbody>
+            {Object.entries(museumData.admissionPrices).map(([type, price]) => (
+              <tr>
+                <td class="capitalize">{type}</td>
+                <td>{price}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p class="text-sm text-gray-500 mt-4">
+          <strong>Note:</strong> Tickets can be purchased at the entrance. Cash and cards accepted.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Highlights -->
+    <section class="mb-12">
+      <h2 class="section-header">Museum Highlights</h2>
+      <ul class="highlights-list">
+        {museumData.highlights.map(highlight => (
+          <li>{highlight}</li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Collections & Exhibitions -->
+    <section class="mb-12">
+      <h2 class="section-header">Collections & Exhibitions</h2>
+
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 mt-6">Permanent Collections</h3>
+      <div class="collections-grid">
+        {museumData.collections.map(collection => (
+          <div class="collection-card">
+            <h3>{collection.name}</h3>
+            <p class="text-gray-600">{collection.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 mt-8">Current Exhibitions</h3>
+      {museumData.exhibitions.map(exhibition => (
+        <div class={`exhibition-card ${exhibition.temporary ? 'exhibition-temporary' : ''}`}>
+          <div class="flex items-start justify-between mb-2">
+            <h4 class="text-xl font-bold text-gray-900">{exhibition.title}</h4>
+            <span class={`exhibition-badge ${exhibition.temporary ? 'temporary' : ''}`}>
+              {exhibition.temporary ? 'Temporary' : 'Permanent'}
+            </span>
+          </div>
+          <p class="text-gray-700 mb-2">{exhibition.description}</p>
+          {exhibition.temporary && exhibition.startDate && exhibition.endDate && (
+            <p class="text-sm text-gray-600">
+              <strong>Duration:</strong> {new Date(exhibition.startDate).toLocaleDateString()} - {new Date(exhibition.endDate).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+      ))}
+    </section>
+
+    <!-- Gallery -->
+    <section class="mb-12">
+      <h2 class="section-header">Gallery</h2>
+      <div class="image-gallery">
+        {museumData.gallery.map((image, index) => (
+          <div class="gallery-item">
+            <img src={image} alt={`${museumData.title} - Image ${index + 1}`} loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Visitor Amenities -->
+    <section class="mb-12">
+      <h2 class="section-header">Visitor Amenities</h2>
+      <div class="amenities-grid">
+        <div class={`amenity-item ${museumData.accessibility.wheelchairAccessible ? 'available' : 'unavailable'}`}>
+          <span class={`amenity-icon ${museumData.accessibility.wheelchairAccessible ? 'available' : 'unavailable'}`}>♿</span>
+          <span>Wheelchair Access</span>
+        </div>
+        <div class={`amenity-item ${museumData.accessibility.audioGuides ? 'available' : 'unavailable'}`}>
+          <span class={`amenity-icon ${museumData.accessibility.audioGuides ? 'available' : 'unavailable'}`}>🎧</span>
+          <span>Audio Guides</span>
+        </div>
+        <div class={`amenity-item ${museumData.accessibility.guidedTours ? 'available' : 'unavailable'}`}>
+          <span class={`amenity-icon ${museumData.accessibility.guidedTours ? 'available' : 'unavailable'}`}>👥</span>
+          <span>Guided Tours</span>
+        </div>
+        <div class={`amenity-item ${museumData.accessibility.giftShop ? 'available' : 'unavailable'}`}>
+          <span class={`amenity-icon ${museumData.accessibility.giftShop ? 'available' : 'unavailable'}`}>🛍️</span>
+          <span>Gift Shop</span>
+        </div>
+        <div class={`amenity-item ${museumData.accessibility.restrooms ? 'available' : 'unavailable'}`}>
+          <span class={`amenity-icon ${museumData.accessibility.restrooms ? 'available' : 'unavailable'}`}>🚻</span>
+          <span>Restrooms</span>
+        </div>
+        <div class={`amenity-item ${museumData.accessibility.cafe ? 'available' : 'unavailable'}`}>
+          <span class={`amenity-icon ${museumData.accessibility.cafe ? 'available' : 'unavailable'}`}>☕</span>
+          <span>Café</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Museum Rules -->
+    <section class="mb-12">
+      <h2 class="section-header">Museum Rules & Guidelines</h2>
+      <ul class="rules-list">
+        {museumData.rules.map(rule => (
+          <li>{rule}</li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Location & Contact -->
+    <section class="mb-12">
+      <h2 class="section-header">Location & Contact</h2>
+      <div class="grid md:grid-cols-2 gap-8">
+
+        <div class="info-card">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="text-2xl">📍</span>
+            Location
+          </h3>
+          <p class="text-gray-700 mb-2"><strong>Address:</strong></p>
+          <p class="text-gray-600 mb-4">{museumData.address}</p>
+
+          <h4 class="font-bold text-gray-900 mb-2">Getting There</h4>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Walking: 10 minutes from Grand Socco</li>
+            <li>• Taxi: Available from anywhere in Tangier</li>
+            <li>• Parking: Limited street parking nearby</li>
+          </ul>
+        </div>
+
+        <div class="info-card">
+          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span class="text-2xl">📞</span>
+            Contact Information
+          </h3>
+          <div class="space-y-2 text-gray-700">
+            {museumData.contact.phone && (
+              <p><strong>Phone:</strong> <a href={`tel:${museumData.contact.phone}`} class="text-teal-700 hover:underline">{museumData.contact.phone}</a></p>
+            )}
+            {museumData.contact.email && (
+              <p><strong>Email:</strong> <a href={`mailto:${museumData.contact.email}`} class="text-teal-700 hover:underline">{museumData.contact.email}</a></p>
+            )}
+            {museumData.contact.website && (
+              <p><strong>Website:</strong> <a href={museumData.contact.website} target="_blank" rel="noopener noreferrer" class="text-teal-700 hover:underline">Visit Website</a></p>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Map placeholder -->
+      <div class="mt-6 bg-gray-200 rounded-2xl overflow-hidden" style="height: 400px;">
+        <iframe
+          src={`https://www.google.com/maps?q=${museumData.coordinates.lat},${museumData.coordinates.lng}&output=embed`}
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <a
+        href={`https://www.google.com/maps/dir/?api=1&destination=${museumData.coordinates.lat},${museumData.coordinates.lng}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary"
+      >
+        <span>📍</span>
+        Get Directions
+      </a>
+
+      {museumData.contact.website && (
+        <a
+          href={museumData.contact.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          <span>🌐</span>
+          Visit Website
+        </a>
+      )}
+
+      <button
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        <span>🖨️</span>
+        Print Guide
+      </button>
+
+      <button
+        onclick="if(navigator.share) { navigator.share({title: document.title, text: 'Check out this museum in Tangier!', url: window.location.href}); } else { navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!'); }"
+        class="btn-secondary"
+      >
+        <span>📤</span>
+        Share
+      </button>
+    </div>
+
+    <!-- Tips for Visitors -->
+    <section class="mb-12 bg-teal-50 border-2 border-teal-200 rounded-2xl p-6">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <span class="text-3xl">💡</span>
+        Tips for Visitors
+      </h2>
+      <ul class="space-y-2 text-gray-700">
+        <li class="flex items-start gap-2">
+          <span class="text-teal-600 font-bold">•</span>
+          <span>Arrive early in the morning for a quieter experience and better lighting for photography</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-teal-600 font-bold">•</span>
+          <span>Allow at least 1-2 hours to fully explore all exhibitions and the palace grounds</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-teal-600 font-bold">•</span>
+          <span>Don't miss the panoramic terrace for stunning views of the Strait of Gibraltar</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-teal-600 font-bold">•</span>
+          <span>Consider hiring a guide for deeper insights into the collections and history</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-teal-600 font-bold">•</span>
+          <span>Wear comfortable shoes as there are stairs and uneven surfaces throughout the palace</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-teal-600 font-bold">•</span>
+          <span>Combine your visit with a walk through the Kasbah's charming streets and cafés</span>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+</MuseumLayout>

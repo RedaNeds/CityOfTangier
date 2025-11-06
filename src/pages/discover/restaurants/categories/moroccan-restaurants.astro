@@ -1,0 +1,186 @@
+---
+import EatDrinkLayout from '../../../../layouts/EatDrinkLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Get the moroccan-restaurants content
+const restaurantsEntry = await getCollection('eatDrink', ({ data }) => data.category === 'moroccan-restaurants');
+const restaurants = restaurantsEntry[0];
+
+if (!restaurants) {
+  throw new Error('Moroccan restaurants content not found');
+}
+
+// Get related eat-drink content
+const relatedEntries = await getCollection('eatDrink', ({ data }) => 
+  data.category !== 'moroccan-restaurants' && 
+  (data.category === 'seafood' || data.category === 'vegetarian-vegan')
+);
+---
+
+<EatDrinkLayout 
+  title={restaurants.data.title}
+  description={restaurants.data.description}
+  category={restaurants.data.category}
+  tags={restaurants.data.tags}
+  featuredImage={restaurants.data.featuredImage}
+  rating={restaurants.data.rating}
+  priceLevel={restaurants.data.priceLevel}
+  location={restaurants.data.location}
+  coordinates={restaurants.data.coordinates}
+  highlights={restaurants.data.highlights}
+>
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <div class="mb-8">
+      {restaurants.data.featuredImage && (
+        <div class="mb-6">
+          <img 
+            src={restaurants.data.featuredImage} 
+            alt={restaurants.data.title}
+            class="w-full h-64 md:h-96 object-cover rounded-2xl"
+          />
+        </div>
+      )}
+      
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <div>
+          <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">{restaurants.data.title}</h1>
+          <p class="text-xl text-gray-600">{restaurants.data.description}</p>
+        </div>
+        
+        <div class="flex items-center gap-4 mt-4 md:mt-0">
+          {restaurants.data.rating && (
+            <div class="rating-stars">
+              <span class="text-lg font-semibold text-gray-700 mr-2">{restaurants.data.rating}</span>
+              {[1, 2, 3, 4, 5].map(star => (
+                <span class={`star ${star <= restaurants.data.rating! ? '' : 'empty'}`}>★</span>
+              ))}
+            </div>
+          )}
+          
+          {restaurants.data.priceLevel && (
+            <div class="price-level">
+              <span class="text-lg font-semibold text-gray-700 mr-1">Price:</span>
+              <span class="price-symbol text-xl">{restaurants.data.priceLevel}</span>
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div class="flex flex-wrap gap-3 mb-6">
+        <span class="category-badge">
+          {restaurants.data.category}
+        </span>
+        {restaurants.data.tags?.map(tag => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Key Information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      {restaurants.data.location && (
+        <div class="location-info">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">📍</span>
+            Location
+          </h3>
+          <p class="text-gray-600">{restaurants.data.location}</p>
+          {restaurants.data.coordinates && (
+            <p class="text-sm text-gray-500 mt-1">
+              {restaurants.data.coordinates.lat}, {restaurants.data.coordinates.lng}
+            </p>
+          )}
+        </div>
+      )}
+      
+      {restaurants.data.openingHours && (
+        <div class="opening-hours">
+          <h3 class="font-semibold text-gray-900 mb-2 flex items-center">
+            <span class="location-icon">🕒</span>
+            Opening Hours
+          </h3>
+          <table class="hours-table">
+            {restaurants.data.openingHours.map(hours => (
+              <tr>
+                <td>{hours.day}</td>
+                <td>{hours.hours}</td>
+              </tr>
+            ))}
+          </table>
+        </div>
+      )}
+    </div>
+
+    <!-- Highlights -->
+    {restaurants.data.highlights && restaurants.data.highlights.length > 0 && (
+      <div class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Highlights</h2>
+        <ul class="highlights-list">
+          {restaurants.data.highlights.map(highlight => (
+            <li class="text-gray-700">{highlight}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Main Content -->
+    <div class="prose prose-lg max-w-none mb-8">
+      <div set:html={restaurants.body} />
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons mb-8">
+      {restaurants.data.coordinates && (
+        <a 
+          href={`https://www.google.com/maps?q=${restaurants.data.coordinates.lat},${restaurants.data.coordinates.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-primary"
+        >
+          📍 Get Directions
+        </a>
+      )}
+      
+      <button 
+        onclick="window.print()"
+        class="btn-secondary"
+      >
+        🖨️ Print Guide
+      </button>
+      
+      <button 
+        onclick="navigator.share ? navigator.share({title: restaurants.data.title, text: restaurants.data.description, url: window.location.href}) : navigator.clipboard.writeText(window.location.href)"
+        class="btn-secondary"
+      >
+        📤 Share
+      </button>
+    </div>
+
+    <!-- Related Places -->
+    {relatedEntries && relatedEntries.length > 0 && (
+      <div class="bg-gray-50 rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">More Places to Eat & Drink</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {relatedEntries.slice(0, 2).map(relatedEntry => (
+            <a 
+              href={`/discover/restaurants/categories/${relatedEntry.data.category}`}
+              class="restaurant-card p-4 hover:shadow-md transition-all"
+            >
+              <h3 class="font-semibold text-gray-900 mb-2">{relatedEntry.data.title}</h3>
+              <p class="text-gray-600 text-sm line-clamp-2">{relatedEntry.data.description}</p>
+              {relatedEntry.data.rating && (
+                <div class="rating-stars mt-2">
+                  <span class="text-sm text-gray-600 mr-1">{relatedEntry.data.rating}</span>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <span class={`star text-sm ${star <= relatedEntry.data.rating! ? '' : 'empty'}`}>★</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</EatDrinkLayout>

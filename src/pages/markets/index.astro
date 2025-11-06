@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+// Fetch all markets from Sanity
+const markets = await client.fetch(`
+  *[_type == "market"] | order(title asc) {
+    _id,
+    title,
+    subtitle,
+    slug,
+    description,
+    heroImage,
+    marketType,
+    priceLevel
+  }
+`);
+
+// Helper function to get image URL from Sanity
+function getImageUrl(image: any) {
+  if (!image) return '/images/market-default.jpg';
+  const builder = imageUrlBuilder(client);
+  return builder.image(image).url();
+}
+
+const pageTitle = "Markets & Souks in Tangier";
+const pageDescription = "Discover Tangier's vibrant markets and traditional souks, from spice markets to artisan craft bazaars.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <div class="bg-[#F5F1E8] min-h-screen">
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-orange-600 to-amber-500 text-white py-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <h1 class="text-5xl font-serif mb-4">Markets & Souks in Tangier</h1>
+        <p class="text-xl opacity-90 max-w-2xl">
+          Immerse yourself in the vibrant atmosphere of Tangier's traditional markets and discover local treasures
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+
+      {markets.length === 0 ? (
+        <div class="text-center py-20">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">No Markets Found</h2>
+          <p class="text-gray-600">Check back soon for new market listings!</p>
+        </div>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {markets.map((market: any) => (
+            <a
+              href={`/markets/${market.slug.current}`}
+              class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div class="aspect-[4/3] overflow-hidden relative">
+                <img
+                  src={getImageUrl(market.heroImage)}
+                  alt={market.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                {market.priceLevel && (
+                  <div class="absolute top-4 right-4 bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    {market.priceLevel}
+                  </div>
+                )}
+              </div>
+              <div class="p-6">
+                <h2 class="font-serif text-2xl text-[#2C2416] mb-2 group-hover:text-orange-600 transition-colors">
+                  {market.title}
+                </h2>
+                {market.marketType && (
+                  <p class="text-sm text-orange-600 mb-3 capitalize">{market.marketType.replace('-', ' ')}</p>
+                )}
+                <p class="text-[#5C5550] text-sm line-clamp-3">
+                  {market.description}
+                </p>
+                <div class="mt-4 text-orange-600 font-semibold text-sm group-hover:underline">
+                  Explore →
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+
+    </section>
+
+    <!-- Tips Section -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+      <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-3xl p-8 md:p-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Shopping in Moroccan Markets</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">🛍️</span>
+              Shopping Tips
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Bargaining is expected - start at 50-60% of the asking price</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Bring cash - many vendors don't accept cards</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Visit early morning for freshest products and fewer crowds</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Don't feel pressured to buy - walking away often gets better prices</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">💰</span>
+              Bargaining Etiquette
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Always be friendly and smile - it's part of the experience</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Know when to walk away if you can't agree on a price</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Show respect - vendors are proud of their craftsmanship</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-orange-600 font-bold">•</span>
+                <span>Compare prices at multiple stalls before buying</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+
+

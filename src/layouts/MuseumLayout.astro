@@ -1,0 +1,590 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  category?: 'museum';
+  subcategory?: string; // e.g., 'art', 'history', 'archaeology', 'cultural'
+  tags?: string[];
+  featuredImage?: string;
+  gallery?: string[];
+  rating?: number;
+  priceLevel?: string;
+  location?: string;
+  address?: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  openingHours?: {
+    day: string;
+    hours: string;
+  }[];
+  admissionPrices?: {
+    adult?: string;
+    student?: string;
+    child?: string;
+    senior?: string;
+    group?: string;
+  };
+  highlights?: string[];
+  collections?: {
+    name: string;
+    description: string;
+  }[];
+  exhibitions?: {
+    title: string;
+    description: string;
+    startDate?: string;
+    endDate?: string;
+    temporary?: boolean;
+  }[];
+  contact?: {
+    phone?: string;
+    email?: string;
+    website?: string;
+  };
+  amenities?: string[];
+  accessibility?: {
+    wheelchairAccessible?: boolean;
+    parking?: boolean;
+    audioGuides?: boolean;
+    guidedTours?: boolean;
+    restrooms?: boolean;
+    cafe?: boolean;
+    giftShop?: boolean;
+  };
+  visitDuration?: string; // e.g., "1-2 hours"
+  bestTimeToVisit?: string;
+  rules?: string[]; // Museum rules and regulations
+}
+
+const {
+  title = "Museum - City of Tangier",
+  description = "Discover fascinating museums in Tangier",
+  category = "museum",
+  subcategory = "cultural",
+  tags = [],
+  featuredImage = "/museum-default-image.jpg",
+  gallery = [],
+  rating = 4.5,
+  priceLevel = "€€",
+  location = "Tangier, Morocco",
+  address = "",
+  coordinates,
+  openingHours = [],
+  admissionPrices = {},
+  highlights = [],
+  collections = [],
+  exhibitions = [],
+  contact = {},
+  amenities = [],
+  accessibility = {},
+  visitDuration = "1-2 hours",
+  bestTimeToVisit = "Weekday mornings",
+  rules = []
+} = Astro.props;
+
+// Generate structured data for museums
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Museum",
+  "name": title,
+  "description": description,
+  "image": featuredImage,
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Tangier",
+    "addressCountry": "Morocco",
+    "streetAddress": address
+  },
+  "aggregateRating": rating ? {
+    "@type": "AggregateRating",
+    "ratingValue": rating,
+    "bestRating": 5
+  } : undefined,
+  "keywords": tags.join(", "),
+  "geo": coordinates ? {
+    "@type": "GeoCoordinates",
+    "latitude": coordinates.lat,
+    "longitude": coordinates.lng
+  } : undefined,
+  "openingHoursSpecification": openingHours.map(hour => ({
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": hour.day,
+    "opens": hour.hours.split('-')[0]?.trim(),
+    "closes": hour.hours.split('-')[1]?.trim()
+  })),
+  "telephone": contact.phone,
+  "email": contact.email,
+  "url": contact.website
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={featuredImage}
+  ogType="article"
+>
+  <!-- Museum specific head content -->
+  <Fragment slot="head">
+    <!-- Museum specific meta tags -->
+    <meta name="museum:category" content={category} />
+    <meta name="museum:subcategory" content={subcategory} />
+    <meta name="museum:rating" content={rating?.toString()} />
+    <meta name="museum:priceLevel" content={priceLevel} />
+    <meta name="museum:location" content={location} />
+    <meta name="museum:visitDuration" content={visitDuration} />
+    {tags.map(tag => <meta name="museum:tag" content={tag} />)}
+    {highlights.map(highlight => <meta name="museum:highlight" content={highlight} />)}
+
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+    <!-- Museum specific styles -->
+    <style>
+      body {
+        padding-top: 4rem;
+      }
+
+      /* Hero section */
+      .museum-hero {
+        position: relative;
+        height: 500px;
+        overflow: hidden;
+        border-radius: 0 0 2rem 2rem;
+      }
+
+      .museum-hero img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .hero-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        color: white;
+        padding: 2rem;
+      }
+
+      /* Museum info cards */
+      .info-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+      }
+
+      .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-card-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .info-card-title {
+        font-size: 0.875rem;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+
+      .info-card-value {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      /* Rating stars */
+      .rating-stars {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .star {
+        color: #fbbf24;
+        font-size: 1.125rem;
+      }
+
+      .star.empty {
+        color: #d1d5db;
+      }
+
+      /* Badges */
+      .museum-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #0f766e, #115e59);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .tag-chip {
+        background: #f3f4f6;
+        color: #374151;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border: 1px solid #e5e7eb;
+      }
+
+      /* Opening hours table */
+      .hours-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .hours-table tr {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .hours-table tr:last-child {
+        border-bottom: none;
+      }
+
+      .hours-table td {
+        padding: 0.75rem 0;
+      }
+
+      .hours-table td:first-child {
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .hours-table td:last-child {
+        color: #6b7280;
+        text-align: right;
+      }
+
+      .hours-table tr.closed td:last-child {
+        color: #dc2626;
+        font-weight: 500;
+      }
+
+      /* Admission prices table */
+      .prices-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .prices-table tr {
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .prices-table tr:last-child {
+        border-bottom: none;
+      }
+
+      .prices-table td {
+        padding: 0.75rem 0;
+      }
+
+      .prices-table td:first-child {
+        color: #374151;
+      }
+
+      .prices-table td:last-child {
+        font-weight: 600;
+        color: #0f766e;
+        text-align: right;
+        font-size: 1.125rem;
+      }
+
+      /* Collections grid */
+      .collections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .collection-card {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .collection-card:hover {
+        border-color: #0f766e;
+        box-shadow: 0 4px 12px rgba(15, 118, 110, 0.1);
+      }
+
+      .collection-card h3 {
+        color: #0f766e;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+      }
+
+      /* Exhibitions */
+      .exhibition-card {
+        background: linear-gradient(135deg, #f0fdfa, #ccfbf1);
+        border: 1px solid #0f766e;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .exhibition-temporary {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-color: #f59e0b;
+      }
+
+      .exhibition-badge {
+        display: inline-block;
+        background: #0f766e;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .exhibition-badge.temporary {
+        background: #f59e0b;
+      }
+
+      /* Highlights list */
+      .highlights-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .highlights-list li {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 0.75rem;
+        color: #374151;
+        line-height: 1.6;
+      }
+
+      .highlights-list li::before {
+        content: '★';
+        position: absolute;
+        left: 0;
+        color: #0f766e;
+        font-size: 1.25rem;
+      }
+
+      /* Amenities grid */
+      .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+      }
+
+      .amenity-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: #f9fafb;
+        border-radius: 0.5rem;
+      }
+
+      .amenity-icon {
+        font-size: 1.5rem;
+      }
+
+      .amenity-icon.available {
+        opacity: 1;
+      }
+
+      .amenity-icon.unavailable {
+        opacity: 0.3;
+      }
+
+      /* Rules list */
+      .rules-list {
+        list-style: none;
+        padding: 0;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 1rem;
+        padding: 1.5rem;
+      }
+
+      .rules-list li {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 0.75rem;
+        color: #991b1b;
+      }
+
+      .rules-list li::before {
+        content: '!';
+        position: absolute;
+        left: 0;
+        width: 1.5rem;
+        height: 1.5rem;
+        background: #dc2626;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.875rem;
+      }
+
+      /* Image gallery */
+      .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+      }
+
+      .gallery-item {
+        aspect-ratio: 4/3;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        background: #f3f4f6;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-item:hover {
+        transform: scale(1.02);
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+
+      .gallery-item:hover img {
+        transform: scale(1.1);
+      }
+
+      /* Action buttons */
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin: 2rem 0;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #0f766e, #115e59);
+        color: white;
+        padding: 0.875rem 1.75rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #115e59, #134e4a);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(15, 118, 110, 0.3);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #374151;
+        padding: 0.875rem 1.75rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 2px solid #e5e7eb;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-secondary:hover {
+        background: #f9fafb;
+        border-color: #0f766e;
+        color: #0f766e;
+      }
+
+      /* Section headers */
+      .section-header {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 3px solid #0f766e;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .museum-hero {
+          height: 300px;
+        }
+
+        .action-buttons {
+          flex-direction: column;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .collections-grid,
+        .image-gallery {
+          grid-template-columns: 1fr;
+        }
+
+        .amenities-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Print styles */
+      @media print {
+        .museum-hero {
+          height: 200px;
+        }
+
+        .action-buttons {
+          display: none;
+        }
+
+        .info-card {
+          box-shadow: none;
+          border: 1px solid #e5e7eb;
+        }
+      }
+    </style>
+  </Fragment>
+
+  <!-- Museum specific content -->
+  <div class="museum-content">
+    <slot />
+  </div>
+</BaseLayout>

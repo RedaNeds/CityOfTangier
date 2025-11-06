@@ -1,0 +1,61 @@
+---
+import { urlFor } from '../../lib/sanity';
+
+export interface Props {
+  image: any;
+  alt: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  sizes?: string;
+}
+
+const { 
+  image, 
+  alt, 
+  width = 800, 
+  height = 600, 
+  className = '',
+  loading = 'lazy',
+  priority = false,
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+} = Astro.props;
+
+// Fallback for missing images
+const fallbackAlt = alt || 'Image not available';
+
+// Generate image URLs if image exists
+const imageUrl = image ? urlFor(image).width(width).height(height).url() : null;
+const webpUrl = image ? urlFor(image).width(width).height(height).format('webp').url() : null;
+const blurDataUrl = image ? urlFor(image).width(20).height(20).blur(10).url() : null;
+---
+
+{!image ? (
+  <div 
+    class={`bg-gradient-to-br from-strait-blue to-kasbah-navy flex items-center justify-center text-white ${className}`}
+    role="img" 
+    aria-label={fallbackAlt}
+  >
+    <div class="text-center p-8">
+      <div class="text-4xl mb-2">📷</div>
+      <p class="text-sm opacity-80">{fallbackAlt}</p>
+    </div>
+  </div>
+) : (
+  <picture class={className}>
+    <source srcset={webpUrl} type="image/webp" />
+    <img
+      src={imageUrl}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={loading}
+      decoding="async"
+      sizes={sizes}
+      class="w-full h-full object-cover"
+      style={priority ? `background-image: url(${blurDataUrl}); background-size: cover;` : ''}
+    />
+  </picture>
+)}

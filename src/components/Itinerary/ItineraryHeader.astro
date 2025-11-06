@@ -1,0 +1,49 @@
+---
+import type { ItineraryData } from '../../lib/itinerary-data.ts';
+
+export interface Props {
+  itinerary: ItineraryData;
+}
+
+const { itinerary } = Astro.props;
+
+const difficultyColors = {
+  easy: 'bg-green-100 text-green-800',
+  moderate: 'bg-yellow-100 text-yellow-800',
+  challenging: 'bg-red-100 text-red-800'
+};
+
+const difficultyIcons = {
+  easy: '😊',
+  moderate: '😐',
+  challenging: '😤'
+};
+---
+
+<div class="text-center mb-16">
+  <h1 class="text-4xl font-serif font-bold text-gray-900 mb-6">{itinerary.title}</h1>
+  <p class="text-xl text-gray-600 mb-6">
+    {itinerary.description}
+  </p>
+  
+  <!-- Stats -->
+  <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500 mb-6">
+    <span>⏱️ {itinerary.totalStops} stops</span>
+    <span>🚶 {itinerary.totalDuration}</span>
+    <span>💰 {itinerary.budget} budget</span>
+    <span class={`px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[itinerary.difficulty]}`}>
+      {difficultyIcons[itinerary.difficulty]} {itinerary.difficulty}
+    </span>
+  </div>
+  
+  <!-- Tags -->
+  {itinerary.tags && itinerary.tags.length > 0 && (
+    <div class="flex flex-wrap justify-center gap-2">
+      {itinerary.tags.map(tag => (
+        <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+          #{tag}
+        </span>
+      ))}
+    </div>
+  )}
+</div>

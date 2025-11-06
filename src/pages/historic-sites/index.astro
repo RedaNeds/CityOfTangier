@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+// Fetch all historic sites from Sanity
+const historicSites = await client.fetch(`
+  *[_type == "historicSite"] | order(title asc) {
+    _id,
+    title,
+    subtitle,
+    slug,
+    description,
+    heroImage,
+    historicalPeriod,
+    UNESCO
+  }
+`);
+
+// Helper function to get image URL from Sanity
+function getImageUrl(image: any) {
+  if (!image) return '/images/historic-default.jpg';
+  const builder = imageUrlBuilder(client);
+  return builder.image(image).url();
+}
+
+const pageTitle = "Historic Sites in Tangier";
+const pageDescription = "Discover Tangier's rich history through its ancient monuments, historic buildings, and architectural treasures.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <div class="bg-[#F5F1E8] min-h-screen">
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-[#8B7355] to-[#A0886F] text-white py-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <h1 class="text-5xl font-serif mb-4">Historic Sites in Tangier</h1>
+        <p class="text-xl opacity-90 max-w-2xl">
+          Step back in time and explore the architectural and historical treasures that define Tangier's rich past
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+
+      {historicSites.length === 0 ? (
+        <div class="text-center py-20">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">No Historic Sites Found</h2>
+          <p class="text-gray-600">Check back soon for new historic site listings!</p>
+        </div>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {historicSites.map((site: any) => (
+            <a
+              href={`/historic-sites/${site.slug.current}`}
+              class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div class="aspect-[4/3] overflow-hidden relative">
+                <img
+                  src={getImageUrl(site.heroImage)}
+                  alt={site.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+                {site.UNESCO && (
+                  <div class="absolute top-4 right-4 bg-[#8B7355] text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    UNESCO Site
+                  </div>
+                )}
+              </div>
+              <div class="p-6">
+                <h2 class="font-serif text-2xl text-[#2C2416] mb-2 group-hover:text-[#8B7355] transition-colors">
+                  {site.title}
+                </h2>
+                {site.historicalPeriod && (
+                  <p class="text-sm text-[#8B7355] mb-3">{site.historicalPeriod}</p>
+                )}
+                <p class="text-[#5C5550] text-sm line-clamp-3">
+                  {site.description}
+                </p>
+                <div class="mt-4 text-[#8B7355] font-semibold text-sm group-hover:underline">
+                  Explore →
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+
+    </section>
+
+    <!-- Tips Section -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 md:p-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Visiting Historic Sites</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">📜</span>
+              Visitor Tips
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Dress modestly when visiting religious or sacred sites</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Many sites offer guided tours in multiple languages</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Visit early morning or late afternoon for the best lighting and fewer crowds</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Bring comfortable walking shoes - many sites involve stairs or uneven surfaces</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">🎟️</span>
+              Getting the Most Value
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Student and senior discounts available at most sites with valid ID</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Consider hiring a local guide for deeper historical context</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Check for special events or exhibitions during your visit</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-amber-600 font-bold">•</span>
+                <span>Combine multiple nearby sites in one day for an immersive experience</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+
+

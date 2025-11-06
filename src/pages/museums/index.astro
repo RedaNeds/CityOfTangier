@@ -1,0 +1,153 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { client, imageUrlBuilder } from '../../lib/sanity';
+
+// Fetch all museums from Sanity (new museum type)
+const museums = await client.fetch(`
+  *[_type == "museum"] | order(title asc) {
+    _id,
+    title,
+    subtitle,
+    slug,
+    description,
+    heroImage
+  }
+`);
+
+// Helper function to get image URL from Sanity
+function getImageUrl(image: any) {
+  if (!image) return '/images/museum-default.jpg';
+  const builder = imageUrlBuilder(client);
+  return builder.image(image).url();
+}
+
+const pageTitle = "Museums & Cultural Sites in Tangier";
+const pageDescription = "Explore Tangier's rich cultural heritage through its fascinating museums, art galleries, and cultural centers.";
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <div class="bg-[#F5F1E8] min-h-screen">
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-[#8B7355] to-[#A0886F] text-white py-20">
+      <div class="max-w-6xl mx-auto px-6">
+        <h1 class="text-5xl font-serif mb-4">Museums in Tangier</h1>
+        <p class="text-xl opacity-90 max-w-2xl">
+          Discover the rich cultural heritage of Tangier through its fascinating museums
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+
+      {museums.length === 0 ? (
+        <div class="text-center py-20">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">No Museums Found</h2>
+          <p class="text-gray-600">Check back soon for new museum listings!</p>
+        </div>
+      ) : (
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {museums.map((museum: any) => (
+            <a
+              href={`/museums/${museum.slug.current}`}
+              class="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div class="aspect-[4/3] overflow-hidden">
+                <img
+                  src={getImageUrl(museum.heroImage)}
+                  alt={museum.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <div class="p-6">
+                <h2 class="font-serif text-2xl text-[#2C2416] mb-2 group-hover:text-[#8B7355] transition-colors">
+                  {museum.title}
+                </h2>
+                {museum.subtitle && (
+                  <p class="text-sm text-[#8B7355] mb-3">{museum.subtitle}</p>
+                )}
+                <p class="text-[#5C5550] text-sm line-clamp-3">
+                  {museum.description}
+                </p>
+                <div class="mt-4 text-[#8B7355] font-semibold text-sm group-hover:underline">
+                  Discover more →
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+
+    </section>
+
+    <!-- Tips Section -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+      <div class="bg-gradient-to-br from-teal-50 to-blue-50 rounded-3xl p-8 md:p-12">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6">Planning Your Museum Visit</h2>
+
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">💡</span>
+              Visitor Tips
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Most museums are closed on Tuesdays - plan accordingly</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Visit early in the morning for fewer crowds and better lighting</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Many museums offer student and senior discounts with valid ID</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Photography is usually allowed but no flash - check before taking photos</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="text-2xl">🎫</span>
+              Getting the Most Value
+            </h3>
+            <ul class="space-y-3 text-gray-700">
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Consider hiring a guide for deeper insights into the collections</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Audio guides are available in multiple languages at major museums</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Combine museum visits with nearby cafés and attractions</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="text-teal-600 font-bold">•</span>
+                <span>Check museum websites for special exhibitions and events</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

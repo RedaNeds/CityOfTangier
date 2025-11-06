@@ -1,0 +1,64 @@
+---
+import HomeLayout from '../layouts/HomeLayout.astro';
+import HeroSearchBar from '../components/HomePage/HeroSearchBar.astro';
+import QuickCategories from '../components/HomePage/QuickCategories.astro';
+import NeighborhoodGrid from '../components/HomePage/NeighborhoodGrid.astro';
+import FeaturedPlaces from '../components/HomePage/FeaturedPlaces.astro';
+import FeaturedEatDrink from '../components/HomePage/FeaturedEatDrink.astro';
+import EventsThisWeek from '../components/HomePage/EventsThisWeek.astro';
+import FeaturedGuides from '../components/HomePage/FeaturedGuides.astro';
+import FeaturedItineraries from '../components/HomePage/FeaturedItineraries.astro';
+import NewsletterSignup from '../components/HomePage/NewsletterSignup.astro';
+---
+
+<HomeLayout>
+		<!-- Hero Section -->
+		<section class="relative hero-gradient text-white min-h-[600px] flex items-center animate-fade-in-up">
+			<div class="absolute inset-0 bg-black opacity-30"></div>
+			<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+				<div class="text-center">
+					<h1 class="text-5xl md:text-7xl font-serif font-bold mb-6 drop-shadow-lg">
+						Your perfect Tangier experience
+					</h1>
+					<p class="text-xl md:text-2xl mb-12 max-w-4xl mx-auto font-light drop-shadow-md">
+						Discover the magic where Africa meets Europe. From ancient kasbahs to modern rooftops, find your next adventure in Morocco's gateway city.
+					</p>
+
+					<!-- Search Bar -->
+					<HeroSearchBar />
+
+					<a
+						href="/itineraries"
+						class="inline-block bg-white text-gray-900 px-10 py-4 rounded-2xl font-semibold hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
+					>
+						Plan your trip
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Quick Categories -->
+		<QuickCategories />
+
+		<!-- Featured Places Section -->
+		<FeaturedPlaces />
+
+		<!-- Food & Drink Section -->
+		<FeaturedEatDrink />
+
+		<!-- What's on Section -->
+		<EventsThisWeek />
+
+		<!-- Guides Section -->
+		<FeaturedGuides />
+
+		<!-- Featured Itineraries Section -->
+		<FeaturedItineraries />
+
+		<!-- Explore by neighborhood Section - Design System -->
+		<NeighborhoodGrid />
+
+		<!-- Newsletter Signup Section -->
+		<NewsletterSignup />
+
+</HomeLayout>

@@ -1,0 +1,180 @@
+---
+import { client } from '../../lib/sanity';
+
+let upcomingEvents = [];
+
+try {
+  const now = new Date().toISOString();
+  upcomingEvents = await client.fetch(`
+    *[_type == "event" && startDate >= $now] | order(startDate asc)[0...2] {
+      _id,
+      title,
+      slug,
+      description,
+      featuredImage { asset->{ url } },
+      startDate,
+      category,
+      location { name, address }
+    }
+  `, { now });
+} catch (error) {
+  console.error('Error fetching events:', error);
+}
+
+// Fallback data if no events from Sanity
+if (upcomingEvents.length === 0) {
+  upcomingEvents = [
+    {
+      title: 'Tanjazz Festival',
+      slug: { current: 'tanjazz-festival' },
+      description: 'International jazz festival featuring world-class musicians in the historic Kasbah setting.',
+      featuredImage: { asset: { url: '/images/tanjazz.jpg' } },
+      startDate: '2024-09-21T20:00:00Z',
+      category: 'music',
+      location: { name: 'Kasbah Amphitheater', address: 'Kasbah' }
+    },
+    {
+      title: 'Contemporary Art at the Kasbah',
+      slug: { current: 'contemporary-art-kasbah' },
+      description: 'Exhibition featuring modern Moroccan artists exploring traditional and contemporary themes.',
+      featuredImage: { asset: { url: '/images/art-exhibition.jpg' } },
+      startDate: '2024-09-25T18:00:00Z',
+      category: 'culture',
+      location: { name: 'Kasbah Museum', address: 'Kasbah' }
+    }
+  ];
+}
+
+// Helper function to format date
+function formatEventDate(dateString: string) {
+  const date = new Date(dateString);
+  const month = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  const day = date.getDate();
+  return { month, day };
+}
+
+// Helper function to format time
+function formatEventTime(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+// Category colors
+function getCategoryColor(category: string) {
+  const colors = {
+    'music': 'bg-orange-500',
+    'culture': 'bg-orange-600',
+    'art': 'bg-purple-500',
+    'food-drink': 'bg-green-500',
+    'festival': 'bg-blue-500',
+    'workshop': 'bg-yellow-500'
+  };
+  return colors[category] || 'bg-gray-500';
+}
+---
+
+<section class="py-16 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-12">
+      <div>
+        <h2 class="text-4xl font-bold text-gray-900 mb-2">
+          What's on
+        </h2>
+        <p class="text-lg text-gray-600">
+          Events and experiences happening in Tangier this week
+        </p>
+      </div>
+      <a
+        href="/events"
+        class="text-teal-600 hover:text-teal-700 font-semibold flex items-center gap-2 group"
+      >
+        See all events
+        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {upcomingEvents.map((event) => {
+        const dateInfo = formatEventDate(event.startDate);
+        return (
+          <div class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300">
+            <!-- Image with Date Badge -->
+            <div class="relative h-80 overflow-hidden">
+              <img
+                src={event.featuredImage?.asset?.url || '/placeholder.jpg'}
+                alt={event.title}
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <!-- Date Badge -->
+              <div class="absolute top-6 left-6 bg-white rounded-xl px-4 py-3 text-center shadow-lg">
+                <div class="text-teal-600 text-xs font-bold uppercase tracking-wide">
+                  {dateInfo.month}
+                </div>
+                <div class="text-gray-900 text-3xl font-bold leading-none">
+                  {dateInfo.day}
+                </div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+              <!-- Title & Category -->
+              <div class="flex items-start justify-between mb-3">
+                <h3 class="text-2xl font-bold text-gray-900 group-hover:text-teal-600 transition-colors flex-1 pr-4">
+                  {event.title}
+                </h3>
+                {event.category && (
+                  <span class={`${getCategoryColor(event.category)} text-white px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap`}>
+                    {event.category}
+                  </span>
+                )}
+              </div>
+
+              <!-- Location -->
+              {event.location && (
+                <div class="flex items-center gap-2 mb-2 text-gray-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <span class="text-sm font-medium">{event.location.name || event.location.address}</span>
+                </div>
+              )}
+
+              <!-- Date & Time -->
+              <div class="flex items-center gap-2 mb-4 text-gray-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-sm">{formatEventTime(event.startDate)}</span>
+              </div>
+
+              <!-- Description -->
+              <p class="text-gray-600 mb-6 line-clamp-2 leading-relaxed">
+                {event.description}
+              </p>
+
+              <!-- Get Tickets Button -->
+              <a
+                href={`/events/${event.slug.current}`}
+                class="block w-full text-center bg-white border-2 border-gray-300 text-gray-900 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all"
+              >
+                Get Tickets
+              </a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
